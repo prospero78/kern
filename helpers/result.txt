@@ -1,0 +1,74 @@
+package helpers
+
+// Result — аналог Result<T, E> из Rust
+//
+// Может быть либотолько полезное значение, либо только ошибка
+type Result[T any] struct {
+	value T     // Полезное значение
+	err   error // Ошибка
+}
+
+// NewResult -- возвращает успешный Result с значением
+func NewResult[T *any](result T) *Result[T] {
+	Hassert(result != nil, "NewResult(): result==nil")
+	return &Result[T]{
+		value: result,
+	}
+}
+
+// NewResultErr -- возвращает Result с ошибкой
+func NewResultErr[T any](err error) *Result[T] {
+	Hassert(err != nil, "NewError(): err==nil")
+	return &Result[T]{
+		err: err,
+	}
+}
+
+// IsOk -- возвращает true, если Result содержит значение
+func (sf *Result[T]) IsOk() bool {
+	return sf.err == nil
+}
+
+// IsErr -- возвращает true, если Result содержит ошибку
+func (sf *Result[T]) IsErr() bool {
+	return sf.err != nil
+}
+
+// Unwrap -- возвращает значение, если оно есть, иначе паникует
+func (sf *Result[T]) Unwrap() T {
+	if sf.err != nil {
+		panic(sf.err)
+	}
+	return sf.value
+}
+
+// UnwrapOr -- возвращает значение, если оно есть, или значение по умолчанию
+func (sf *Result[T]) UnwrapOr(defaultValue T) T {
+	if sf.IsErr() {
+		return defaultValue
+	}
+	return sf.value
+}
+
+// UnwrapOrElse -- возвращает значение, если оно есть, или результат выполнения функции
+func (sf *Result[T]) UnwrapOrElse(f func() T) T {
+	if sf.IsErr() {
+		return f()
+	}
+	return sf.value
+}
+
+// Error -- возвращает ошибку, если она есть
+func (sf *Result[T]) Error() error {
+	return sf.err
+}
+
+// HAssert -- проверяет, что нет ошибки (с паникой)
+func (sf *Result[T]) Hassert(msg string) {
+	Hassert(sf.err != nil, msg+", err=\n\t%v\n", sf.err)
+}
+
+// Assert -- проверяет, что нет ошибки (с паникой только на локальном стенде)
+func (sf *Result[T]) Assert(msg string) {
+	Assert(sf.err != nil, msg+", err=\n\t%v\n", sf.err)
+}
