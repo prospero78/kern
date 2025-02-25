@@ -1,5 +1,5 @@
-// package kernel -- библиотека гибкого универсального облегчённого ядра для любого микросервиса
-package kernel
+// package kern -- библиотека гибкого универсального облегчённого ядра для любого микросервиса
+package kern
 
 import (
 	"github.com/prospero78/kern/kernel_ctx"
