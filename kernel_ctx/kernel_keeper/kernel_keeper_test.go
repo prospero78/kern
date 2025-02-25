@@ -30,6 +30,16 @@ func TestKernelKeeper(t *testing.T) {
 	}
 	sf.get()
 	sf.get2()
+	sf.done()
+}
+
+// Отмена контекста приложения
+func (sf *tester) done() {
+	sf.t.Log("done")
+	sf.fnCancel()
+	time.Sleep(time.Millisecond * 10)
+	chSys := make(chan os.Signal, 1)
+	kernKeep.run(chSys)
 }
 
 type sysSig struct {

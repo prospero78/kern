@@ -43,7 +43,12 @@ func (sf *tester) new() {
 
 	safeBool := NewSafeBool()
 	if safeBool == nil {
-		sf.t.Fatalf("new(): ISAfeBool==nil")
+		sf.t.Fatalf("new(): ISafeBool==nil")
+	}
+
+	kernBus := NewKernelBusLocal(ctx)
+	if kernBus == nil {
+		sf.t.Fatalf("new(): (local) IKernelBus==nil")
 	}
 
 	kernServHttp := NewKernelServerHttp(ctx)
