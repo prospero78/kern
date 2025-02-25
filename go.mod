@@ -1,4 +1,4 @@
-module github.com/svi/kern
+module github.com/prospero78/kern
 
 go 1.24.0
 

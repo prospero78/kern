@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/svi/kern/kernel_ctx/kernel_wg"
-	. "github.com/svi/kern/kernel_types"
+	"github.com/prospero78/kern/kernel_ctx/kernel_wg"
+	. "github.com/prospero78/kern/kernel_types"
 )
 
 type tester struct {

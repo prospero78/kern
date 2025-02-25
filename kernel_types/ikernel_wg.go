@@ -1,7 +1,7 @@
 package kernel_types
 
 import (
-	. "github.com/svi/kern/kernel_alias"
+	. "github.com/prospero78/kern/kernel_alias"
 )
 
 // IKernelWg -- интерфейс к именованному ожидателю потоков

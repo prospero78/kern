@@ -4,7 +4,7 @@ package safe_bool
 import (
 	"sync"
 
-	. "github.com/svi/kern/kernel_types"
+	. "github.com/prospero78/kern/kernel_types"
 )
 
 // safeBool -- потокобезопасный булевый признак

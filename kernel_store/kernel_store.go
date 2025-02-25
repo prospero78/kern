@@ -10,9 +10,9 @@ import (
 
 	"github.com/dgraph-io/badger/v4"
 
-	. "github.com/svi/kern/helpers"
-	. "github.com/svi/kern/kernel_types"
-	"github.com/svi/kern/safe_bool"
+	. "github.com/prospero78/kern/helpers"
+	. "github.com/prospero78/kern/kernel_types"
+	"github.com/prospero78/kern/safe_bool"
 )
 
 const (

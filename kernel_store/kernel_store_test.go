@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/svi/kern/kernel_ctx"
-	. "github.com/svi/kern/kernel_types"
-	"github.com/svi/kern/mock/mock_env"
+	"github.com/prospero78/kern/kernel_ctx"
+	. "github.com/prospero78/kern/kernel_types"
+	"github.com/prospero78/kern/mock/mock_env"
 )
 
 type tester struct {

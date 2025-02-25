@@ -3,7 +3,7 @@ package safe_bool
 import (
 	"testing"
 
-	. "github.com/svi/kern/kernel_types"
+	. "github.com/prospero78/kern/kernel_types"
 )
 
 type tester struct {

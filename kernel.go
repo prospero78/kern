@@ -2,11 +2,11 @@
 package kernel
 
 import (
-	"github.com/svi/kern/kernel_ctx"
-	"github.com/svi/kern/kernel_serv_http"
-	"github.com/svi/kern/kernel_store"
-	. "github.com/svi/kern/kernel_types"
-	"github.com/svi/kern/safe_bool"
+	"github.com/prospero78/kern/kernel_ctx"
+	"github.com/prospero78/kern/kernel_serv_http"
+	"github.com/prospero78/kern/kernel_store"
+	. "github.com/prospero78/kern/kernel_types"
+	"github.com/prospero78/kern/safe_bool"
 )
 
 // NewKernelCtx -- возвращает новый контекст ядра

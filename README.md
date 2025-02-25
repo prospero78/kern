@@ -4,7 +4,7 @@
 
 ## Контакты
 
-Пишите запросы в соответствующем [разделе](https://github.com/svi/kern/issue?status=).
+Пишите запросы в соответствующем [разделе](https://github.com/prospero78/kern/issue?status=).
 
 ## Статус проекта
 
