@@ -2,6 +2,7 @@
 package kern
 
 import (
+	"github.com/prospero78/kern/kernel_bus/kernel_bus_http"
 	"github.com/prospero78/kern/kernel_bus/kernel_bus_local"
 	"github.com/prospero78/kern/kernel_ctx"
 	"github.com/prospero78/kern/kernel_serv_http"
@@ -37,5 +38,11 @@ func NewSafeBool() ISafeBool {
 // NewKernelBusLocal -- возвращает локальную шину данных
 func NewKernelBusLocal() IKernelBus {
 	bus := kernel_bus_local.GetKernelBusLocal()
+	return bus
+}
+
+// NewKernelBusHttp -- возвращает HTTP шину данных
+func NewKernelBusHttp() IKernelBus {
+	bus := kernel_bus_http.GetKernelBusHttp()
 	return bus
 }

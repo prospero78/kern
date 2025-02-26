@@ -51,6 +51,11 @@ func (sf *tester) new() {
 		sf.t.Fatalf("new(): (local) IKernelBus==nil")
 	}
 
+	kernBusHttp := NewKernelBusHttp()
+	if kernBusHttp == nil {
+		sf.t.Fatalf("new(): (local) IKernelBus==nil")
+	}
+
 	kernServHttp := NewKernelServerHttp()
 	go kernServHttp.Run()
 	ctx.Cancel()
