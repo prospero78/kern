@@ -26,6 +26,17 @@ func TestBuilders(t *testing.T) {
 	fnClear()
 	fnClear()
 	sf.new()
+	sf.newModBad()
+}
+
+func (sf *tester) newModBad() {
+	sf.t.Log("newModBad")
+	defer func() {
+		if _panic := recover(); _panic == nil {
+			sf.t.Fatalf("newModBad(): panic==nil")
+		}
+	}()
+	_ = NewKernelModule("")
 }
 
 // создание компонентов
@@ -53,7 +64,22 @@ func (sf *tester) new() {
 
 	kernBusHttp := NewKernelBusHttp()
 	if kernBusHttp == nil {
-		sf.t.Fatalf("new(): (local) IKernelBus==nil")
+		sf.t.Fatalf("new(): (http) IKernelBus==nil")
+	}
+
+	monLocal := NewMonolitLocal()
+	if monLocal == nil {
+		sf.t.Fatalf("new(): (local) IKernelMonolit==nil")
+	}
+
+	monHttp := NewMonolitHttp()
+	if monHttp == nil {
+		sf.t.Fatalf("new(): (http) IKernelMonolit==nil")
+	}
+
+	mod := NewKernelModule("test_mod")
+	if mod == nil {
+		sf.t.Fatalf("new():IKernelModule==nil")
 	}
 
 	kernServHttp := NewKernelServerHttp()
