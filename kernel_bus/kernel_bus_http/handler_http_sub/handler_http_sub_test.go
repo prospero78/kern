@@ -1,6 +1,7 @@
 package handler_http_sub
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
@@ -44,7 +45,7 @@ func (sf *tester) backBad2() {
 	_ = mock_env.MakeEnv()
 	kernServ := kernel_serv_http.GetKernelServHttp()
 	fiberApp := kernServ.Fiber()
-	sf.hand.name = "http://localhost:18200/test/local"
+	sf.hand.webHook = "http://localhost:18200/test/local"
 	fiberApp.Post("/test/local", sf.testLocal)
 	go kernServ.Run()
 	sf.isBad = true
@@ -84,11 +85,11 @@ func (sf *tester) newGood1() {
 	if sf.hand == nil {
 		sf.t.Fatalf("newGood1(): handler==nil")
 	}
-	if name := sf.hand.Name(); name != "/test/local" {
-		sf.t.Fatalf("newGood1(): name(%v)!='/test/local'", name)
+	if name := sf.hand.Name(); !strings.Contains(string(name), "/test/local_") {
+		sf.t.Fatalf("newGood1(): name(%v)!='/test/local_'", name)
 	}
 	if topic := sf.hand.Topic(); topic != "test_topic" {
-		sf.t.Fatalf("newGood1(): topic(%v)!='test_topic'", topic)
+		sf.t.Fatalf("newGood1(): bad topic(%v) 'test_topic'", topic)
 	}
 }
 

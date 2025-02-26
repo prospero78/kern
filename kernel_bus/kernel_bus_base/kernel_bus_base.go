@@ -21,36 +21,36 @@ const (
 
 // KernelBusBase -- базовая часть шины данных
 type KernelBusBase struct {
-	ctx       IKernelCtx
-	isWork    ISafeBool
+	Ctx_      IKernelCtx
+	IsWork_   ISafeBool
 	dictSub   IDictTopicSub
 	dictServe IDictTopicServe
 	block     sync.Mutex
 }
 
 var (
-	bus *KernelBusBase
+	Bus_ *KernelBusBase
 )
 
 // GetKernelBusBase -- возвращает базовую шину сообщений
 func GetKernelBusBase() *KernelBusBase {
-	if bus != nil {
-		return bus
+	if Bus_ != nil {
+		return Bus_
 	}
 	ctx := kernel_ctx.GetKernelCtx()
-	bus = &KernelBusBase{
-		ctx:       ctx,
-		isWork:    safe_bool.NewSafeBool(),
+	Bus_ = &KernelBusBase{
+		Ctx_:      ctx,
+		IsWork_:   safe_bool.NewSafeBool(),
 		dictSub:   dict_topic_sub.NewDictTopicSub(),
 		dictServe: dict_topic_serve.NewDictServe(),
 	}
-	go bus.close()
-	err := bus.ctx.Wg().Add(strBusBaseStream)
+	go Bus_.close()
+	err := Bus_.Ctx_.Wg().Add(strBusBaseStream)
 	Hassert(err == nil, "GetKernelBusBase(): in add name stream '%v' Wg, err=%v", strBusBaseStream, err)
-	bus.isWork.Set()
-	ctx.Add("kernBusBase", bus)
-	_ = IKernelBus(bus)
-	return bus
+	Bus_.IsWork_.Set()
+	ctx.Set("kernBusBase", Bus_)
+	_ = IKernelBus(Bus_)
+	return Bus_
 }
 
 // Unsubscribe -- отписывает обработчик от топика
@@ -62,7 +62,7 @@ func (sf *KernelBusBase) Unsubscribe(handler IBusHandlerSubscribe) {
 func (sf *KernelBusBase) Subscribe(handler IBusHandlerSubscribe) error {
 	sf.block.Lock()
 	defer sf.block.Unlock()
-	if !sf.isWork.Get() {
+	if !sf.IsWork_.Get() {
 		return fmt.Errorf("KernelBusBase.Subscribe(): bus already closed")
 	}
 	sf.dictSub.Subscribe(handler)
@@ -73,7 +73,7 @@ func (sf *KernelBusBase) Subscribe(handler IBusHandlerSubscribe) error {
 func (sf *KernelBusBase) SendRequest(topic ATopic, binReq []byte) ([]byte, error) {
 	sf.block.Lock()
 	defer sf.block.Unlock()
-	if !sf.isWork.Get() {
+	if !sf.IsWork_.Get() {
 		return nil, fmt.Errorf("KernelBusBase.SendRequest(): bus already closed")
 	}
 	binResp, err := sf.dictServe.SendRequest(topic, binReq)
@@ -93,7 +93,7 @@ func (sf *KernelBusBase) RegisterServe(handler IBusHandlerServe) {
 func (sf *KernelBusBase) Publish(topic ATopic, binMsg []byte) (err error) {
 	sf.block.Lock()
 	defer sf.block.Unlock()
-	if !sf.isWork.Get() {
+	if !sf.IsWork_.Get() {
 		return fmt.Errorf("KernelBusBase.Publish(): bus already closed")
 	}
 	// Асинхронный запуск чтения
@@ -103,18 +103,18 @@ func (sf *KernelBusBase) Publish(topic ATopic, binMsg []byte) (err error) {
 
 // IsWork -- возвращает признак работы шины
 func (sf *KernelBusBase) IsWork() bool {
-	return sf.isWork.Get()
+	return sf.IsWork_.Get()
 }
 
 // Ожидает закрытия шины в отдельном потоке
 func (sf *KernelBusBase) close() {
-	<-sf.ctx.Ctx().Done()
+	<-sf.Ctx_.Ctx().Done()
 	sf.block.Lock()
 	defer sf.block.Unlock()
-	if !sf.isWork.Get() {
+	if !sf.IsWork_.Get() {
 		return
 	}
-	sf.isWork.Reset()
-	sf.ctx.Wg().Done(strBusBaseStream)
+	sf.IsWork_.Reset()
+	sf.Ctx_.Wg().Done(strBusBaseStream)
 	log.Println("kernelBusLocal.close(): done")
 }

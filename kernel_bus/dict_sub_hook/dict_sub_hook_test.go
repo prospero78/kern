@@ -21,7 +21,6 @@ func TestDictSubWebHook(t *testing.T) {
 	}
 	sf.new()
 	sf.add()
-	sf.del()
 	sf.read()
 	sf.unsub()
 }
@@ -36,16 +35,6 @@ func (sf *tester) unsub() {
 func (sf *tester) read() {
 	sf.t.Log("read")
 	sf.dict.Read([]byte("test_msg"))
-}
-
-// Удаляет хук из словаря
-func (sf *tester) del() {
-	sf.t.Log("del")
-	sf.dict.Del("hand_name1")
-	sf.dict.Del("hand_name1")
-	if _len := len(sf.dict.dict); _len != 1 {
-		sf.t.Fatalf("new(): len(%v)!=1", _len)
-	}
 }
 
 // Добавляет хуки ыв словарь

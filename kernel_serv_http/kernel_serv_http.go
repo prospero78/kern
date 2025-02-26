@@ -79,9 +79,9 @@ func GetKernelServHttp() IKernelServerHttp {
 	sf.fiberApp.Get("/monitor", monitor.New(monitor.Config{Title: "KernelHttpServer"}))
 	err := sf.ctx.Wg().Add(streamName)
 	Hassert(err == nil, "NewKernelServHttp(): in add stream %v, err=\n\t%v", streamName, err)
-	ctx.Add("fiberApp", sf.fiberApp)
+	ctx.Set("fiberApp", sf.fiberApp)
 	kernServHttp = sf
-	ctx.Add("kernServHttp", kernServHttp)
+	ctx.Set("kernServHttp", kernServHttp)
 	return kernServHttp
 }
 

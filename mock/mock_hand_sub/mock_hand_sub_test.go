@@ -1,6 +1,7 @@
 package mock_hand_sub
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -26,7 +27,7 @@ func (sf *tester) back() {
 func (sf *tester) backGood1() {
 	sf.t.Log("backGood1")
 	sf.hand.FnBack([]byte("test_msg"))
-	if string(sf.hand.Msg_) != "test_msg" {
+	if sf.hand.Msg() != "test_msg" {
 		sf.t.Fatalf("backGood1(): binMsg(%v)!='test_msg'", string(sf.hand.Msg_))
 	}
 }
@@ -44,8 +45,8 @@ func (sf *tester) newGood1() {
 	if sf.hand == nil {
 		sf.t.Fatalf("newGood1(): handler==nil")
 	}
-	if name := sf.hand.Name(); name != "test_name" {
-		sf.t.Fatalf("newGood1(): name(%v)!='test_name'", name)
+	if name := sf.hand.Name(); !strings.Contains(name, "test_name_") {
+		sf.t.Fatalf("newGood1(): name(%v)!='test_name_'", name)
 	}
 	if topic := sf.hand.Topic(); topic != "test_topic" {
 		sf.t.Fatalf("newGood1(): topic(%v)!='test_topic'", topic)

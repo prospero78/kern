@@ -3,6 +3,7 @@ package handler_http_sub
 
 import (
 	"bytes"
+	"crypto/rand"
 	"log"
 	"net/http"
 
@@ -13,8 +14,9 @@ import (
 
 // handlerHttpSub -- обработчик подписки по HTTP
 type handlerHttpSub struct {
-	name  string // Уникальное имя обработчика (webHook)
-	topic ATopic // Имя топика, на который подписан обработчик
+	name    string // Уникальное имя обработчика
+	topic   ATopic // Имя топика, на который подписан обработчик
+	webHook string // Куда обращаться при запросах
 }
 
 // NewHandlerHttpSub -- возвращает новый обработчик подписки по HTTP
@@ -22,8 +24,9 @@ func NewHandlerHttpSub(topic ATopic, webHook string) IBusHandlerSubscribe {
 	Hassert(topic != "", "NewHandlerHttpSub(): topic is empty")
 	Hassert(webHook != "", "NewHandlerHttpSub(): webHook is empty")
 	sf := &handlerHttpSub{
-		topic: topic,
-		name:  webHook,
+		topic:   topic,
+		name:    webHook + "_" + rand.Text(),
+		webHook: webHook,
 	}
 	return sf
 }
@@ -41,13 +44,13 @@ func (sf *handlerHttpSub) Name() string {
 // FnBack -- обратный вызов по приходу сообщения
 func (sf *handlerHttpSub) FnBack(binMsg []byte) {
 	body := bytes.NewBuffer(binMsg)
-	resp, err := http.Post(sf.name, "application/json", body)
+	resp, err := http.Post(sf.webHook, "application/json", body)
 	if err != nil {
-		log.Printf("handlerHttpSub.FnBack(): topic='%v', in make request, err=\n\t%v\n", sf.name, err)
+		log.Printf("handlerHttpSub.FnBack(): topic='%v', in make request, err=\n\t%v\n", sf.webHook, err)
 		return
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
-		log.Printf("handlerHttpSub.FnBack(): topic='%v', code=%v, status=%v\n", sf.name, resp.StatusCode, resp.Status)
+		log.Printf("handlerHttpSub.FnBack(): topic='%v', code=%v, status=%v\n", sf.webHook, resp.StatusCode, resp.Status)
 	}
 }

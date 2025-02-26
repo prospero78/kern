@@ -67,8 +67,8 @@ func (sf *kernelCtx) Del(key string) {
 	delete(sf.dictVal, key)
 }
 
-// Add -- добавляет значение в контекст
-func (sf *kernelCtx) Add(key string, val interface{}) {
+// Set -- добавляет значение в контекст
+func (sf *kernelCtx) Set(key string, val interface{}) {
 	sf.block.Lock()
 	defer sf.block.Unlock()
 	sf.dictVal[key] = val

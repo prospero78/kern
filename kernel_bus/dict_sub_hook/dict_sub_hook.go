@@ -42,7 +42,7 @@ func (sf *dictSubHook) Subscribe(handler IBusHandlerSubscribe) {
 	Hassert(handler != nil, "dictSubHook.Subscribe(): handler==nil")
 	handlerName := handler.Name()
 	sf.dict[handlerName] = true
-	sf.ctx.Add(handlerName, handler)
+	sf.ctx.Set(handlerName, handler)
 }
 
 // Read -- вызывает все обработчики словаря подписок
@@ -53,11 +53,4 @@ func (sf *dictSubHook) Read(binMsg []byte) {
 		handler := sf.ctx.Get(key).(IBusHandlerSubscribe)
 		go handler.FnBack(binMsg)
 	}
-}
-
-// Del -- удаляет из словаря веб-хук
-func (sf *dictSubHook) Del(webHook string) {
-	sf.block.Lock()
-	defer sf.block.Unlock()
-	delete(sf.dict, webHook)
 }

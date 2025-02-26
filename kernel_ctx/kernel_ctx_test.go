@@ -28,7 +28,7 @@ func (sf *tester) new() {
 	if ctx := ctx.Ctx(); ctx != kernCtx.ctx {
 		sf.t.Fatalf("new(): ctx!=kernel.ctx")
 	}
-	ctx.Add("counter", 5)
+	ctx.Set("counter", 5)
 	counter := ctx.Get("counter").(int)
 	if counter != 5 {
 		sf.t.Fatalf("new(): counter(%v)!=5", counter)

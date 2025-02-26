@@ -52,7 +52,7 @@ func GetKernelStore() IKernelStore {
 	}
 	sf.open()
 	kernStore = sf
-	ctx.Add("kernStore", kernStore)
+	ctx.Set("kernStore", kernStore)
 	return kernStore
 }
 
