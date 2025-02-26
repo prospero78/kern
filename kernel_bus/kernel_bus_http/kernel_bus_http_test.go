@@ -51,6 +51,43 @@ func (sf *tester) req() {
 	sf.reqBad3()
 	sf.reqGood1()
 	sf.reqBad4()
+	sf.subBad1()
+	sf.subBad2()
+}
+
+// Проверка кривых полей запроса в процессе подписки
+func (sf *tester) subBad2() {
+	sf.t.Log("subBad2")
+	req := &SubscribeReq{
+		Topic_: "",
+	}
+	defer func() {
+		if _panic := recover(); _panic == nil {
+			sf.t.Fatalf("subBad2(): panic==nil")
+		}
+	}()
+	_ = bus.processSubscribe(req)
+}
+
+// Кривой запрос
+func (sf *tester) subBad1() {
+	sf.t.Log("subBad1")
+	req := "tra-ta-ta"
+	binReq, _ := json.MarshalIndent(req, "", "  ")
+	body := strings.NewReader(string(binReq))
+	fibApp := kernel_serv_http.GetKernelServHttp().Fiber()
+	hReq, err := http.NewRequest("POST", "/bus/sub", body)
+	hReq.Header.Add("Content-Type", "application/json")
+	if err != nil {
+		sf.t.Fatalf("subBad1(): err=%v", err)
+	}
+	_resp, err := fibApp.Test(hReq)
+	if err != nil {
+		sf.t.Fatalf("subBad1(): after request, err=%v", err)
+	}
+	if _resp.StatusCode != 400 {
+		sf.t.Fatalf("subBad1(): statusCode(%v)!=400", _resp.StatusCode)
+	}
 }
 
 // Что-то с обработчиком

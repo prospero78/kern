@@ -2,7 +2,6 @@
 package kernel_bus_http
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -10,6 +9,7 @@ import (
 	. "github.com/prospero78/kern/helpers"
 	. "github.com/prospero78/kern/kernel_alias"
 	"github.com/prospero78/kern/kernel_bus/kernel_bus_base"
+	"github.com/prospero78/kern/kernel_bus/kernel_bus_http/handler_http_sub"
 	"github.com/prospero78/kern/kernel_ctx"
 	"github.com/prospero78/kern/kernel_serv_http"
 	. "github.com/prospero78/kern/kernel_types"
@@ -44,8 +44,22 @@ func GetKernelBusHttp() IKernelBus {
 
 // SubscribeReq -- входящий запрос на подписку
 type SubscribeReq struct {
-	Topic_   ATopic `json:"topic"`    // Топик, на который надо подписаться
+	Topic_   ATopic `json:"topic"` // Топик, на который надо подписаться
+	Uuid_    string `json:"uuid"`
 	WebHook_ string `json:"web_hook"` // Веб-хук для обратного вызова
+}
+
+// SelfCheck -- проверяет поля на правильность
+func (sf *SubscribeReq) SelfCheck() {
+	Hassert(sf.Topic_ != "", "SubscribeReq.SelfCheck(): topic is empty")
+	Hassert(sf.Uuid_ != "", "SubscribeReq.SelfCheck(): uuid is empty")
+	Hassert(sf.WebHook_ != "", "SubscribeReq.SelfCheck(): WebHook_ is empty")
+}
+
+// SubscribeResp -- ответ на запрос подписки
+type SubscribeResp struct {
+	Status_ string `json:"status"`
+	Uuid_   string `json:"uuid"`
 }
 
 // Входящий запрос HTTP на подписку
@@ -54,27 +68,33 @@ func (sf *kernelBusHttp) postSub(ctx *fiber.Ctx) error {
 	ctx.Set("Content-type", "text/json")
 	ctx.Set("Cache-Control", "no-cache")
 	req := &SubscribeReq{}
-	err := ctx.ParamsParser(req)
+	err := ctx.BodyParser(req)
 	if err != nil {
-		dict := map[string]string{
-			"error": fmt.Sprintf("kernelBusHttp.postSub(): in parse request, err=\n\t%v\n", err),
+		resp := &SubscribeResp{
+			Status_: fmt.Sprintf("kernelBusHttp.postSub(): in parse request, err=\n\t%v\n", err),
+			Uuid_:   req.Uuid_,
 		}
 		ctx.Response().SetStatusCode(http.StatusBadRequest)
-		return ctx.JSON(dict)
+		return ctx.JSON(resp)
 	}
-	var handler IBusHandlerSubscribe
-	err = sf.Subscribe(handler)
+	resp := sf.processSubscribe(req)
+	return ctx.JSON(resp)
+}
+
+// Процесс подписки веб-хука
+func (sf *kernelBusHttp) processSubscribe(req *SubscribeReq) *SubscribeResp {
+	req.SelfCheck()
+	handler := handler_http_sub.NewHandlerHttpSub(req.Topic_, req.WebHook_)
+	resp := &SubscribeResp{
+		Status_: "ok",
+		Uuid_:   req.Uuid_,
+	}
+	err := sf.Subscribe(handler)
 	if err != nil {
-		dict := map[string]string{
-			"error": fmt.Sprintf("kernelBusHttp.postSub(): in subscribe request, err=\n\t%v\n", err),
-		}
-		ctx.Response().SetStatusCode(http.StatusInternalServerError)
-		return ctx.JSON(dict)
+		resp.Status_ = fmt.Sprintf("kernelBusHttp.processSubscribe(): err=\n\t%v", err)
+		return resp
 	}
-	dict := map[string]string{
-		"status": "ok",
-	}
-	return ctx.JSON(dict)
+	return resp
 }
 
 // Входящая публикация
@@ -115,9 +135,7 @@ func (sf *kernelBusHttp) postSendRequest(ctx *fiber.Ctx) error {
 			Uuid_:   req.Uuid_,
 		}
 		ctx.Response().SetStatusCode(http.StatusBadRequest)
-
-		binResp, _ := json.MarshalIndent(resp, "", "  ")
-		return ctx.SendString(string(binResp))
+		return ctx.JSON(resp)
 	}
 	resp := sf.processSendRequest(req)
 	return ctx.JSON(resp)
