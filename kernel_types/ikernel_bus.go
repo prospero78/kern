@@ -30,8 +30,8 @@ type IBusHandlerServe interface {
 type IDictSubHook interface {
 	// Subscribe -- подписывает обработчик
 	Subscribe(IBusHandlerSubscribe)
-	// Call -- вызывает все локальные обработчики по приходу сообщения
-	Call(binMsg []byte)
+	// Read -- все локальные обработчики читают сообщение по его приходу
+	Read(binMsg []byte)
 	// Unsubscribe -- отписывает обработчик
 	Unsubscribe(IBusHandlerSubscribe)
 }

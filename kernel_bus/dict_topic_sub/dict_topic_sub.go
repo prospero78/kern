@@ -36,7 +36,7 @@ func (sf *dictTopicSub) Read(topic ATopic, binMsg []byte) {
 	if dictHook == nil {
 		return
 	}
-	dictHook.Call(binMsg)
+	dictHook.Read(binMsg)
 }
 
 // Subscribe -- подписывает обработчик на топик

@@ -22,6 +22,20 @@ func TestDictSubWebHook(t *testing.T) {
 	sf.new()
 	sf.add()
 	sf.del()
+	sf.read()
+	sf.unsub()
+}
+
+// Отписка обработчика от топика
+func (sf *tester) unsub() {
+	sf.t.Log("unsub")
+	sf.dict.Unsubscribe(sf.handSub)
+}
+
+// Чтение входящего сообщения по подписке
+func (sf *tester) read() {
+	sf.t.Log("read")
+	sf.dict.Read([]byte("test_msg"))
 }
 
 // Удаляет хук из словаря

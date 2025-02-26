@@ -45,8 +45,8 @@ func (sf *dictSubHook) Subscribe(handler IBusHandlerSubscribe) {
 	sf.ctx.Add(handlerName, handler)
 }
 
-// Call -- вызывает все обработчики словаря подписок
-func (sf *dictSubHook) Call(binMsg []byte) {
+// Read -- вызывает все обработчики словаря подписок
+func (sf *dictSubHook) Read(binMsg []byte) {
 	sf.block.RLock()
 	defer sf.block.RUnlock()
 	for key := range sf.dict {
