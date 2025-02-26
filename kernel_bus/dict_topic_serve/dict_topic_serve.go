@@ -41,8 +41,8 @@ func (sf *dictServe) Unregister(handler IBusHandlerServe) {
 
 var TimeoutDefault = 15000
 
-// Request -- вызывает обработчик при поступлении запроса
-func (sf *dictServe) Request(topic ATopic, binReq []byte) ([]byte, error) {
+// SendRequest -- вызывает обработчик при поступлении запроса
+func (sf *dictServe) SendRequest(topic ATopic, binReq []byte) ([]byte, error) {
 	var handler IBusHandlerServe
 	fnExtract := func() bool {
 		sf.block.RLock()
@@ -52,7 +52,7 @@ func (sf *dictServe) Request(topic ATopic, binReq []byte) ([]byte, error) {
 		return isOk
 	}
 	if !fnExtract() {
-		return nil, fmt.Errorf("dictServe.Request(): handler for topic (%v) not exists", topic)
+		return nil, fmt.Errorf("dictServe.SendRequest(): handler for topic (%v) not exists", topic)
 	}
 	var (
 		chErr  = make(chan error, 2)
@@ -71,10 +71,10 @@ func (sf *dictServe) Request(topic ATopic, binReq []byte) ([]byte, error) {
 	go fnCall()
 	select {
 	case <-ctx.Done():
-		return nil, fmt.Errorf("dictServe.Request(): in call for topic (%v), err=\n\t%w", topic, ctx.Err())
+		return nil, fmt.Errorf("dictServe.SendRequest(): in call for topic (%v), err=\n\t%w", topic, ctx.Err())
 	case err := <-chErr:
 		if err != nil {
-			return nil, fmt.Errorf("dictServe.Request(): error in call for topic (%v), err=\n\t%w", topic, err)
+			return nil, fmt.Errorf("dictServe.SendRequest(): error in call for topic (%v), err=\n\t%w", topic, err)
 		}
 	}
 	return binRes, nil

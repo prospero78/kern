@@ -4,25 +4,18 @@ package kernel_bus_http
 import (
 	"fmt"
 	"net/http"
-	"sync"
 
 	"github.com/gofiber/fiber/v2"
 	. "github.com/prospero78/kern/kernel_alias"
-	"github.com/prospero78/kern/kernel_bus/dict_topic_serve"
-	"github.com/prospero78/kern/kernel_bus/dict_topic_sub"
+	"github.com/prospero78/kern/kernel_bus/kernel_bus_base"
 	"github.com/prospero78/kern/kernel_ctx"
+	"github.com/prospero78/kern/kernel_serv_http"
 	. "github.com/prospero78/kern/kernel_types"
-	"github.com/prospero78/kern/safe_bool"
 )
 
 // kernelBusHttp -- шина данных поверх HTTP
 type kernelBusHttp struct {
-	ctx       IKernelCtx
-	isWork    ISafeBool
-	block     sync.RWMutex
-	kernServ  IKernelServerHttp
-	dictSub   IDictTopicSub
-	dictServe IDictTopicServe
+	*kernel_bus_base.KernelBusBase
 }
 
 var (
@@ -35,35 +28,16 @@ func GetKernelBusHttp() IKernelBus {
 		return bus
 	}
 	ctx := kernel_ctx.GetKernelCtx()
-	bus := &kernelBusHttp{
-		ctx:       ctx,
-		kernServ:  ctx.Get("kernServHttp").(IKernelServerHttp),
-		dictSub:   dict_topic_sub.NewDictTopicSub(),
-		dictServe: dict_topic_serve.NewDictServe(),
-		isWork:    safe_bool.NewSafeBool(),
+	bus = &kernelBusHttp{
+		KernelBusBase: kernel_bus_base.GetKernelBusBase(),
 	}
 	ctx.Add("kernBus", bus)
-	bus.kernServ.Fiber().Post("/bus/sub", bus.postSub)
-	bus.kernServ.Fiber().Post("/bus/unsub", bus.postUnsub)
-	bus.kernServ.Fiber().Post("/bus/request", bus.postRequest)
-	bus.kernServ.Fiber().Post("/bus/pub", bus.postPublish)
+	fibApp := kernel_serv_http.GetKernelServHttp().Fiber()
+	fibApp.Post("/bus/sub", bus.postSub)
+	fibApp.Post("/bus/unsub", bus.postUnsub)
+	fibApp.Post("/bus/request", bus.postRequest)
+	fibApp.Post("/bus/pub", bus.postPublish)
 	return bus
-}
-
-// Request -- обрабатывает входящий запрос
-func (sf *kernelBusHttp) Request(topic ATopic, binMsg []byte) ([]byte, error) {
-	return sf.dictServe.Request(topic, binMsg)
-}
-
-// RegisterServe -- регистрирует обработчик входящих запросов
-func (sf *kernelBusHttp) RegisterServe(handler IBusHandlerServe) {
-
-}
-
-// Publish -- публикует сообщение в шину HTTP
-func (sf *kernelBusHttp) Publish(topic ATopic, binMsg []byte) error {
-	sf.dictSub.Read(topic, binMsg)
-	return nil
 }
 
 // RequestSubscribe -- входящий запрос на подписку
@@ -87,7 +61,14 @@ func (sf *kernelBusHttp) postSub(ctx *fiber.Ctx) error {
 		return ctx.JSON(dict)
 	}
 	var handler IBusHandlerSubscribe
-	sf.dictSub.Subscribe(handler)
+	err = sf.Subscribe(handler)
+	if err != nil {
+		dict := map[string]string{
+			"error": fmt.Sprintf("kernelBusHttp.postSub(): in subscribe request, err=\n\t%v\n", err),
+		}
+		ctx.Response().SetStatusCode(http.StatusInternalServerError)
+		return ctx.JSON(dict)
+	}
 	dict := map[string]string{
 		"status": "ok",
 	}
@@ -107,22 +88,4 @@ func (sf *kernelBusHttp) postRequest(ctx *fiber.Ctx) error {
 // Входящий запрос HTTP на отписку от топика
 func (sf *kernelBusHttp) postUnsub(ctx *fiber.Ctx) error {
 	return ctx.SendStatus(http.StatusInternalServerError)
-}
-
-// Unsubscribe -- отписывает подписчика от топика
-func (sf *kernelBusHttp) Unsubscribe(handler IBusHandlerSubscribe) {
-	sf.dictSub.Unsubscribe(handler)
-}
-
-// Subscribe -- подписывает на топик обработчик
-func (sf *kernelBusHttp) Subscribe(handler IBusHandlerSubscribe) error {
-	sf.block.Lock()
-	defer sf.block.Unlock()
-	sf.dictSub.Subscribe(handler)
-	return fmt.Errorf("надо доделать")
-}
-
-// IsWork -- возвращает признак работы шины HTTP
-func (sf *kernelBusHttp) IsWork() bool {
-	return sf.isWork.Get()
 }

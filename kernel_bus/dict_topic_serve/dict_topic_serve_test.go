@@ -22,9 +22,9 @@ func TestDictSub(t *testing.T) {
 	sf.addBad1()
 	sf.addGood1()
 	sf.addBad2()
-	sf.callBad1()
-	sf.callBad2()
-	sf.callGood1()
+	sf.sendBad1()
+	sf.sendBad2()
+	sf.sendGood1()
 	sf.delBad1()
 	sf.delGood2()
 	sf.callBad3()
@@ -37,7 +37,7 @@ func (sf *tester) callBad3() {
 	ctx.Cancel()
 	ctx.Wg().Wait()
 	sf.dict.Register(sf.hand)
-	binMsg, err := sf.dict.Request(sf.hand.Topic(), []byte("test"))
+	binMsg, err := sf.dict.SendRequest(sf.hand.Topic(), []byte("test"))
 	if err == nil {
 		sf.t.Fatalf("callBad3(): err==nil")
 	}
@@ -68,28 +68,28 @@ func (sf *tester) delBad1() {
 	sf.dict.Unregister(nil)
 }
 
-func (sf *tester) callGood1() {
-	sf.t.Log("callGood1")
+func (sf *tester) sendGood1() {
+	sf.t.Log("sendGood1")
 	TimeoutDefault = 5000
-	binMsg, err := sf.dict.Request(sf.hand.Topic(), []byte("test_good"))
+	binMsg, err := sf.dict.SendRequest(sf.hand.Topic(), []byte("test_good"))
 	if err != nil {
-		sf.t.Fatalf("callGood1(): err=%v", err)
+		sf.t.Fatalf("sendGood1(): err=%v", err)
 	}
 	if binMsg == nil {
-		sf.t.Fatalf("callGood1(): binMsg==nil")
+		sf.t.Fatalf("sendGood1(): binMsg==nil")
 	}
 }
 
 // Обработчик вернул ошибку
-func (sf *tester) callBad2() {
-	sf.t.Log("callBad2")
+func (sf *tester) sendBad2() {
+	sf.t.Log("sendBad2")
 	sf.hand.IsBad_.Set()
-	binMsg, err := sf.dict.Request(sf.hand.Topic(), []byte("test"))
+	binMsg, err := sf.dict.SendRequest(sf.hand.Topic(), []byte("test"))
 	if err == nil {
-		sf.t.Fatalf("callBad2(): err==nil")
+		sf.t.Fatalf("sendBad2(): err==nil")
 	}
 	if binMsg != nil {
-		sf.t.Fatalf("callBad2(): binMsg!=nil")
+		sf.t.Fatalf("sendBad2(): binMsg!=nil")
 	}
 	sf.hand.IsBad_.Reset()
 }
@@ -129,14 +129,14 @@ func (sf *tester) addBad1() {
 }
 
 // Вызов несуществующего топика
-func (sf *tester) callBad1() {
-	sf.t.Log("callBad1")
-	binRes, err := sf.dict.Request("test_bad_topic", []byte("test"))
+func (sf *tester) sendBad1() {
+	sf.t.Log("sendBad1")
+	binRes, err := sf.dict.SendRequest("test_bad_topic", []byte("test"))
 	if err == nil {
-		sf.t.Fatalf("callBad1(): err==nil")
+		sf.t.Fatalf("sendBad1(): err==nil")
 	}
 	if binRes != nil {
-		sf.t.Fatalf("callBad1(): binRes!=nil")
+		sf.t.Fatalf("sendBad1(): binRes!=nil")
 	}
 }
 

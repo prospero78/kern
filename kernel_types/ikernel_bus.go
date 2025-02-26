@@ -55,8 +55,8 @@ type IDictTopicSub interface {
 type IDictTopicServe interface {
 	// Register -- регистрирует единственный обработчик на единственный топик
 	Register(IBusHandlerServe)
-	// Request -- выполняет запрос по указанному топику
-	Request(topic ATopic, binReq []byte) (binResp []byte, errResp error)
+	// SendRequest -- выполняет запрос по указанному топику
+	SendRequest(topic ATopic, binReq []byte) (binResp []byte, errResp error)
 	// Unregister -- удаляет единственный обработчик с единственного топика
 	Unregister(IBusHandlerServe)
 }
@@ -68,8 +68,8 @@ type IDictTopicServe interface {
 type IKernelBus interface {
 	// Publish -- публикует сообщение в шину
 	Publish(topic ATopic, binMsg []byte) error
-	// Request -- выполняет запрос по указанному топику
-	Request(topic ATopic, binReq []byte) (binResp []byte, errResp error)
+	// SendRequest -- выполняет запрос по указанному топику
+	SendRequest(topic ATopic, binReq []byte) (binResp []byte, errResp error)
 
 	// Subscribe -- подписывает обработчик на топик
 	Subscribe(IBusHandlerSubscribe) error
