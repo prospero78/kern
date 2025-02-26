@@ -58,9 +58,9 @@ func (sf *SubscribeReq) SelfCheck() {
 
 // SubscribeResp -- ответ на запрос подписки
 type SubscribeResp struct {
-	Status_ string `json:"status"`
-	Uuid_   string `json:"uuid"`
-	Name_   string `json:"name"` // Уникальное имя подписки
+	Status_ string       `json:"status"`
+	Uuid_   string       `json:"uuid"`
+	Name_   AHandlerName `json:"name"` // Уникальное имя подписки
 }
 
 // Входящий запрос HTTP на подписку
@@ -208,8 +208,8 @@ func (sf *kernelBusHttp) processSendRequest(req *ServeReq) *ServeResp {
 
 // UnsubReq -- запрос на отписку от топика
 type UnsubReq struct {
-	Name_ string `json:"name"` // Уникальная метка подписки
-	Uuid_ string `json:"uuid"`
+	Name_ AHandlerName `json:"name"` // Уникальная метка подписки
+	Uuid_ string       `json:"uuid"`
 }
 
 // SelfCheck -- проверка запроса на правильность полей
@@ -246,7 +246,7 @@ func (sf *kernelBusHttp) postUnsub(ctx *fiber.Ctx) error {
 // Процесс отписки от топика
 func (sf *kernelBusHttp) processUnsubRequest(req *UnsubReq) *UnsubResp {
 	req.SelfCheck()
-	_hand := sf.Ctx_.Get(req.Name_)
+	_hand := sf.Ctx_.Get(string(req.Name_))
 	resp := &UnsubResp{
 		Status_: "ok",
 		Uuid_:   req.Uuid_,

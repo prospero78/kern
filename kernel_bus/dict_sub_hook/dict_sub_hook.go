@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	. "github.com/prospero78/kern/helpers"
+	. "github.com/prospero78/kern/kernel_alias"
 	"github.com/prospero78/kern/kernel_ctx"
 	. "github.com/prospero78/kern/kernel_types"
 )
@@ -12,7 +13,7 @@ import (
 // dictSubHook -- словарь потребителей топика по подписке
 type dictSubHook struct {
 	ctx   IKernelCtx
-	dict  map[string]bool // В качестве ключа -- URL веб-хука
+	dict  map[AHandlerName]bool // В качестве ключа -- URL веб-хука
 	block sync.RWMutex
 }
 
@@ -20,7 +21,7 @@ type dictSubHook struct {
 func NewDictSubHook() IDictSubHook {
 	sf := &dictSubHook{
 		ctx:  kernel_ctx.GetKernelCtx(),
-		dict: map[string]bool{},
+		dict: map[AHandlerName]bool{},
 	}
 	return sf
 }
@@ -32,7 +33,7 @@ func (sf *dictSubHook) Unsubscribe(handler IBusHandlerSubscribe) {
 	Hassert(handler != nil, "dictSubHook.Unsubscribe(): handler==nil")
 	handlerName := handler.Name()
 	delete(sf.dict, handlerName)
-	sf.ctx.Del(handlerName)
+	sf.ctx.Del(string(handlerName))
 }
 
 // Subscribe -- добавляет в словарь подписки новый обработчик
@@ -42,15 +43,15 @@ func (sf *dictSubHook) Subscribe(handler IBusHandlerSubscribe) {
 	Hassert(handler != nil, "dictSubHook.Subscribe(): handler==nil")
 	handlerName := handler.Name()
 	sf.dict[handlerName] = true
-	sf.ctx.Set(handlerName, handler)
+	sf.ctx.Set(string(handlerName), handler)
 }
 
 // Read -- вызывает все обработчики словаря подписок
 func (sf *dictSubHook) Read(binMsg []byte) {
 	sf.block.RLock()
 	defer sf.block.RUnlock()
-	for key := range sf.dict {
-		handler := sf.ctx.Get(key).(IBusHandlerSubscribe)
+	for handlerName := range sf.dict {
+		handler := sf.ctx.Get(string(handlerName)).(IBusHandlerSubscribe)
 		go handler.FnBack(binMsg)
 	}
 }

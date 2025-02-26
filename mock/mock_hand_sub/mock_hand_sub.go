@@ -11,9 +11,9 @@ import (
 )
 
 type MockHandlerSub struct {
-	Msg_   []byte // Для обратного вызова
-	Name_  string // Уникальное имя мок-обработчика подписки
-	Topic_ ATopic // Имя топика подписки
+	Msg_   []byte       // Для обратного вызова
+	Name_  AHandlerName // Уникальное имя мок-обработчика подписки
+	Topic_ ATopic       // Имя топика подписки
 	block  sync.RWMutex
 }
 
@@ -23,7 +23,7 @@ func NewMockHandlerSub(topic ATopic, webHook string) *MockHandlerSub {
 	Hassert(webHook != "", "NewMockHandlerSub(): name is empty")
 	sf := &MockHandlerSub{
 		Topic_: topic,
-		Name_:  webHook + "_" + rand.Text(),
+		Name_:  AHandlerName(webHook + "_" + rand.Text()),
 	}
 	_ = IBusHandlerSubscribe(sf)
 	return sf
@@ -49,6 +49,6 @@ func (sf *MockHandlerSub) Topic() ATopic {
 }
 
 // Возвращает топик для обработчика подписки
-func (sf *MockHandlerSub) Name() string {
+func (sf *MockHandlerSub) Name() AHandlerName {
 	return sf.Name_
 }

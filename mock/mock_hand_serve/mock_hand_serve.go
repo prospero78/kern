@@ -13,10 +13,10 @@ import (
 
 // MockHandlerServe -- мок-обработчик входящих запросов
 type MockHandlerServe struct {
-	IsBad_ ISafeBool // Признак сбоя при вызове
-	Msg_   []byte    // Для обратного вызова
-	Name_  string    // Уникальное имя мок-обработчика подписки
-	Topic_ ATopic    // Имя топика подписки
+	IsBad_ ISafeBool    // Признак сбоя при вызове
+	Msg_   []byte       // Для обратного вызова
+	Name_  AHandlerName // Уникальное имя мок-обработчика подписки
+	Topic_ ATopic       // Имя топика подписки
 	block  sync.Mutex
 }
 
@@ -26,7 +26,7 @@ func NewMockHandlerServe(topic ATopic, name string) *MockHandlerServe {
 	Hassert(name != "", "NewMockHandlerServe(): name is empty")
 	sf := &MockHandlerServe{
 		Topic_: topic,
-		Name_:  name,
+		Name_:  AHandlerName(name),
 		IsBad_: safe_bool.NewSafeBool(),
 	}
 	_ = IBusHandlerServe(sf)
@@ -50,6 +50,6 @@ func (sf *MockHandlerServe) Topic() ATopic {
 }
 
 // Возвращает топик для обработчика подписки
-func (sf *MockHandlerServe) Name() string {
+func (sf *MockHandlerServe) Name() AHandlerName {
 	return sf.Name_
 }

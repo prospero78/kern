@@ -9,3 +9,6 @@ type ATopic string
 
 // AHandlerName -- имя функции обработчика
 type AHandlerName string
+
+// AModuleName -- уникальное имя модуля
+type AModuleName string

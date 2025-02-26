@@ -14,9 +14,9 @@ import (
 
 // handlerHttpSub -- обработчик подписки по HTTP
 type handlerHttpSub struct {
-	name    string // Уникальное имя обработчика
-	topic   ATopic // Имя топика, на который подписан обработчик
-	webHook string // Куда обращаться при запросах
+	name    AHandlerName // Уникальное имя обработчика
+	topic   ATopic       // Имя топика, на который подписан обработчик
+	webHook string       // Куда обращаться при запросах
 }
 
 // NewHandlerHttpSub -- возвращает новый обработчик подписки по HTTP
@@ -25,7 +25,7 @@ func NewHandlerHttpSub(topic ATopic, webHook string) IBusHandlerSubscribe {
 	Hassert(webHook != "", "NewHandlerHttpSub(): webHook is empty")
 	sf := &handlerHttpSub{
 		topic:   topic,
-		name:    webHook + "_" + rand.Text(),
+		name:    AHandlerName(webHook + "_" + rand.Text()),
 		webHook: webHook,
 	}
 	return sf
@@ -37,7 +37,7 @@ func (sf *handlerHttpSub) Topic() ATopic {
 }
 
 // Name -- возвращает уникальное имя обработчика
-func (sf *handlerHttpSub) Name() string {
+func (sf *handlerHttpSub) Name() AHandlerName {
 	return sf.name
 }
 

@@ -45,7 +45,7 @@ func (sf *tester) newGood1() {
 	if sf.hand == nil {
 		sf.t.Fatalf("newGood1(): handler==nil")
 	}
-	if name := sf.hand.Name(); !strings.Contains(name, "test_name_") {
+	if name := sf.hand.Name(); !strings.Contains(string(name), "test_name_") {
 		sf.t.Fatalf("newGood1(): name(%v)!='test_name_'", name)
 	}
 	if topic := sf.hand.Topic(); topic != "test_topic" {
