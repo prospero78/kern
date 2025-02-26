@@ -3,7 +3,9 @@ package kernel_monolit
 import (
 	"testing"
 
+	. "github.com/prospero78/kern/kernel_alias"
 	"github.com/prospero78/kern/kernel_ctx"
+	"github.com/prospero78/kern/kernel_module"
 	. "github.com/prospero78/kern/kernel_types"
 )
 
@@ -17,12 +19,54 @@ func TestKernMono(t *testing.T) {
 		t: t,
 	}
 	sf.new()
+	sf.run()
 	sf.add()
+	sf.done()
+}
+
+func (sf *tester) done() {
+	sf.t.Log("done")
+	ctx := kernel_ctx.GetKernelCtx()
+	ctx.Cancel()
+	ctx.Wg().Wait()
+	sf.mon.(*kernMonolit).close()
+	sf.mon.Run()
 }
 
 // Добавление модуля в монолит
 func (sf *tester) add() {
 	sf.t.Log("add")
+	sf.addGood1()
+}
+
+type mod struct {
+	IKernelModule
+}
+
+func newMod(name AModuleName) IKernelModule {
+	sf := &mod{
+		IKernelModule: kernel_module.NewKernelModule(name),
+	}
+	return sf
+}
+
+func (sf *mod) Run() {}
+
+func (sf *tester) addGood1() {
+	sf.t.Log("addGood1")
+	mod := newMod("test_module")
+	sf.mon.Add(mod)
+}
+
+func (sf *tester) run() {
+	sf.t.Log("run")
+	mod := newMod("test_mod1")
+	sf.mon.Add(mod)
+	sf.mon.Run()
+	isWork := sf.mon.IsWork()
+	if !isWork {
+		sf.t.Fatalf("newGood1(): isWork==false")
+	}
 }
 
 // Создаёт новый монолит
@@ -42,6 +86,10 @@ func (sf *tester) newGood1() {
 	ctx := kernel_ctx.GetKernelCtx()
 	ctx.Set("isLocal", true)
 	sf.mon = NewMonolit()
+	isLocal := sf.mon.IsLocal()
+	if !isLocal {
+		sf.t.Fatalf("newGood1(): isLocal==false")
+	}
 }
 
 // Нет признака локальности

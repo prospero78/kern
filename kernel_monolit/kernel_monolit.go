@@ -17,6 +17,7 @@ type kernMonolit struct {
 	ctx     IKernelCtx
 	isLocal bool
 	isWork  ISafeBool
+	isEnd   bool
 	dict    map[AModuleName]IKernelModule // Словарь модулей монолита
 	block   sync.Mutex
 }
@@ -50,6 +51,9 @@ func (sf *kernMonolit) Add(module IKernelModule) {
 func (sf *kernMonolit) Run() {
 	sf.block.Lock()
 	defer sf.block.Unlock()
+	if sf.isEnd {
+		return
+	}
 	sf.isWork.Set()
 	for _, module := range sf.dict {
 		go module.Run()
@@ -69,7 +73,9 @@ func (sf *kernMonolit) IsWork() bool {
 
 // Ожидание завершения работы монолита
 func (sf *kernMonolit) close() {
+	<-sf.ctx.Ctx().Done()
 	sf.ctx.Wg().Wait()
 	sf.isWork.Reset()
+	sf.isEnd = true
 	log.Printf("kernMonolit.close(): done")
 }
