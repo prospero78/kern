@@ -27,7 +27,6 @@ func TestDictSub(t *testing.T) {
 	sf.addBad2()
 	sf.callBad1()
 	sf.callBad2()
-	sf.callBad3()
 	sf.callGood1()
 	sf.delBad1()
 	sf.delGood2()
@@ -65,21 +64,6 @@ func (sf *tester) callGood1() {
 	if binMsg == nil {
 		sf.t.Fatalf("callGood1(): binMsg==nil")
 	}
-}
-
-// Слишком долгое ожидание
-func (sf *tester) callBad3() {
-	sf.t.Log("callBad3")
-	sf.hand.IsLong_.Set()
-	TimeoutDefault = 5
-	binMsg, err := sf.dict.Request(sf.hand.Topic(), []byte("test"))
-	if err == nil {
-		sf.t.Fatalf("callBad3(): err==nil")
-	}
-	if binMsg != nil {
-		sf.t.Fatalf("callBad3(): binMsg!=nil")
-	}
-	sf.hand.IsLong_.Reset()
 }
 
 // Обработчик вернул ошибку

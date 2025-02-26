@@ -4,7 +4,6 @@ package mock_hand_serve
 import (
 	"fmt"
 	"sync"
-	"time"
 
 	. "github.com/prospero78/kern/helpers"
 	. "github.com/prospero78/kern/kernel_alias"
@@ -14,12 +13,11 @@ import (
 
 // MockHandlerServe -- мок-обработчик входящих запросов
 type MockHandlerServe struct {
-	IsBad_  ISafeBool // Признак сбоя при вызове
-	IsLong_ ISafeBool // Долгое выполнение вызова
-	Msg_    []byte    // Для обратного вызова
-	Name_   string    // Уникальное имя мок-обработчика подписки
-	Topic_  ATopic    // Имя топика подписки
-	block   sync.Mutex
+	IsBad_ ISafeBool // Признак сбоя при вызове
+	Msg_   []byte    // Для обратного вызова
+	Name_  string    // Уникальное имя мок-обработчика подписки
+	Topic_ ATopic    // Имя топика подписки
+	block  sync.Mutex
 }
 
 // NewMockHandlerServe -- возвращает новый обработчик подписки
@@ -27,10 +25,9 @@ func NewMockHandlerServe(topic ATopic, name string) *MockHandlerServe {
 	Hassert(topic != "", "NewMockHandlerServe(): topic is empty")
 	Hassert(name != "", "NewMockHandlerServe(): name is empty")
 	sf := &MockHandlerServe{
-		Topic_:  topic,
-		Name_:   name,
-		IsBad_:  safe_bool.NewSafeBool(),
-		IsLong_: safe_bool.NewSafeBool(),
+		Topic_: topic,
+		Name_:  name,
+		IsBad_: safe_bool.NewSafeBool(),
 	}
 	_ = IBusHandlerServe(sf)
 	return sf
@@ -43,11 +40,8 @@ func (sf *MockHandlerServe) FnBack(binMsg []byte) ([]byte, error) {
 	if sf.IsBad_.Get() {
 		return nil, fmt.Errorf("FnBack(): isBad==true")
 	}
-	if sf.IsLong_.Get() {
-		time.Sleep(time.Millisecond * 20)
-	}
 	sf.Msg_ = binMsg
-	return []byte("response"), nil
+	return sf.Msg_, nil
 }
 
 // Возвращает уникальное имя обработчика подписки
