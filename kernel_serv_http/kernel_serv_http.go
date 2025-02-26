@@ -15,6 +15,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 
 	. "github.com/prospero78/kern/helpers"
+	"github.com/prospero78/kern/kernel_ctx"
 	. "github.com/prospero78/kern/kernel_types"
 	"github.com/prospero78/kern/safe_bool"
 )
@@ -41,7 +42,7 @@ var (
 )
 
 // GetKernelServHttp -- возвращает  встроенный HTTP-сервер
-func GetKernelServHttp(ctx IKernelCtx) IKernelServerHttp {
+func GetKernelServHttp() IKernelServerHttp {
 	log.Println("NewKernelServHttp()")
 	block.Lock()
 	defer block.Unlock()
@@ -59,6 +60,7 @@ func GetKernelServHttp(ctx IKernelCtx) IKernelServerHttp {
 		Network:           "tcp4",
 		EnablePrintRoutes: true,
 	}
+	ctx := kernel_ctx.GetKernelCtx()
 	sf := &kernelServHttp{
 		ctx:      ctx,
 		strPort:  strPort,

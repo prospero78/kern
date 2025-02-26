@@ -110,7 +110,6 @@ func (sf *tester) close() {
 // Создаёт новое хранилище ядра
 func (sf *tester) new() {
 	sf.t.Log("new")
-	sf.newBad1()
 	sf.newGood1()
 }
 
@@ -121,23 +120,12 @@ func (sf *tester) newGood1() {
 			sf.t.Fatalf("newGood1(): panic=%v", _panic)
 		}
 	}()
-	store := GetKernelStore(sf.ctx)
+	store := GetKernelStore()
 	if store == nil {
 		sf.t.Fatalf("newGood1(): KernelStore==nil")
 	}
-	store = GetKernelStore(sf.ctx)
+	store = GetKernelStore()
 	if store == nil {
 		sf.t.Fatalf("newGood1(): KernelStore==nil")
 	}
-}
-
-// Нет ядра
-func (sf *tester) newBad1() {
-	sf.t.Log("newBad1")
-	defer func() {
-		if _panic := recover(); _panic == nil {
-			sf.t.Fatalf("newBad1(): panic==nil")
-		}
-	}()
-	_ = GetKernelStore(nil)
 }

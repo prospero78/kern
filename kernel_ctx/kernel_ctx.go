@@ -60,6 +60,13 @@ func (sf *kernelCtx) Get(key string) interface{} {
 	return sf.dictVal[key]
 }
 
+// Del -- удаляет значение из контекста
+func (sf *kernelCtx) Del(key string) {
+	sf.block.Lock()
+	defer sf.block.Unlock()
+	delete(sf.dictVal, key)
+}
+
 // Add -- добавляет значение в контекст
 func (sf *kernelCtx) Add(key string, val interface{}) {
 	sf.block.Lock()

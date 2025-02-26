@@ -2,7 +2,7 @@
 package kern
 
 import (
-	"github.com/prospero78/kern/kernel_bus_local"
+	"github.com/prospero78/kern/kernel_bus/kernel_bus_local"
 	"github.com/prospero78/kern/kernel_ctx"
 	"github.com/prospero78/kern/kernel_serv_http"
 	"github.com/prospero78/kern/kernel_store"
@@ -17,14 +17,14 @@ func NewKernelCtx() IKernelCtx {
 }
 
 // NewKernelStore -- возвращает хранилище ядра
-func NewKernelStore(ctx IKernelCtx) IKernelStore {
-	store := kernel_store.GetKernelStore(ctx)
+func NewKernelStore() IKernelStore {
+	store := kernel_store.GetKernelStore()
 	return store
 }
 
 // NewKernelServerHttp -- возвращает веб-сервер ядра
-func NewKernelServerHttp(ctx IKernelCtx) IKernelServerHttp {
-	kernServHttp := kernel_serv_http.GetKernelServHttp(ctx)
+func NewKernelServerHttp() IKernelServerHttp {
+	kernServHttp := kernel_serv_http.GetKernelServHttp()
 	return kernServHttp
 }
 
@@ -35,7 +35,7 @@ func NewSafeBool() ISafeBool {
 }
 
 // NewKernelBusLocal -- возвращает локальную шину данных
-func NewKernelBusLocal(ctx IKernelCtx) IKernelBus {
-	bus := kernel_bus_local.GetKernelBusLocal(ctx)
+func NewKernelBusLocal() IKernelBus {
+	bus := kernel_bus_local.GetKernelBusLocal()
 	return bus
 }

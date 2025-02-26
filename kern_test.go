@@ -35,7 +35,7 @@ func (sf *tester) new() {
 	if ctx == nil {
 		sf.t.Fatalf("new(): IKernelCtx==nil")
 	}
-	store := NewKernelStore(ctx)
+	store := NewKernelStore()
 	err := store.Delete("test_builders")
 	if err != nil {
 		sf.t.Fatalf("new(): get empty key, store, err=%v", err)
@@ -46,12 +46,12 @@ func (sf *tester) new() {
 		sf.t.Fatalf("new(): ISafeBool==nil")
 	}
 
-	kernBus := NewKernelBusLocal(ctx)
+	kernBus := NewKernelBusLocal()
 	if kernBus == nil {
 		sf.t.Fatalf("new(): (local) IKernelBus==nil")
 	}
 
-	kernServHttp := NewKernelServerHttp(ctx)
+	kernServHttp := NewKernelServerHttp()
 	go kernServHttp.Run()
 	ctx.Cancel()
 	ctx.Wg().Wait()

@@ -49,8 +49,7 @@ func (sf *tester) new() {
 // Повторный запуск сервера на том же порту
 func (sf *tester) newBad3() {
 	sf.t.Log("newBad3()")
-	ctx := kernel_ctx.GetKernelCtx()
-	serv := GetKernelServHttp(ctx)
+	serv := GetKernelServHttp()
 	go serv.Run()
 	time.Sleep(time.Millisecond * 20)
 }
@@ -63,7 +62,7 @@ func (sf *tester) newGood1() {
 		}
 	}()
 	sf.me = mock_env.MakeEnv()
-	serv := GetKernelServHttp(sf.ctx)
+	serv := GetKernelServHttp()
 	if serv != kernServHttp {
 		sf.t.Fatalf("newGood1(): bad IKernelServHttp")
 	}
@@ -81,7 +80,7 @@ func (sf *tester) newBad2() {
 			sf.t.Fatalf("newBad2(): panic==nil")
 		}
 	}()
-	_ = GetKernelServHttp(sf.ctx)
+	_ = GetKernelServHttp()
 }
 
 // Нет контекста ядра
@@ -92,6 +91,5 @@ func (sf *tester) newBad1() {
 			sf.t.Fatalf("newBad1(): panic==nil")
 		}
 	}()
-	var ctx IKernelCtx
-	_ = GetKernelServHttp(ctx)
+	_ = GetKernelServHttp()
 }

@@ -14,9 +14,11 @@ type IKernelCtx interface {
 	// Done -- ожидает отмены контекста ядра
 	Done()
 	// Add -- добавляет значение в контекст
-	Add(key string, val interface{})
+	Add(key string, val any)
 	// Get -- извлекает значение из контекста
-	Get(key string) interface{}
+	Get(key string) any
+	// Del -- удаляет значение из контекста
+	Del(key string)
 	// Wg -- возвращает ожидатель потоков
 	Wg() IKernelWg
 }

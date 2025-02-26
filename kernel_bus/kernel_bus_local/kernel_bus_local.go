@@ -2,15 +2,15 @@
 package kernel_bus_local
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"sync"
 
 	. "github.com/prospero78/kern/helpers"
 	. "github.com/prospero78/kern/kernel_alias"
-	"github.com/prospero78/kern/kernel_bus_local/dict_serve"
-	"github.com/prospero78/kern/kernel_bus_local/dict_sub"
+	"github.com/prospero78/kern/kernel_bus/dict_topic_serve"
+	"github.com/prospero78/kern/kernel_bus/dict_topic_sub"
+	"github.com/prospero78/kern/kernel_ctx"
 	. "github.com/prospero78/kern/kernel_types"
 	"github.com/prospero78/kern/safe_bool"
 )
@@ -23,8 +23,8 @@ const (
 type kernelBusLocal struct {
 	ctx       IKernelCtx
 	isWork    ISafeBool
-	dictSub   *dict_sub.DictSub
-	dictServe *dict_serve.DictServe
+	dictSub   IDictTopicSub
+	dictServe IDictTopicServe
 	block     sync.Mutex
 }
 
@@ -33,21 +33,22 @@ var (
 )
 
 // GetKernelBusLocal -- возвращает локальную шину сообщений
-func GetKernelBusLocal(ctx IKernelCtx) IKernelBus {
+func GetKernelBusLocal() IKernelBus {
 	if bus != nil {
 		return bus
 	}
-	Hassert(ctx != nil, "GetKernelBusLocal(): IKernelCtx==nil")
+	ctx := kernel_ctx.GetKernelCtx()
 	bus = &kernelBusLocal{
 		ctx:       ctx,
 		isWork:    safe_bool.NewSafeBool(),
-		dictSub:   dict_sub.NewDictSub(),
-		dictServe: dict_serve.NewDictServe(ctx),
+		dictSub:   dict_topic_sub.NewDictTopicSub(),
+		dictServe: dict_topic_serve.NewDictServe(),
 	}
 	go bus.close()
 	err := bus.ctx.Wg().Add(strBusLocalStream)
 	Hassert(err == nil, "GetKernelBusLocal(): in add name stream '%v' Wg, err=%v", strBusLocalStream, err)
 	bus.isWork.Set()
+	ctx.Add("kernBus", bus)
 	return bus
 }
 
@@ -63,33 +64,29 @@ func (sf *kernelBusLocal) Subscribe(handler IBusHandlerSubscribe) error {
 	if !sf.isWork.Get() {
 		return fmt.Errorf("kernelBusLocal.Subscribe(): bus already closed")
 	}
-	sf.dictSub.Add(handler)
+	sf.dictSub.Subscribe(handler)
 	return nil
 }
 
 // Unsubscribe -- отписывает обработчик от топика
 func (sf *kernelBusLocal) Unsubscribe(handler IBusHandlerSubscribe) {
-	sf.block.Lock()
-	defer sf.block.Unlock()
-	sf.dictSub.Del(handler)
+	sf.dictSub.Unsubscribe(handler)
 }
 
-// Serve -- выполняет обслуживание входящих запросов
-func (sf *kernelBusLocal) Serve(handler IBusHandlerServe) {
-	sf.block.Lock()
-	defer sf.block.Unlock()
+// RegisterServe -- регистрирует обработчики входящих запросов
+func (sf *kernelBusLocal) RegisterServe(handler IBusHandlerServe) {
 	Hassert(handler != nil, "kernelBusLocal.Subscribe(): IBusHandlerSubscribe==nil")
-	sf.dictServe.Add(handler)
+	sf.dictServe.Register(handler)
 }
 
 // Request -- выполняет запрос в шину данных
-func (sf *kernelBusLocal) Request(ctx context.Context, topic ATopic, binReq []byte) ([]byte, error) {
+func (sf *kernelBusLocal) Request(topic ATopic, binReq []byte) ([]byte, error) {
 	sf.block.Lock()
 	defer sf.block.Unlock()
 	if !sf.isWork.Get() {
 		return nil, fmt.Errorf("kernelBusLocal.Request(): bus already closed")
 	}
-	binResp, err := sf.dictServe.Call(ctx, topic, binReq)
+	binResp, err := sf.dictServe.Request(topic, binReq)
 	if err != nil {
 		return nil, fmt.Errorf("kernelBusLocal.Request(): topic='%v', err=\n\t%w", topic, err)
 	}
@@ -97,13 +94,14 @@ func (sf *kernelBusLocal) Request(ctx context.Context, topic ATopic, binReq []by
 }
 
 // Publish -- публикует сообщение в шину
-func (sf *kernelBusLocal) Publish(ctx context.Context, topic ATopic, binMsg []byte) (err error) {
+func (sf *kernelBusLocal) Publish(topic ATopic, binMsg []byte) (err error) {
 	sf.block.Lock()
 	defer sf.block.Unlock()
 	if !sf.isWork.Get() {
 		return fmt.Errorf("kernelBusLocal.Publish(): bus already closed")
 	}
-	go sf.dictSub.Call(topic, binMsg)
+	// Асинхронный запуск чтения
+	go sf.dictSub.Read(topic, binMsg)
 	return nil
 }
 

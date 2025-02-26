@@ -11,6 +11,7 @@ import (
 	"github.com/dgraph-io/badger/v4"
 
 	. "github.com/prospero78/kern/helpers"
+	"github.com/prospero78/kern/kernel_ctx"
 	. "github.com/prospero78/kern/kernel_types"
 	"github.com/prospero78/kern/safe_bool"
 )
@@ -36,14 +37,14 @@ var (
 )
 
 // GetKernelStore -- возвращает новое локальное хранилище ядра
-func GetKernelStore(ctx IKernelCtx) IKernelStore {
+func GetKernelStore() IKernelStore {
 	log.Println("GetKernelStore()")
 	block.Lock()
 	defer block.Unlock()
 	if kernStore != nil {
 		return kernStore
 	}
-	Hassert(ctx != nil, "GetKernelStore(): IKernelCtx==nil")
+	ctx := kernel_ctx.GetKernelCtx()
 	sf := &kernelStore{
 		ctx:    ctx,
 		wg:     ctx.Wg(),

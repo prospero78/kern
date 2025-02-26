@@ -1,46 +1,27 @@
-package dict_sub
+package dict_topic_sub
 
 import (
 	"testing"
 
-	. "github.com/prospero78/kern/kernel_alias"
+	"github.com/prospero78/kern/mock/mock_hand_sub"
 )
-
-type handler struct {
-	t     *testing.T
-	chMsg chan []byte // Для обратного вызова
-}
-
-// Функция обратного вызова подписки
-func (sf *handler) FnBack(binMsg []byte) {
-	sf.t.Log("FnBack")
-	sf.chMsg <- binMsg
-}
-
-// Возвращает топик для обработчика подписки
-func (sf *handler) Topic() ATopic {
-	return "test_topic"
-}
 
 type tester struct {
 	t    *testing.T
-	dict *DictSub
-	hand *handler
+	dict *dictTopicSub
+	hand *mock_hand_sub.MockHandlerSub
 }
 
 func TestDictSub(t *testing.T) {
 	sf := &tester{
-		t: t,
-		hand: &handler{
-			t:     t,
-			chMsg: make(chan []byte, 2),
-		},
+		t:    t,
+		hand: mock_hand_sub.NewMockHandlerSub("topic_dict_sub", "name_dict_sub"),
 	}
 	sf.new()
 	sf.addBad1()
 	sf.addGood1()
-	sf.addBad2()
-	sf.callBad1()
+	sf.addGood2()
+	sf.callGood10()
 	sf.callGood1()
 	sf.callBad2()
 	sf.delBad1()
@@ -54,8 +35,8 @@ func (sf *tester) delGood2() {
 			sf.t.Fatalf("delGood2(): panic=%v", _panic)
 		}
 	}()
-	sf.dict.Del(sf.hand)
-	sf.dict.Del(sf.hand)
+	sf.dict.Unsubscribe(sf.hand)
+	sf.dict.Unsubscribe(sf.hand)
 }
 
 // Удаляет, чего нет
@@ -66,25 +47,23 @@ func (sf *tester) delBad1() {
 			sf.t.Fatalf("delBad1(): panic==nil")
 		}
 	}()
-	sf.dict.Del(nil)
+	sf.dict.Unsubscribe(nil)
 }
 
 func (sf *tester) callGood1() {
 	sf.t.Log("callGood1")
-	sf.dict.Call(sf.hand.Topic(), []byte("test_good"))
-	<-sf.hand.chMsg
+	sf.dict.Read(sf.hand.Topic(), []byte("test_good"))
 }
 
 // повторное добавление обработчика
-func (sf *tester) addBad2() {
-	sf.t.Log("addBad2")
-	sf.t.Log("addGood1()")
+func (sf *tester) addGood2() {
+	sf.t.Log("addGood2")
 	defer func() {
-		if _panic := recover(); _panic == nil {
-			sf.t.Fatalf("addGood1(): panic==nil")
+		if _panic := recover(); _panic != nil {
+			sf.t.Fatalf("addGood2(): panic=%v", _panic)
 		}
 	}()
-	sf.dict.Add(sf.hand)
+	sf.dict.Subscribe(sf.hand)
 }
 
 // Правильное добавление обработчика подписки
@@ -95,7 +74,7 @@ func (sf *tester) addGood1() {
 			sf.t.Fatalf("addGood1(): panic=%v", _panic)
 		}
 	}()
-	sf.dict.Add(sf.hand)
+	sf.dict.Subscribe(sf.hand)
 }
 
 // Вместо обработчика пустышка
@@ -106,7 +85,7 @@ func (sf *tester) addBad1() {
 			sf.t.Fatalf("addBad1(): panic==nil")
 		}
 	}()
-	sf.dict.Add(nil)
+	sf.dict.Subscribe(nil)
 }
 
 // Нет топика
@@ -117,13 +96,18 @@ func (sf *tester) callBad2() {
 			sf.t.Fatalf("callBad2(): panic==nil")
 		}
 	}()
-	sf.dict.Call("", []byte("test_msg"))
+	sf.dict.Read("", []byte("test_msg"))
 }
 
-// Вызов несуществующего топика
-func (sf *tester) callBad1() {
-	sf.t.Log("callBad1")
-	sf.dict.Call("test_bad_topic", []byte("test"))
+// Нет данных в топике
+func (sf *tester) callGood10() {
+	sf.t.Log("callGood10")
+	defer func() {
+		if _panic := recover(); _panic != nil {
+			sf.t.Fatalf("callGood10(): panic=%v", _panic)
+		}
+	}()
+	sf.dict.Read("test_bad_topic", []byte("test"))
 }
 
 // Создание словаря подписчиков
@@ -139,7 +123,7 @@ func (sf *tester) newGood1() {
 			sf.t.Fatalf("newGood1(): panic=%v", _panic)
 		}
 	}()
-	sf.dict = NewDictSub()
+	sf.dict = NewDictTopicSub().(*dictTopicSub)
 	if sf.dict == nil {
 		sf.t.Fatalf("newGood1(): DictSub==nil")
 	}

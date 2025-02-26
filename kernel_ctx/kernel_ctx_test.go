@@ -42,4 +42,5 @@ func (sf *tester) new() {
 	if wg := ctx.Wg(); wg == nil {
 		sf.t.Fatalf("new(): IKernelWg==nil")
 	}
+	ctx.Del("counter")
 }
