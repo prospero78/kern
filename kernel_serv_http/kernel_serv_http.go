@@ -52,11 +52,11 @@ func GetKernelServHttp() IKernelServerHttp {
 	strPort := os.Getenv("SERVER_HTTP_PORT")
 	Hassert(strPort != "", "NewKernelServHttp(): env SERVER_HTTP_PORT not set")
 	confFiber := fiber.Config{
-		ServerHeader:      "Server log audit",
+		ServerHeader:      "KernelHttpServer",
 		UnescapePath:      true,
 		ReadTimeout:       time.Second * 15,
 		WriteTimeout:      time.Second * 15,
-		AppName:           "AppServerLogAudit",
+		AppName:           "KernelHttpServer",
 		Network:           "tcp4",
 		EnablePrintRoutes: true,
 	}
@@ -76,7 +76,7 @@ func GetKernelServHttp() IKernelServerHttp {
 		Browse:     true,
 		MaxAge:     3600 * 24,
 	}))
-	sf.fiberApp.Get("/monitor", monitor.New(monitor.Config{Title: "ServerLogAudit"}))
+	sf.fiberApp.Get("/monitor", monitor.New(monitor.Config{Title: "KernelHttpServer"}))
 	err := sf.ctx.Wg().Add(streamName)
 	Hassert(err == nil, "NewKernelServHttp(): in add stream %v, err=\n\t%v", streamName, err)
 	ctx.Add("fiberApp", sf.fiberApp)
