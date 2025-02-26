@@ -9,7 +9,7 @@ type IBusBaseHandler interface {
 	// Topic -- топик подписки обработчика
 	Topic() ATopic
 	// Name -- уникальное имя обработчика
-	Name() string
+	Name() AHandlerName
 }
 
 // IBusHandlerSubscribe -- объект обработчика подписки
