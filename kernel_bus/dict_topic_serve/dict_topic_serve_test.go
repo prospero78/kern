@@ -4,13 +4,11 @@ import (
 	"testing"
 
 	"github.com/prospero78/kern/kernel_ctx"
-	. "github.com/prospero78/kern/kernel_types"
 	"github.com/prospero78/kern/mock/mock_hand_serve"
 )
 
 type tester struct {
 	t    *testing.T
-	ctx  IKernelCtx
 	dict *dictServe
 	hand *mock_hand_serve.MockHandlerServe
 }
@@ -18,7 +16,6 @@ type tester struct {
 func TestDictSub(t *testing.T) {
 	sf := &tester{
 		t:    t,
-		ctx:  kernel_ctx.GetKernelCtx(),
 		hand: mock_hand_serve.NewMockHandlerServe("topic_dict_serve", "name_dict_serve"),
 	}
 	sf.new()
@@ -30,6 +27,23 @@ func TestDictSub(t *testing.T) {
 	sf.callGood1()
 	sf.delBad1()
 	sf.delGood2()
+	sf.callBad3()
+}
+
+// Работа ядра завершена
+func (sf *tester) callBad3() {
+	sf.t.Log("callBad3")
+	ctx := kernel_ctx.GetKernelCtx()
+	ctx.Cancel()
+	ctx.Wg().Wait()
+	sf.dict.Register(sf.hand)
+	binMsg, err := sf.dict.Request(sf.hand.Topic(), []byte("test"))
+	if err == nil {
+		sf.t.Fatalf("callBad3(): err==nil")
+	}
+	if binMsg != nil {
+		sf.t.Fatalf("callBad3(): binMsg!=nil")
+	}
 }
 
 func (sf *tester) delGood2() {
