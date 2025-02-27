@@ -128,4 +128,7 @@ func (sf *tester) newGood1() {
 	if store == nil {
 		sf.t.Fatalf("newGood1(): KernelStore==nil")
 	}
+	if log := store.Log(); log == nil {
+		sf.t.Fatalf("newGood1(): log==nil")
+	}
 }

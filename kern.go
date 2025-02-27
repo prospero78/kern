@@ -21,7 +21,7 @@ func NewKernelCtx() IKernelCtx {
 }
 
 // NewKernelStore -- возвращает хранилище ядра
-func NewKernelStore() IKernelStore {
+func NewKernelStore() IKernelStoreKv {
 	store := kernel_store.GetKernelStore()
 	return store
 }

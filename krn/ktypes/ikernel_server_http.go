@@ -8,4 +8,6 @@ type IKernelServerHttp interface {
 	Run()
 	// Fiber -- возвращает объект веб-приложения fiber
 	Fiber() *fiber.App
+	// Log -- возвращает локальный лог
+	Log() ILogBuf
 }

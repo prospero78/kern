@@ -3,7 +3,6 @@ package kctx
 
 import (
 	"context"
-	"log"
 	"sync"
 
 	"github.com/prospero78/kern/kc/local_ctx"
@@ -12,9 +11,10 @@ import (
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
-// kernelCtx -- контекст ядра
-type kernelCtx struct {
+// kCtx -- контекст ядра
+type kCtx struct {
 	ILocalCtx
+	log        ILogBuf
 	ctxBg      context.Context // Неотменяемый контекст ядра
 	ctx        context.Context // Отменяемый контекст ядра
 	fnCancel   func()          // Функция отмены контекста ядра
@@ -23,7 +23,7 @@ type kernelCtx struct {
 }
 
 var (
-	kernCtx *kernelCtx // Глобальный объект контекста приложения
+	kernCtx *kCtx // Глобальный объект контекста приложения
 	block   sync.Mutex
 )
 
@@ -36,12 +36,13 @@ func GetKernelCtx() IKernelCtx {
 	}
 	ctxBg := context.Background()
 	ctx, fnCancel := context.WithCancel(ctxBg)
-	sf := &kernelCtx{
+	sf := &kCtx{
 		ctxBg:    ctxBg,
 		ctx:      ctx,
 		fnCancel: fnCancel,
 	}
 	sf.ILocalCtx = local_ctx.NewLocalCtx(sf.ctx)
+	sf.log = sf.Log()
 	sf.kernWg = kwg.GetKernelWg(sf.ctx)
 	sf.kernKeeper = kernel_keeper.GetKernelKeeper(sf.ctx, sf.fnCancel, sf.kernWg)
 	kernCtx = sf
@@ -49,28 +50,28 @@ func GetKernelCtx() IKernelCtx {
 }
 
 // Wg -- возвращает ожидатель потоков
-func (sf *kernelCtx) Wg() IKernelWg {
+func (sf *kCtx) Wg() IKernelWg {
 	return sf.kernWg
 }
 
 // Done -- блокирующий вызов ожидания отмены контекста ядра
-func (sf *kernelCtx) Done() {
+func (sf *kCtx) Done() {
 	<-sf.ctx.Done()
-	log.Println("kernelCtx.Done()")
+	sf.log.Debug("kCtx.Done()")
 }
 
 // CtxBg -- возвращает неотменяемый контекст ядра (лучше не использовать)
-func (sf *kernelCtx) CtxBg() context.Context {
+func (sf *kCtx) CtxBg() context.Context {
 	return sf.ctxBg
 }
 
 // BaseCtx -- возвращает контекст ядра
-func (sf *kernelCtx) BaseCtx() context.Context {
+func (sf *kCtx) BaseCtx() context.Context {
 	return sf.ctx
 }
 
 // Cancel -- отменяет контекст ядра
-func (sf *kernelCtx) Cancel() {
-	log.Println("kernelCtx.Cancel()")
+func (sf *kCtx) Cancel() {
 	sf.fnCancel()
+	sf.log.Debug("kCtx.Cancel()")
 }

@@ -3,7 +3,6 @@ package kbus_base
 
 import (
 	"fmt"
-	"log"
 	"sync"
 
 	. "github.com/prospero78/kern/kc/helpers"
@@ -75,7 +74,7 @@ func (sf *KBusBase) Subscribe(handler IBusHandlerSubscribe) error {
 	defer sf.block.Unlock()
 	sf.log.Debug("KBusBase.Subscribe(): handler='%v'", handler.Name())
 	if !sf.IsWork_.Get() {
-		strOut := fmt.Sprintf("KernelBusBase.Subscribe():  handler='%v', bus already closed", handler.Name())
+		strOut := fmt.Sprintf("KBusBase.Subscribe():  handler='%v', bus already closed", handler.Name())
 		sf.log.Err(strOut)
 		return fmt.Errorf(strOut, "")
 	}
@@ -89,13 +88,13 @@ func (sf *KBusBase) SendRequest(topic ATopic, binReq []byte) ([]byte, error) {
 	defer sf.block.Unlock()
 	sf.log.Debug("KBusBase.SendRequest(): topic='%v'", topic)
 	if !sf.IsWork_.Get() {
-		strOut := fmt.Sprintf("KernelBusBase.SendRequest():  topic='%v', bus already closed", topic)
+		strOut := fmt.Sprintf("KBusBase.SendRequest():  topic='%v', bus already closed", topic)
 		sf.log.Err(strOut)
 		return nil, fmt.Errorf(strOut, "")
 	}
 	binResp, err := sf.dictServe.SendRequest(topic, binReq)
 	if err != nil {
-		strOut := fmt.Sprintf("KernelBusBase.SendRequest(): topic='%v', err=\n\t%v", topic, err)
+		strOut := fmt.Sprintf("KBusBase.SendRequest(): topic='%v', err=\n\t%v", topic, err)
 		sf.log.Err(strOut)
 		return nil, fmt.Errorf(strOut, "")
 	}
@@ -104,7 +103,8 @@ func (sf *KBusBase) SendRequest(topic ATopic, binReq []byte) ([]byte, error) {
 
 // RegisterServe -- регистрирует обработчики входящих запросов
 func (sf *KBusBase) RegisterServe(handler IBusHandlerServe) {
-	Hassert(handler != nil, "KernelBusBase.Subscribe(): IBusHandlerSubscribe==nil")
+	Hassert(handler != nil, "KBusBase.RegisterServe(): IBusHandlerSubscribe==nil")
+	sf.log.Debug("KBusBase.RegisterServe(): handler='%v'", handler.Name())
 	sf.dictServe.Register(handler)
 }
 
@@ -112,8 +112,11 @@ func (sf *KBusBase) RegisterServe(handler IBusHandlerServe) {
 func (sf *KBusBase) Publish(topic ATopic, binMsg []byte) (err error) {
 	sf.block.Lock()
 	defer sf.block.Unlock()
+	sf.log.Debug("KBusBase.Publish(): topic='%v'", topic)
 	if !sf.IsWork_.Get() {
-		return fmt.Errorf("KernelBusBase.Publish(): bus already closed")
+		strOut := fmt.Sprintf("KBusBase.Publish(): topic='%v',bus already closed", topic)
+		sf.log.Err(strOut)
+		return fmt.Errorf(strOut, "")
 	}
 	// Асинхронный запуск чтения
 	go sf.dictSub.Read(topic, binMsg)
@@ -135,5 +138,5 @@ func (sf *KBusBase) close() {
 	}
 	sf.IsWork_.Reset()
 	sf.Ctx_.Wg().Done(strBusBaseStream)
-	log.Println("kernelBusLocal.close(): done")
+	sf.log.Debug("KBusBase.close(): done")
 }

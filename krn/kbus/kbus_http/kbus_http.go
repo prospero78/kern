@@ -19,6 +19,7 @@ import (
 // kBusHttp -- шина данных поверх HTTP
 type kBusHttp struct {
 	*kbus_base.KBusBase
+	log ILogBuf
 }
 
 var (
@@ -34,6 +35,7 @@ func GetKernelBusHttp() IKernelBus {
 	bus = &kBusHttp{
 		KBusBase: kbus_base.GetKernelBusBase(),
 	}
+	bus.log = bus.Log()
 	ctx.Set("kernBus", bus, "http data bus")
 	fibApp := kserv_http.GetKernelServHttp().Fiber()
 	fibApp.Post("/bus/sub", bus.postSub)             // Топик подписки, IN
@@ -69,6 +71,7 @@ func (sf *kBusHttp) postSub(ctx *fiber.Ctx) error {
 	ctx.Set("Content-type", "text/html; charset=utf8")
 	ctx.Set("Content-type", "text/json")
 	ctx.Set("Cache-Control", "no-cache")
+	sf.log.Debug("kBusHttp.postSub()")
 	req := &SubscribeReq{}
 	err := ctx.BodyParser(req)
 	if err != nil {
@@ -77,6 +80,7 @@ func (sf *kBusHttp) postSub(ctx *fiber.Ctx) error {
 			Uuid_:   req.Uuid_,
 		}
 		ctx.Response().SetStatusCode(http.StatusBadRequest)
+		sf.log.Err(resp.Status_)
 		return ctx.JSON(resp)
 	}
 	resp := sf.processSubscribe(req)
@@ -121,6 +125,7 @@ type PublishResp struct {
 
 // Входящая публикация
 func (sf *kBusHttp) postPublish(ctx *fiber.Ctx) error {
+	sf.log.Debug("kBusHttp.postPublish()")
 	ctx.Set("Content-type", "text/html; charset=utf8")
 	ctx.Set("Content-type", "text/json")
 	ctx.Set("Cache-Control", "no-cache")
@@ -132,6 +137,7 @@ func (sf *kBusHttp) postPublish(ctx *fiber.Ctx) error {
 			Uuid_:   req.Uuid_,
 		}
 		ctx.Response().SetStatusCode(http.StatusBadRequest)
+		sf.log.Err(resp.Status_)
 		return ctx.JSON(resp)
 	}
 	resp := sf.processPublish(req)
@@ -174,6 +180,7 @@ type ServeResp struct {
 
 // Входящий запрос
 func (sf *kBusHttp) postSendRequest(ctx *fiber.Ctx) error {
+	sf.log.Debug("kBusHttp.postSendRequest()")
 	ctx.Set("Content-type", "text/html; charset=utf8")
 	ctx.Set("Content-type", "text/json")
 	ctx.Set("Cache-Control", "no-cache")
@@ -185,6 +192,7 @@ func (sf *kBusHttp) postSendRequest(ctx *fiber.Ctx) error {
 			Uuid_:   req.Uuid_,
 		}
 		ctx.Response().SetStatusCode(http.StatusBadRequest)
+		sf.log.Err(resp.Status_)
 		return ctx.JSON(resp)
 	}
 	resp := sf.processSendRequest(req)
@@ -227,6 +235,7 @@ type UnsubResp struct {
 
 // Входящая отписка от топика по HTTP
 func (sf *kBusHttp) postUnsub(ctx *fiber.Ctx) error {
+	sf.log.Debug("kBusHttp.postUnsub()")
 	ctx.Set("Content-type", "text/html; charset=utf8")
 	ctx.Set("Content-type", "text/json")
 	ctx.Set("Cache-Control", "no-cache")
@@ -238,6 +247,7 @@ func (sf *kBusHttp) postUnsub(ctx *fiber.Ctx) error {
 			Uuid_:   req.Uuid_,
 		}
 		ctx.Response().SetStatusCode(http.StatusBadRequest)
+		sf.log.Err(resp.Status_)
 		return ctx.JSON(resp)
 	}
 	resp := sf.processUnsubRequest(req)

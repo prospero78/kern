@@ -63,12 +63,15 @@ func (sf *tester) newGood1() {
 	}()
 	sf.me = mock_env.MakeEnv()
 	sf.ctx.Set("monolitName", "test_monolit", "comment")
-	serv := GetKernelServHttp()
+	serv := GetKernelServHttp().(*kServHttp)
 	if serv != kernServHttp {
 		sf.t.Fatalf("newGood1(): bad IKernelServHttp")
 	}
 	if webFiber := serv.Fiber(); webFiber != kernServHttp.fiberApp {
 		sf.t.Fatalf("newGood1(): webFiber==serv.appFiber")
+	}
+	if log := serv.Log(); log == nil {
+		sf.t.Fatalf("newGood1(): log==nil")
 	}
 	go serv.Run()
 }

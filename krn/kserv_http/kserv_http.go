@@ -3,6 +3,7 @@ package kserv_http
 
 import (
 	"embed"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -15,6 +16,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 
 	. "github.com/prospero78/kern/kc/helpers"
+	"github.com/prospero78/kern/kc/local_ctx"
 	"github.com/prospero78/kern/kc/safe_bool"
 	"github.com/prospero78/kern/krn/kctx"
 	. "github.com/prospero78/kern/krn/ktypes"
@@ -26,7 +28,9 @@ const (
 
 // kServHttp -- встроенный HTTP-сервер
 type kServHttp struct {
-	ctx      IKernelCtx
+	kCtx     IKernelCtx
+	ctx      ILocalCtx
+	log      ILogBuf
 	strPort  string // Порт ,на котором слушает HTTP-сервер
 	fiberApp *fiber.App
 	isWork   ISafeBool
@@ -62,11 +66,13 @@ func GetKernelServHttp() IKernelServerHttp {
 		EnablePrintRoutes: true,
 	}
 	sf := &kServHttp{
-		ctx:      ctx,
+		kCtx:     ctx,
+		ctx:      local_ctx.NewLocalCtx(ctx.BaseCtx()),
 		strPort:  strPort,
 		fiberApp: fiber.New(confFiber),
 		isWork:   safe_bool.NewSafeBool(),
 	}
+	sf.log = sf.ctx.Log()
 	sf.fiberApp.Use(compress.New(compress.Config{
 		Level: compress.LevelBestCompression, // 2
 	}))
@@ -77,12 +83,17 @@ func GetKernelServHttp() IKernelServerHttp {
 		MaxAge:     3600 * 24,
 	}))
 	sf.fiberApp.Get("/monitor", monitor.New(monitor.Config{Title: "KernelHttpServer"}))
-	err := sf.ctx.Wg().Add(streamName)
+	err := sf.kCtx.Wg().Add(streamName)
 	Hassert(err == nil, "NewKernelServHttp(): in add stream %v, err=\n\t%v", streamName, err)
 	ctx.Set("fiberApp", sf.fiberApp, "kServHttp: internal fiber app")
 	kernServHttp = sf
 	ctx.Set("kServHttp", kernServHttp, "kServHttp")
 	return kernServHttp
+}
+
+// Log -- возвращает локальный лог
+func (sf *kServHttp) Log() ILogBuf {
+	return sf.log
 }
 
 // Fiber -- возвращает объект веб-приложения fiber
@@ -94,16 +105,18 @@ func (sf *kServHttp) Fiber() *fiber.App {
 func (sf *kServHttp) Run() {
 	go sf.close()
 	sf.isWork.Set()
+	sf.log.Debug("kServHttp.Run(): port='%v'", sf.strPort)
 	err := sf.fiberApp.Listen(":" + sf.strPort)
 	if err != nil {
-		log.Printf("kServHttp.Run(): in listen, err=\n\t%v\n", err)
-		sf.ctx.Cancel()
+		strOut := fmt.Sprintf("kServHttp.Run(): in listen, err=\n\t%v", err)
+		sf.log.Err(strOut)
+		sf.kCtx.Cancel()
 	}
 }
 
 // Ожидает окончания работы
 func (sf *kServHttp) close() {
-	sf.ctx.Done()
+	sf.kCtx.Done()
 	sf.block.Lock()
 	defer sf.block.Unlock()
 	if !sf.isWork.Get() {
@@ -112,6 +125,6 @@ func (sf *kServHttp) close() {
 	sf.isWork.Reset()
 	err := sf.fiberApp.Server().Shutdown()
 	Assert(err == nil, "kServHttp.close(): in close server, err=\n\t%v", err)
-	sf.ctx.Wg().Done(streamName)
-	log.Println("kServHttp.close(): end")
+	sf.kCtx.Wg().Done(streamName)
+	sf.log.Debug("kServHttp.close(): end")
 }
