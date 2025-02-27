@@ -7,10 +7,12 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	. "github.com/prospero78/kern/kc/helpers"
-	. "github.com/prospero78/kern/krn/kalias"
 	"github.com/prospero78/kern/krn/kbus/kbus_base"
 	"github.com/prospero78/kern/krn/kbus/kbus_http/handler_http_sub"
+	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_pub"
+	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_serve"
+	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_sub"
+	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_unsub"
 	"github.com/prospero78/kern/krn/kctx"
 	"github.com/prospero78/kern/krn/kserv_http"
 	. "github.com/prospero78/kern/krn/ktypes"
@@ -45,37 +47,16 @@ func GetKernelBusHttp() IKernelBus {
 	return bus
 }
 
-// SubscribeReq -- входящий запрос на подписку
-type SubscribeReq struct {
-	Topic_   ATopic `json:"topic"` // Топик, на который надо подписаться
-	Uuid_    string `json:"uuid"`
-	WebHook_ string `json:"web_hook"` // Веб-хук для обратного вызова
-}
-
-// SelfCheck -- проверяет поля на правильность
-func (sf *SubscribeReq) SelfCheck() {
-	Hassert(sf.Topic_ != "", "SubscribeReq.SelfCheck(): topic is empty")
-	Hassert(sf.Uuid_ != "", "SubscribeReq.SelfCheck(): uuid is empty")
-	Hassert(sf.WebHook_ != "", "SubscribeReq.SelfCheck(): WebHook_ is empty")
-}
-
-// SubscribeResp -- ответ на запрос подписки
-type SubscribeResp struct {
-	Status_ string       `json:"status"`
-	Uuid_   string       `json:"uuid"`
-	Name_   AHandlerName `json:"name"` // Уникальное имя подписки
-}
-
 // Входящий запрос HTTP на подписку
 func (sf *kBusHttp) postSub(ctx *fiber.Ctx) error {
 	ctx.Set("Content-type", "text/html; charset=utf8")
 	ctx.Set("Content-type", "text/json")
 	ctx.Set("Cache-Control", "no-cache")
 	sf.log.Debug("kBusHttp.postSub()")
-	req := &SubscribeReq{}
+	req := &msg_sub.SubscribeReq{}
 	err := ctx.BodyParser(req)
 	if err != nil {
-		resp := &SubscribeResp{
+		resp := &msg_sub.SubscribeResp{
 			Status_: fmt.Sprintf("kernelBusHttp.postSub(): in parse request, err=\n\t%v\n", err),
 			Uuid_:   req.Uuid_,
 		}
@@ -88,10 +69,10 @@ func (sf *kBusHttp) postSub(ctx *fiber.Ctx) error {
 }
 
 // Процесс подписки веб-хука
-func (sf *kBusHttp) processSubscribe(req *SubscribeReq) *SubscribeResp {
+func (sf *kBusHttp) processSubscribe(req *msg_sub.SubscribeReq) *msg_sub.SubscribeResp {
 	req.SelfCheck()
 	handler := handler_http_sub.NewHandlerHttpSub(req.Topic_, req.WebHook_)
-	resp := &SubscribeResp{
+	resp := &msg_sub.SubscribeResp{
 		Status_: "ok",
 		Uuid_:   req.Uuid_,
 		Name_:   handler.Name(),
@@ -104,35 +85,16 @@ func (sf *kBusHttp) processSubscribe(req *SubscribeReq) *SubscribeResp {
 	return resp
 }
 
-// PublishReq -- запрос на публикацию
-type PublishReq struct {
-	Topic_ ATopic `json:"topic"`
-	Uuid_  string `json:"uuid"`
-	BinMsg []byte `json:"msg"`
-}
-
-// SelfCheck -- проверяет правильность своих полей
-func (sf *PublishReq) SelfCheck() {
-	Hassert(sf.Topic_ != "", "PublishReq.SelfCheck(): topic is empty")
-	Hassert(sf.Uuid_ != "", "PublishReq.SelfCheck(): uuid is empty")
-}
-
-// PublishResp -- ответ на запрос публикации
-type PublishResp struct {
-	Status_ string `json:"status"`
-	Uuid_   string `json:"uuid"`
-}
-
 // Входящая публикация
 func (sf *kBusHttp) postPublish(ctx *fiber.Ctx) error {
 	sf.log.Debug("kBusHttp.postPublish()")
 	ctx.Set("Content-type", "text/html; charset=utf8")
 	ctx.Set("Content-type", "text/json")
 	ctx.Set("Cache-Control", "no-cache")
-	req := &PublishReq{}
+	req := &msg_pub.PublishReq{}
 	err := ctx.BodyParser(req)
 	if err != nil {
-		resp := &SubscribeResp{
+		resp := &msg_pub.PublishResp{
 			Status_: fmt.Sprintf("kernelBusHttp.postPublish(): in parse request, err=\n\t%v\n", err),
 			Uuid_:   req.Uuid_,
 		}
@@ -145,10 +107,10 @@ func (sf *kBusHttp) postPublish(ctx *fiber.Ctx) error {
 }
 
 // Выполняет процесс публикации
-func (sf *kBusHttp) processPublish(req *PublishReq) *PublishResp {
+func (sf *kBusHttp) processPublish(req *msg_pub.PublishReq) *msg_pub.PublishResp {
 	req.SelfCheck()
 	err := sf.Publish(req.Topic_, req.BinMsg)
-	resp := &PublishResp{
+	resp := &msg_pub.PublishResp{
 		Status_: "ok",
 		Uuid_:   req.Uuid_,
 	}
@@ -158,36 +120,16 @@ func (sf *kBusHttp) processPublish(req *PublishReq) *PublishResp {
 	return resp
 }
 
-// ServeReq -- входящий запрос на обслуживание
-type ServeReq struct {
-	Topic_  ATopic `json:"topic"`
-	Uuid_   string `json:"uuid"`
-	BinReq_ []byte `json:"req"`
-}
-
-// SelfCheck -- проверяет структуру на правильность полей
-func (sf *ServeReq) SelfCheck() {
-	Hassert(sf.Topic_ != "", "ServeReq.SelfCheck(): topic is empty")
-	Hassert(sf.Uuid_ != "", "ServeReq.SelfCheck(): uuid is empty")
-}
-
-// ServeResp -- ответ на входящий запрос
-type ServeResp struct {
-	Status_  string `json:"status"`
-	Uuid_    string `json:"uuid"`
-	BinResp_ []byte `json:"resp"`
-}
-
 // Входящий запрос
 func (sf *kBusHttp) postSendRequest(ctx *fiber.Ctx) error {
 	sf.log.Debug("kBusHttp.postSendRequest()")
 	ctx.Set("Content-type", "text/html; charset=utf8")
 	ctx.Set("Content-type", "text/json")
 	ctx.Set("Cache-Control", "no-cache")
-	req := &ServeReq{}
+	req := &msg_serve.ServeReq{}
 	err := ctx.BodyParser(req)
 	if err != nil {
-		resp := &ServeResp{
+		resp := &msg_serve.ServeResp{
 			Status_: fmt.Sprintf("kernelBusHttp.postSendRequest(): err=\n\t%v", err),
 			Uuid_:   req.Uuid_,
 		}
@@ -200,10 +142,10 @@ func (sf *kBusHttp) postSendRequest(ctx *fiber.Ctx) error {
 }
 
 // Обрабатывает входящий запрос
-func (sf *kBusHttp) processSendRequest(req *ServeReq) *ServeResp {
+func (sf *kBusHttp) processSendRequest(req *msg_serve.ServeReq) *msg_serve.ServeResp {
 	req.SelfCheck()
 	binResp, err := sf.SendRequest(req.Topic_, req.BinReq_)
-	resp := &ServeResp{
+	resp := &msg_serve.ServeResp{
 		Status_:  "ok",
 		Uuid_:    req.Uuid_,
 		BinResp_: binResp,
@@ -215,34 +157,16 @@ func (sf *kBusHttp) processSendRequest(req *ServeReq) *ServeResp {
 	return resp
 }
 
-// UnsubReq -- запрос на отписку от топика
-type UnsubReq struct {
-	Name_ AHandlerName `json:"name"` // Уникальная метка подписки
-	Uuid_ string       `json:"uuid"`
-}
-
-// SelfCheck -- проверка запроса на правильность полей
-func (sf *UnsubReq) SelfCheck() {
-	Hassert(sf.Name_ != "", "UnsubReq.SelfCheck(): name is empty")
-	Hassert(sf.Uuid_ != "", "UnsubReq.SelfCheck(): uuid is empty")
-}
-
-// UnsubResp -- ответ на запрос отписки
-type UnsubResp struct {
-	Status_ string `json:"status"`
-	Uuid_   string `json:"uuid"`
-}
-
 // Входящая отписка от топика по HTTP
 func (sf *kBusHttp) postUnsub(ctx *fiber.Ctx) error {
 	sf.log.Debug("kBusHttp.postUnsub()")
 	ctx.Set("Content-type", "text/html; charset=utf8")
 	ctx.Set("Content-type", "text/json")
 	ctx.Set("Cache-Control", "no-cache")
-	req := &UnsubReq{}
+	req := &msg_unsub.UnsubReq{}
 	err := ctx.BodyParser(req)
 	if err != nil {
-		resp := &ServeResp{
+		resp := &msg_serve.ServeResp{
 			Status_: fmt.Sprintf("kernelBusHttp.postSendRequest(): err=\n\t%v", err),
 			Uuid_:   req.Uuid_,
 		}
@@ -255,10 +179,10 @@ func (sf *kBusHttp) postUnsub(ctx *fiber.Ctx) error {
 }
 
 // Процесс отписки от топика
-func (sf *kBusHttp) processUnsubRequest(req *UnsubReq) *UnsubResp {
+func (sf *kBusHttp) processUnsubRequest(req *msg_unsub.UnsubReq) *msg_unsub.UnsubResp {
 	req.SelfCheck()
 	_hand := sf.Ctx_.Get(string(req.Name_))
-	resp := &UnsubResp{
+	resp := &msg_unsub.UnsubResp{
 		Status_: "ok",
 		Uuid_:   req.Uuid_,
 	}

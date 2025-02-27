@@ -8,6 +8,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_pub"
+	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_serve"
+	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_sub"
+	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_unsub"
 	"github.com/prospero78/kern/krn/kctx"
 	"github.com/prospero78/kern/krn/kserv_http"
 	"github.com/prospero78/kern/mock/mock_env"
@@ -51,7 +55,7 @@ func (sf *tester) unsubGood2() {
 	if err != nil {
 		sf.t.Fatalf("unsubGood1(): err=%v", err)
 	}
-	req := &UnsubReq{
+	req := &msg_unsub.UnsubReq{
 		Name_: sf.handSub.Name_,
 		Uuid_: "test_uuid",
 	}
@@ -72,7 +76,7 @@ func (sf *tester) unsubGood2() {
 	}
 	defer _resp.Body.Close()
 	binBody, _ := io.ReadAll(_resp.Body)
-	resp := &UnsubResp{}
+	resp := &msg_unsub.UnsubResp{}
 	err = json.Unmarshal(binBody, resp)
 	if err != nil {
 		sf.t.Fatalf("unsubGood2(): err=%v", err)
@@ -109,7 +113,7 @@ func (sf *tester) unsubGood1() {
 	if err != nil {
 		sf.t.Fatalf("unsubGood1(): err=%v", err)
 	}
-	req := &UnsubReq{
+	req := &msg_unsub.UnsubReq{
 		Name_: sf.handSub.Name_,
 		Uuid_: "test_uuid",
 	}
@@ -123,7 +127,7 @@ func (sf *tester) unsubGood1() {
 func (sf *tester) unsubBad2() {
 	sf.t.Log("unsubBad2")
 	bus.Unsubscribe(sf.handSub)
-	req := &UnsubReq{
+	req := &msg_unsub.UnsubReq{
 		Name_: sf.handSub.Name_,
 		Uuid_: "test_uuid",
 	}
@@ -141,7 +145,7 @@ func (sf *tester) unsubBad1() {
 			sf.t.Fatalf("unsubBad1(): panic==nil")
 		}
 	}()
-	req := &UnsubReq{}
+	req := &msg_unsub.UnsubReq{}
 	_ = bus.processUnsubRequest(req)
 }
 
@@ -157,7 +161,7 @@ func (sf *tester) pub() {
 
 func (sf *tester) pubGood2() {
 	sf.t.Log("pubGood2")
-	req := &PublishReq{
+	req := &msg_pub.PublishReq{
 		Topic_: "topic_sub",
 		Uuid_:  "test_uuid",
 		BinMsg: []byte("http_pub"),
@@ -179,7 +183,7 @@ func (sf *tester) pubGood2() {
 	}
 	defer _resp.Body.Close()
 	binBody, _ := io.ReadAll(_resp.Body)
-	resp := &PublishResp{}
+	resp := &msg_pub.PublishResp{}
 	err = json.Unmarshal(binBody, resp)
 	if err != nil {
 		sf.t.Fatalf("pubGood2(): err=%v", err)
@@ -216,7 +220,7 @@ func (sf *tester) pubBad2() {
 	bus.IsWork_.Reset()
 	defer bus.IsWork_.Set()
 
-	req := &PublishReq{
+	req := &msg_pub.PublishReq{
 		Topic_: "topic_sub",
 		Uuid_:  "test_uuid",
 		BinMsg: []byte("test_pub"),
@@ -234,7 +238,7 @@ func (sf *tester) pubGood1() {
 	if err != nil {
 		sf.t.Fatalf("pubGood1(): err=%v", err)
 	}
-	req := &PublishReq{
+	req := &msg_pub.PublishReq{
 		Topic_: "topic_sub",
 		Uuid_:  "test_uuid",
 		BinMsg: []byte("test_pub"),
@@ -266,7 +270,7 @@ func (sf *tester) pubBad1() {
 			sf.t.Fatalf("pubBad1(): panic==nil")
 		}
 	}()
-	req := &PublishReq{}
+	req := &msg_pub.PublishReq{}
 	_ = bus.processPublish(req)
 }
 
@@ -283,7 +287,7 @@ func (sf *tester) sub() {
 // Полный процесс подписки
 func (sf *tester) subGood2() {
 	sf.t.Log("subGood2")
-	req := &SubscribeReq{
+	req := &msg_sub.SubscribeReq{
 		Topic_:   "topic_serv",
 		Uuid_:    "test_uuid",
 		WebHook_: "http://localhost:18200/bus/pub/",
@@ -305,7 +309,7 @@ func (sf *tester) subGood2() {
 	}
 	defer _resp.Body.Close()
 	binBody, _ := io.ReadAll(_resp.Body)
-	resp := &SubscribeResp{}
+	resp := &msg_sub.SubscribeResp{}
 	err = json.Unmarshal(binBody, resp)
 	if err != nil {
 		sf.t.Fatalf("subBad1(): err=%v", err)
@@ -318,7 +322,7 @@ func (sf *tester) subGood2() {
 // Отключена базовая шина
 func (sf *tester) subBad3() {
 	sf.t.Log("subBad3")
-	req := &SubscribeReq{
+	req := &msg_sub.SubscribeReq{
 		Topic_:   "topic_serv",
 		Uuid_:    "test_uuid",
 		WebHook_: "http://localhost:18200/bus/pub/",
@@ -340,7 +344,7 @@ func (sf *tester) subBad3() {
 // Проверка полей запроса в процессе подписки
 func (sf *tester) subGood1() {
 	sf.t.Log("subGood1")
-	req := &SubscribeReq{
+	req := &msg_sub.SubscribeReq{
 		Topic_:   "topic_serv",
 		Uuid_:    "test_uuid",
 		WebHook_: "http://localhost:18200/bus/",
@@ -356,7 +360,7 @@ func (sf *tester) subGood1() {
 // Проверка кривых полей запроса в процессе подписки
 func (sf *tester) subBad2() {
 	sf.t.Log("subBad2")
-	req := &SubscribeReq{
+	req := &msg_sub.SubscribeReq{
 		Topic_: "",
 	}
 	defer func() {
@@ -403,7 +407,7 @@ func (sf *tester) reqBad4() {
 	sf.t.Log("reqBad4")
 	sf.handServ.IsBad_.Set()
 	defer sf.handServ.IsBad_.Reset()
-	req := &ServeReq{
+	req := &msg_serve.ServeReq{
 		Topic_:  sf.handServ.Topic_,
 		Uuid_:   "test_uuid",
 		BinReq_: []byte("test_msg"),
@@ -425,7 +429,7 @@ func (sf *tester) reqBad4() {
 	}
 	defer _resp.Body.Close()
 	binBody, _ := io.ReadAll(_resp.Body)
-	resp := &ServeResp{}
+	resp := &msg_serve.ServeResp{}
 	err = json.Unmarshal(binBody, resp)
 	if err != nil {
 		sf.t.Fatalf("reqBad4(): err=%v", err)
@@ -437,7 +441,7 @@ func (sf *tester) reqBad4() {
 
 func (sf *tester) reqGood1() {
 	sf.t.Log("reqGood1")
-	req := &ServeReq{
+	req := &msg_serve.ServeReq{
 		Topic_:  sf.handServ.Topic_,
 		Uuid_:   "test_uuid",
 		BinReq_: []byte("test_msg"),
@@ -459,7 +463,7 @@ func (sf *tester) reqGood1() {
 	}
 	defer _resp.Body.Close()
 	binBody, _ := io.ReadAll(_resp.Body)
-	resp := &ServeResp{}
+	resp := &msg_serve.ServeResp{}
 	err = json.Unmarshal(binBody, resp)
 	if err != nil {
 		sf.t.Fatalf("reqGood1(): err=%v", err)
@@ -472,7 +476,7 @@ func (sf *tester) reqGood1() {
 // Нет такого топика для запросов
 func (sf *tester) reqBad3() {
 	sf.t.Log("reqBad3")
-	req := &ServeReq{
+	req := &msg_serve.ServeReq{
 		Topic_:  "bad_topic",
 		Uuid_:   "test_uuid",
 		BinReq_: []byte("test_msg"),
