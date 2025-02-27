@@ -38,7 +38,7 @@ func (sf *tester) newGood1() {
 	if create := msg.CreateAt(); create == "" {
 		sf.t.Fatalf("newGood1(): create is empty")
 	}
-	if str := msg.String(); !strings.Contains(str,"ERRO   2") {
+	if str := msg.String(); !strings.Contains(str, "ERRO   2") {
 		sf.t.Fatalf("newGood1(): str(%v)!=`ERRO   2`", str)
 	}
 }

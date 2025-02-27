@@ -30,4 +30,6 @@ type ILocalCtx interface {
 	Cancel()
 	// Done -- ожидает отмены контекста
 	Done()
+	// Log -- возвращает буфер сообщений
+	Log() ILogBuf
 }

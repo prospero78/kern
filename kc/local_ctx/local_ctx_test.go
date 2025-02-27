@@ -66,6 +66,7 @@ func (sf *tester) newGood1() {
 	sf.t.Log("newGood1")
 	ctx := context.Background()
 	sf.ctx = NewLocalCtx(ctx).(*localCtx)
+	_ = sf.ctx.Log()
 }
 
 // Нет контекста ядра
