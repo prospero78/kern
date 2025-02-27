@@ -2,16 +2,16 @@
 package kern
 
 import (
-	. "github.com/prospero78/kern/kernel_alias"
-	"github.com/prospero78/kern/kernel_bus/kernel_bus_http"
-	"github.com/prospero78/kern/kernel_bus/kernel_bus_local"
-	"github.com/prospero78/kern/kernel_ctx"
-	"github.com/prospero78/kern/kernel_module"
-	"github.com/prospero78/kern/kernel_monolit"
-	"github.com/prospero78/kern/kernel_serv_http"
-	"github.com/prospero78/kern/kernel_store"
-	. "github.com/prospero78/kern/kernel_types"
-	"github.com/prospero78/kern/safe_bool"
+	"github.com/prospero78/kern/kc/safe_bool"
+	. "github.com/prospero78/kern/krn/kalias"
+	"github.com/prospero78/kern/krn/kbus/kbus_http"
+	"github.com/prospero78/kern/krn/kbus/kbus_local"
+	"github.com/prospero78/kern/krn/kernel_ctx"
+	"github.com/prospero78/kern/krn/kernel_serv_http"
+	"github.com/prospero78/kern/krn/kernel_store"
+	"github.com/prospero78/kern/krn/kmodule"
+	"github.com/prospero78/kern/krn/kmonolit"
+	. "github.com/prospero78/kern/krn/ktypes"
 )
 
 // NewKernelCtx -- возвращает контекст ядра
@@ -40,36 +40,36 @@ func NewSafeBool() ISafeBool {
 
 // NewKernelBusLocal -- возвращает локальную шину данных
 func NewKernelBusLocal() IKernelBus {
-	bus := kernel_bus_local.GetKernelBusLocal()
+	bus := kbus_local.GetKernelBusLocal()
 	return bus
 }
 
 // NewKernelBusHttp -- возвращает HTTP шину данных
 func NewKernelBusHttp() IKernelBus {
-	bus := kernel_bus_http.GetKernelBusHttp()
+	bus := kbus_http.GetKernelBusHttp()
 	return bus
 }
 
 // NewMonolitLocal -- возвращает монолит с локальной шиной
 func NewMonolitLocal() IKernelMonolit {
 	ctx := kernel_ctx.GetKernelCtx()
-	_ = kernel_bus_local.GetKernelBusLocal()
+	_ = kbus_local.GetKernelBusLocal()
 	ctx.Set("isLocal", true)
-	monolit := kernel_monolit.NewMonolit()
+	monolit := kmonolit.NewMonolit()
 	return monolit
 }
 
 // NewMonolitHttp -- возвращает монолит с локальной шиной поверх HTTP
 func NewMonolitHttp() IKernelMonolit {
 	ctx := kernel_ctx.GetKernelCtx()
-	_ = kernel_bus_http.GetKernelBusHttp()
+	_ = kbus_http.GetKernelBusHttp()
 	ctx.Set("isLocal", false)
-	monolit := kernel_monolit.NewMonolit()
+	monolit := kmonolit.NewMonolit()
 	return monolit
 }
 
 // NewKernelModule -- возвращает новый модуль на ядре
 func NewKernelModule(name AModuleName) IKernelModule {
-	mod := kernel_module.NewKernelModule(name)
+	mod := kmodule.NewKernelModule(name)
 	return mod
 }

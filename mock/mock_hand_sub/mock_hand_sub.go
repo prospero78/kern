@@ -5,9 +5,9 @@ import (
 	"crypto/rand"
 	"sync"
 
-	. "github.com/prospero78/kern/helpers"
-	. "github.com/prospero78/kern/kernel_alias"
-	. "github.com/prospero78/kern/kernel_types"
+	. "github.com/prospero78/kern/kc/helpers"
+	. "github.com/prospero78/kern/krn/kalias"
+	. "github.com/prospero78/kern/krn/ktypes"
 )
 
 type MockHandlerSub struct {

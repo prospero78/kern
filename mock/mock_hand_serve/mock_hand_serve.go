@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"sync"
 
-	. "github.com/prospero78/kern/helpers"
-	. "github.com/prospero78/kern/kernel_alias"
-	. "github.com/prospero78/kern/kernel_types"
-	"github.com/prospero78/kern/safe_bool"
+	. "github.com/prospero78/kern/kc/helpers"
+	"github.com/prospero78/kern/kc/safe_bool"
+	. "github.com/prospero78/kern/krn/kalias"
+	. "github.com/prospero78/kern/krn/ktypes"
 )
 
 // MockHandlerServe -- мок-обработчик входящих запросов
