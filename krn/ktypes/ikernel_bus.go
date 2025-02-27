@@ -83,3 +83,8 @@ type IKernelBus interface {
 	// Log -- возвращает буферный лог
 	Log() ILogBuf
 }
+
+// IClientBus -- интерфейс клиента к шину
+type IClientBus interface {
+	IKernelBus
+}
