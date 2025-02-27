@@ -12,6 +12,6 @@ type IKernelModule interface {
 	IsWork() bool
 	// Name -- возвращает уникальное имя модуля
 	Name() AModuleName
-	// Ctx -- возвращает контекст ядра
-	Ctx() IKernelCtx
+	// Ctx -- возвращает контекст модуля
+	Ctx() ILocalCtx
 }
