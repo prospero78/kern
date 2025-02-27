@@ -8,7 +8,7 @@ import (
 	. "github.com/prospero78/kern/kc/helpers"
 	"github.com/prospero78/kern/kc/safe_bool"
 	. "github.com/prospero78/kern/krn/kalias"
-	"github.com/prospero78/kern/krn/kernel_ctx"
+	"github.com/prospero78/kern/krn/kctx"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
@@ -24,7 +24,7 @@ type kernMonolit struct {
 
 // NewMonolit -- возвращает новый монолит
 func NewMonolit() IKernelMonolit {
-	ctx := kernel_ctx.GetKernelCtx()
+	ctx := kctx.GetKernelCtx()
 	sf := &kernMonolit{
 		ctx:     ctx,
 		dict:    map[AModuleName]IKernelModule{},

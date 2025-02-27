@@ -1,10 +1,10 @@
-package kernel_serv_http
+package kserv_http
 
 import (
 	"testing"
 	"time"
 
-	"github.com/prospero78/kern/krn/kernel_ctx"
+	"github.com/prospero78/kern/krn/kctx"
 	. "github.com/prospero78/kern/krn/ktypes"
 
 	// . "github.com/prospero78/kern/helpers"
@@ -19,7 +19,7 @@ type tester struct {
 }
 
 func TestKernelServHttp(t *testing.T) {
-	ctx := kernel_ctx.GetKernelCtx()
+	ctx := kctx.GetKernelCtx()
 	sf := &tester{
 		t:   t,
 		ctx: ctx,

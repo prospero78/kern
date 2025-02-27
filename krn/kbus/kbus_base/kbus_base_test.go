@@ -3,7 +3,7 @@ package kbus_base
 import (
 	"testing"
 
-	"github.com/prospero78/kern/krn/kernel_ctx"
+	"github.com/prospero78/kern/krn/kctx"
 	. "github.com/prospero78/kern/krn/ktypes"
 	"github.com/prospero78/kern/mock/mock_hand_serve"
 	"github.com/prospero78/kern/mock/mock_hand_sub"
@@ -149,7 +149,7 @@ func (sf *tester) new() {
 // Закрытие шины
 func (sf *tester) close() {
 	sf.t.Log("close")
-	ctx := kernel_ctx.GetKernelCtx()
+	ctx := kctx.GetKernelCtx()
 	ctx.Cancel()
 	ctx.Wg().Wait()
 	sf.bus.(*KernelBusBase).close()

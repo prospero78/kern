@@ -6,8 +6,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/prospero78/kern/krn/kernel_ctx"
-	"github.com/prospero78/kern/krn/kernel_serv_http"
+	"github.com/prospero78/kern/krn/kctx"
+	"github.com/prospero78/kern/krn/kserv_http"
 	"github.com/prospero78/kern/mock/mock_env"
 )
 
@@ -23,7 +23,7 @@ func TestHandlerHttpSub(t *testing.T) {
 	}
 	sf.new()
 	sf.back()
-	ctx := kernel_ctx.GetKernelCtx()
+	ctx := kctx.GetKernelCtx()
 	ctx.Cancel()
 	ctx.Wg().Wait()
 }
@@ -44,7 +44,7 @@ func (sf *tester) backGood1() {
 func (sf *tester) backBad2() {
 	sf.t.Log("backBad2")
 	_ = mock_env.MakeEnv()
-	kernServ := kernel_serv_http.GetKernelServHttp()
+	kernServ := kserv_http.GetKernelServHttp()
 	fiberApp := kernServ.Fiber()
 	sf.hand.webHook = "http://localhost:18200/test/local"
 	fiberApp.Post("/test/local", sf.testLocal)

@@ -3,7 +3,7 @@ package dict_topic_serve
 import (
 	"testing"
 
-	"github.com/prospero78/kern/krn/kernel_ctx"
+	"github.com/prospero78/kern/krn/kctx"
 	"github.com/prospero78/kern/mock/mock_hand_serve"
 )
 
@@ -33,7 +33,7 @@ func TestDictSub(t *testing.T) {
 // Работа ядра завершена
 func (sf *tester) callBad3() {
 	sf.t.Log("callBad3")
-	ctx := kernel_ctx.GetKernelCtx()
+	ctx := kctx.GetKernelCtx()
 	ctx.Cancel()
 	ctx.Wg().Wait()
 	sf.dict.Register(sf.hand)

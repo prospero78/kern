@@ -1,13 +1,13 @@
-// package kernel_ctx -- контекст ядра
-package kernel_ctx
+// package kctx -- контекст ядра
+package kctx
 
 import (
 	"context"
 	"log"
 	"sync"
 
-	"github.com/prospero78/kern/krn/kernel_ctx/kernel_keeper"
-	"github.com/prospero78/kern/krn/kernel_ctx/kernel_wg"
+	"github.com/prospero78/kern/krn/kctx/kernel_keeper"
+	"github.com/prospero78/kern/krn/kctx/kwg"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
@@ -42,7 +42,7 @@ func GetKernelCtx() IKernelCtx {
 		fnCancel: fnCancel,
 		dictVal:  map[string]interface{}{},
 	}
-	sf.kernWg = kernel_wg.GetKernelWg(sf.ctx)
+	sf.kernWg = kwg.GetKernelWg(sf.ctx)
 	sf.kernKeeper = kernel_keeper.GetKernelKeeper(sf.ctx, sf.fnCancel, sf.kernWg)
 	kernCtx = sf
 	return kernCtx

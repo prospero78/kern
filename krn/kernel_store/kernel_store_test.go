@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/prospero78/kern/krn/kernel_ctx"
+	"github.com/prospero78/kern/krn/kctx"
 	. "github.com/prospero78/kern/krn/ktypes"
 	"github.com/prospero78/kern/mock/mock_env"
 )
@@ -18,7 +18,7 @@ type tester struct {
 }
 
 func TestKernelStore(t *testing.T) {
-	ctx := kernel_ctx.GetKernelCtx()
+	ctx := kctx.GetKernelCtx()
 	sf := &tester{
 		t:   t,
 		me:  mock_env.MakeEnv(),

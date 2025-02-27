@@ -7,7 +7,7 @@ import (
 	. "github.com/prospero78/kern/kc/helpers"
 	. "github.com/prospero78/kern/krn/kalias"
 	"github.com/prospero78/kern/krn/kbus/dict_sub_hook"
-	"github.com/prospero78/kern/krn/kernel_ctx"
+	"github.com/prospero78/kern/krn/kctx"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
@@ -21,7 +21,7 @@ type dictTopicSub struct {
 // NewDictTopicSub -- возвращает потокобезопасный словарь подписчиков
 func NewDictTopicSub() IDictTopicSub {
 	sf := &dictTopicSub{
-		ctx:           kernel_ctx.GetKernelCtx(),
+		ctx:           kctx.GetKernelCtx(),
 		dictTopicHook: map[ATopic]IDictSubHook{},
 	}
 	return sf

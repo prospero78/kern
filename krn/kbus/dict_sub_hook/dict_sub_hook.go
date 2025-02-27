@@ -6,7 +6,7 @@ import (
 
 	. "github.com/prospero78/kern/kc/helpers"
 	. "github.com/prospero78/kern/krn/kalias"
-	"github.com/prospero78/kern/krn/kernel_ctx"
+	"github.com/prospero78/kern/krn/kctx"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
@@ -20,7 +20,7 @@ type dictSubHook struct {
 // NewDictSubHook -- возвращает новый словарь веб-хуков одного топика
 func NewDictSubHook() IDictSubHook {
 	sf := &dictSubHook{
-		ctx:  kernel_ctx.GetKernelCtx(),
+		ctx:  kctx.GetKernelCtx(),
 		dict: map[AHandlerName]bool{},
 	}
 	return sf

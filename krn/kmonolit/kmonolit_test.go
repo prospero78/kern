@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	. "github.com/prospero78/kern/krn/kalias"
-	"github.com/prospero78/kern/krn/kernel_ctx"
+	"github.com/prospero78/kern/krn/kctx"
 	"github.com/prospero78/kern/krn/kmodule"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
@@ -26,7 +26,7 @@ func TestKernMono(t *testing.T) {
 
 func (sf *tester) done() {
 	sf.t.Log("done")
-	ctx := kernel_ctx.GetKernelCtx()
+	ctx := kctx.GetKernelCtx()
 	ctx.Cancel()
 	ctx.Wg().Wait()
 	sf.mon.(*kernMonolit).close()
@@ -83,7 +83,7 @@ func (sf *tester) newGood1() {
 			sf.t.Fatalf("newGood1(): panic=%v", _panic)
 		}
 	}()
-	ctx := kernel_ctx.GetKernelCtx()
+	ctx := kctx.GetKernelCtx()
 	ctx.Set("isLocal", true)
 	sf.mon = NewMonolit()
 	isLocal := sf.mon.IsLocal()

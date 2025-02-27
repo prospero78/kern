@@ -1,4 +1,4 @@
-package kernel_ctx
+package kctx
 
 import (
 	"testing"

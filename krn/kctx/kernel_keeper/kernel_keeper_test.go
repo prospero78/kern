@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/prospero78/kern/krn/kernel_ctx/kernel_wg"
+	"github.com/prospero78/kern/krn/kctx/kwg"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
@@ -20,7 +20,7 @@ type tester struct {
 func TestKernelKeeper(t *testing.T) {
 	ctxBg := context.Background()
 	ctx, fnCancel := context.WithCancel(ctxBg)
-	wg := kernel_wg.GetKernelWg(ctx)
+	wg := kwg.GetKernelWg(ctx)
 	defer fnCancel()
 	sf := &tester{
 		t:        t,

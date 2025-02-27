@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/prospero78/kern/krn/kernel_serv_http"
+	"github.com/prospero78/kern/krn/kserv_http"
 	"github.com/prospero78/kern/mock/mock_env"
 	"github.com/prospero78/kern/mock/mock_hand_serve"
 	"github.com/prospero78/kern/mock/mock_hand_sub"
@@ -54,7 +54,7 @@ func (sf *tester) unsubGood2() {
 	}
 	binReq, _ := json.MarshalIndent(req, "", "  ")
 	body := strings.NewReader(string(binReq))
-	fibApp := kernel_serv_http.GetKernelServHttp().Fiber()
+	fibApp := kserv_http.GetKernelServHttp().Fiber()
 	hReq, err := http.NewRequest("POST", "/bus/unsub", body)
 	hReq.Header.Add("Content-Type", "application/json")
 	if err != nil {
@@ -85,7 +85,7 @@ func (sf *tester) unsubBad3() {
 	req := "tra-la-la"
 	binReq, _ := json.MarshalIndent(req, "", "  ")
 	body := strings.NewReader(string(binReq))
-	fibApp := kernel_serv_http.GetKernelServHttp().Fiber()
+	fibApp := kserv_http.GetKernelServHttp().Fiber()
 	hReq, err := http.NewRequest("POST", "/bus/unsub", body)
 	hReq.Header.Add("Content-Type", "application/json")
 	if err != nil {
@@ -161,7 +161,7 @@ func (sf *tester) pubGood2() {
 	}
 	binReq, _ := json.MarshalIndent(req, "", "  ")
 	body := strings.NewReader(string(binReq))
-	fibApp := kernel_serv_http.GetKernelServHttp().Fiber()
+	fibApp := kserv_http.GetKernelServHttp().Fiber()
 	hReq, err := http.NewRequest("POST", "/bus/pub", body)
 	hReq.Header.Add("Content-Type", "application/json")
 	if err != nil {
@@ -192,7 +192,7 @@ func (sf *tester) pubBad3() {
 	req := "tra-la-la"
 	binReq, _ := json.MarshalIndent(req, "", "  ")
 	body := strings.NewReader(string(binReq))
-	fibApp := kernel_serv_http.GetKernelServHttp().Fiber()
+	fibApp := kserv_http.GetKernelServHttp().Fiber()
 	hReq, err := http.NewRequest("POST", "/bus/pub", body)
 	hReq.Header.Add("Content-Type", "application/json")
 	if err != nil {
@@ -287,7 +287,7 @@ func (sf *tester) subGood2() {
 	}
 	binReq, _ := json.MarshalIndent(req, "", "  ")
 	body := strings.NewReader(string(binReq))
-	fibApp := kernel_serv_http.GetKernelServHttp().Fiber()
+	fibApp := kserv_http.GetKernelServHttp().Fiber()
 	hReq, err := http.NewRequest("POST", "/bus/sub", body)
 	hReq.Header.Add("Content-Type", "application/json")
 	if err != nil {
@@ -370,7 +370,7 @@ func (sf *tester) subBad1() {
 	req := "tra-ta-ta"
 	binReq, _ := json.MarshalIndent(req, "", "  ")
 	body := strings.NewReader(string(binReq))
-	fibApp := kernel_serv_http.GetKernelServHttp().Fiber()
+	fibApp := kserv_http.GetKernelServHttp().Fiber()
 	hReq, err := http.NewRequest("POST", "/bus/sub", body)
 	hReq.Header.Add("Content-Type", "application/json")
 	if err != nil {
@@ -424,7 +424,7 @@ func (sf *tester) reqBad4() {
 	}
 	binReq, _ := json.MarshalIndent(req, "", "  ")
 	body := strings.NewReader(string(binReq))
-	fibApp := kernel_serv_http.GetKernelServHttp().Fiber()
+	fibApp := kserv_http.GetKernelServHttp().Fiber()
 	hReq, err := http.NewRequest("POST", "/bus/request", body)
 	hReq.Header.Add("Content-Type", "application/json")
 	if err != nil {
@@ -458,7 +458,7 @@ func (sf *tester) reqGood1() {
 	}
 	binReq, _ := json.MarshalIndent(req, "", "  ")
 	body := strings.NewReader(string(binReq))
-	fibApp := kernel_serv_http.GetKernelServHttp().Fiber()
+	fibApp := kserv_http.GetKernelServHttp().Fiber()
 	hReq, err := http.NewRequest("POST", "/bus/request", body)
 	hReq.Header.Add("Content-Type", "application/json")
 	if err != nil {
@@ -493,7 +493,7 @@ func (sf *tester) reqBad3() {
 	}
 	binReq, _ := json.MarshalIndent(req, "", "  ")
 	body := strings.NewReader(string(binReq))
-	fibApp := kernel_serv_http.GetKernelServHttp().Fiber()
+	fibApp := kserv_http.GetKernelServHttp().Fiber()
 	hReq, err := http.NewRequest("POST", "/bus/request", body)
 	if err != nil {
 		sf.t.Fatalf("reqBad3(): err=%v", err)
@@ -511,7 +511,7 @@ func (sf *tester) reqBad3() {
 func (sf *tester) reqBad2() {
 	sf.t.Log("reqBad1")
 	body := strings.NewReader("test_msg")
-	fibApp := kernel_serv_http.GetKernelServHttp().Fiber()
+	fibApp := kserv_http.GetKernelServHttp().Fiber()
 	hReq, err := http.NewRequest("POST", "/bus/request", body)
 	if err != nil {
 		sf.t.Fatalf("reqBad1(): err=%v", err)

@@ -12,7 +12,7 @@ import (
 
 	. "github.com/prospero78/kern/kc/helpers"
 	"github.com/prospero78/kern/kc/safe_bool"
-	"github.com/prospero78/kern/krn/kernel_ctx"
+	"github.com/prospero78/kern/krn/kctx"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
@@ -44,7 +44,7 @@ func GetKernelStore() IKernelStore {
 	if kernStore != nil {
 		return kernStore
 	}
-	ctx := kernel_ctx.GetKernelCtx()
+	ctx := kctx.GetKernelCtx()
 	sf := &kernelStore{
 		ctx:    ctx,
 		wg:     ctx.Wg(),

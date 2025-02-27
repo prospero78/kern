@@ -4,7 +4,7 @@ package kmodule
 import (
 	. "github.com/prospero78/kern/kc/helpers"
 	. "github.com/prospero78/kern/krn/kalias"
-	"github.com/prospero78/kern/krn/kernel_ctx"
+	"github.com/prospero78/kern/krn/kctx"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
@@ -18,7 +18,7 @@ type kernelModule struct {
 func NewKernelModule(name AModuleName) IKernelModule {
 	Hassert(name != "", "NewKernelModule(): name is empty")
 	sf := &kernelModule{
-		ctx:  kernel_ctx.GetKernelCtx(),
+		ctx:  kctx.GetKernelCtx(),
 		name: name,
 	}
 	return sf

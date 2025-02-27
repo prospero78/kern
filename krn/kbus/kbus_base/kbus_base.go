@@ -11,7 +11,7 @@ import (
 	. "github.com/prospero78/kern/krn/kalias"
 	"github.com/prospero78/kern/krn/kbus/dict_topic_serve"
 	"github.com/prospero78/kern/krn/kbus/dict_topic_sub"
-	"github.com/prospero78/kern/krn/kernel_ctx"
+	"github.com/prospero78/kern/krn/kctx"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
@@ -37,7 +37,7 @@ func GetKernelBusBase() *KernelBusBase {
 	if Bus_ != nil {
 		return Bus_
 	}
-	ctx := kernel_ctx.GetKernelCtx()
+	ctx := kctx.GetKernelCtx()
 	Bus_ = &KernelBusBase{
 		Ctx_:      ctx,
 		IsWork_:   safe_bool.NewSafeBool(),

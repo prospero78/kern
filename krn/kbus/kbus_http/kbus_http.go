@@ -11,8 +11,8 @@ import (
 	. "github.com/prospero78/kern/krn/kalias"
 	"github.com/prospero78/kern/krn/kbus/kbus_base"
 	"github.com/prospero78/kern/krn/kbus/kbus_http/handler_http_sub"
-	"github.com/prospero78/kern/krn/kernel_ctx"
-	"github.com/prospero78/kern/krn/kernel_serv_http"
+	"github.com/prospero78/kern/krn/kctx"
+	"github.com/prospero78/kern/krn/kserv_http"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
@@ -30,12 +30,12 @@ func GetKernelBusHttp() IKernelBus {
 	if bus != nil {
 		return bus
 	}
-	ctx := kernel_ctx.GetKernelCtx()
+	ctx := kctx.GetKernelCtx()
 	bus = &kernelBusHttp{
 		KernelBusBase: kbus_base.GetKernelBusBase(),
 	}
 	ctx.Set("kernBus", bus)
-	fibApp := kernel_serv_http.GetKernelServHttp().Fiber()
+	fibApp := kserv_http.GetKernelServHttp().Fiber()
 	fibApp.Post("/bus/sub", bus.postSub)             // Топик подписки, IN
 	fibApp.Post("/bus/unsub", bus.postUnsub)         // Топик отписки, IN
 	fibApp.Post("/bus/request", bus.postSendRequest) // Топик входящих запросов, IN

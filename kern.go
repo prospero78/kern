@@ -6,17 +6,17 @@ import (
 	. "github.com/prospero78/kern/krn/kalias"
 	"github.com/prospero78/kern/krn/kbus/kbus_http"
 	"github.com/prospero78/kern/krn/kbus/kbus_local"
-	"github.com/prospero78/kern/krn/kernel_ctx"
-	"github.com/prospero78/kern/krn/kernel_serv_http"
+	"github.com/prospero78/kern/krn/kctx"
 	"github.com/prospero78/kern/krn/kernel_store"
 	"github.com/prospero78/kern/krn/kmodule"
 	"github.com/prospero78/kern/krn/kmonolit"
+	"github.com/prospero78/kern/krn/kserv_http"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
 // NewKernelCtx -- возвращает контекст ядра
 func NewKernelCtx() IKernelCtx {
-	ctx := kernel_ctx.GetKernelCtx()
+	ctx := kctx.GetKernelCtx()
 	return ctx
 }
 
@@ -28,7 +28,7 @@ func NewKernelStore() IKernelStore {
 
 // NewKernelServerHttp -- возвращает веб-сервер ядра
 func NewKernelServerHttp() IKernelServerHttp {
-	kernServHttp := kernel_serv_http.GetKernelServHttp()
+	kernServHttp := kserv_http.GetKernelServHttp()
 	return kernServHttp
 }
 
@@ -52,7 +52,7 @@ func NewKernelBusHttp() IKernelBus {
 
 // NewMonolitLocal -- возвращает монолит с локальной шиной
 func NewMonolitLocal() IKernelMonolit {
-	ctx := kernel_ctx.GetKernelCtx()
+	ctx := kctx.GetKernelCtx()
 	_ = kbus_local.GetKernelBusLocal()
 	ctx.Set("isLocal", true)
 	monolit := kmonolit.NewMonolit()
@@ -61,7 +61,7 @@ func NewMonolitLocal() IKernelMonolit {
 
 // NewMonolitHttp -- возвращает монолит с локальной шиной поверх HTTP
 func NewMonolitHttp() IKernelMonolit {
-	ctx := kernel_ctx.GetKernelCtx()
+	ctx := kctx.GetKernelCtx()
 	_ = kbus_http.GetKernelBusHttp()
 	ctx.Set("isLocal", false)
 	monolit := kmonolit.NewMonolit()

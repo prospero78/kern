@@ -1,4 +1,4 @@
-package kernel_wg
+package kwg
 
 import (
 	"context"
