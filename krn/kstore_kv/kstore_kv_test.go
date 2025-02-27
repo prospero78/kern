@@ -1,4 +1,4 @@
-package kernel_store
+package kstore_kv
 
 import (
 	"os"

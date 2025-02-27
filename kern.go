@@ -7,10 +7,10 @@ import (
 	"github.com/prospero78/kern/krn/kbus/kbus_http"
 	"github.com/prospero78/kern/krn/kbus/kbus_local"
 	"github.com/prospero78/kern/krn/kctx"
-	"github.com/prospero78/kern/krn/kernel_store"
 	"github.com/prospero78/kern/krn/kmodule"
 	"github.com/prospero78/kern/krn/kmonolit"
 	"github.com/prospero78/kern/krn/kserv_http"
+	"github.com/prospero78/kern/krn/kstore_kv"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
@@ -20,9 +20,9 @@ func NewKernelCtx() IKernelCtx {
 	return ctx
 }
 
-// NewKernelStore -- возвращает хранилище ядра
-func NewKernelStore() IKernelStoreKv {
-	store := kernel_store.GetKernelStore()
+// NewKernelStoreKv -- возвращает быстрое key-value хранилище ядра
+func NewKernelStoreKv() IKernelStoreKv {
+	store := kstore_kv.GetKernelStore()
 	return store
 }
 

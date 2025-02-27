@@ -46,7 +46,7 @@ func (sf *tester) new() {
 	if ctx == nil {
 		sf.t.Fatalf("new(): IKernelCtx==nil")
 	}
-	store := NewKernelStore()
+	store := NewKernelStoreKv()
 	err := store.Delete("test_builders")
 	if err != nil {
 		sf.t.Fatalf("new(): get empty key, store, err=%v", err)

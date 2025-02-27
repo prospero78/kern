@@ -1,5 +1,5 @@
-// package kernel_store -- локальное хранилище ядра
-package kernel_store
+// package kstore_kv -- локальное быстрое key-value хранилище ядра
+package kstore_kv
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	storeStreamName = "kernel_store" // Имя потока для ожидателя потоков
+	storeStreamName = "kstore_kv" // Имя потока для ожидателя потоков
 )
 
 // kStoreKv -- локальное хранилище ядра
