@@ -74,9 +74,9 @@ func (sf *KBusBase) Subscribe(handler IBusHandlerSubscribe) error {
 	defer sf.block.Unlock()
 	sf.log.Debug("KBusBase.Subscribe(): handler='%v'", handler.Name())
 	if !sf.IsWork_.Get() {
-		strOut := fmt.Sprintf("KBusBase.Subscribe():  handler='%v', bus already closed", handler.Name())
-		sf.log.Err(strOut)
-		return fmt.Errorf(strOut, "")
+		err := fmt.Errorf("KBusBase.Subscribe():  handler='%v', bus already closed", handler.Name())
+		sf.log.Err(err.Error())
+		return err
 	}
 	sf.dictSub.Subscribe(handler)
 	return nil
@@ -88,15 +88,15 @@ func (sf *KBusBase) SendRequest(topic ATopic, binReq []byte) ([]byte, error) {
 	defer sf.block.Unlock()
 	sf.log.Debug("KBusBase.SendRequest(): topic='%v'", topic)
 	if !sf.IsWork_.Get() {
-		strOut := fmt.Sprintf("KBusBase.SendRequest():  topic='%v', bus already closed", topic)
-		sf.log.Err(strOut)
-		return nil, fmt.Errorf(strOut, "")
+		err := fmt.Errorf("KBusBase.SendRequest():  topic='%v', bus already closed", topic)
+		sf.log.Err(err.Error())
+		return nil, err
 	}
 	binResp, err := sf.dictServe.SendRequest(topic, binReq)
 	if err != nil {
-		strOut := fmt.Sprintf("KBusBase.SendRequest(): topic='%v', err=\n\t%v", topic, err)
-		sf.log.Err(strOut)
-		return nil, fmt.Errorf(strOut, "")
+		err := fmt.Errorf("KBusBase.SendRequest(): topic='%v', err=\n\t%w", topic, err)
+		sf.log.Err(err.Error())
+		return nil, err
 	}
 	return binResp, nil
 }
@@ -114,9 +114,9 @@ func (sf *KBusBase) Publish(topic ATopic, binMsg []byte) (err error) {
 	defer sf.block.Unlock()
 	sf.log.Debug("KBusBase.Publish(): topic='%v'", topic)
 	if !sf.IsWork_.Get() {
-		strOut := fmt.Sprintf("KBusBase.Publish(): topic='%v',bus already closed", topic)
-		sf.log.Err(strOut)
-		return fmt.Errorf(strOut, "")
+		err := fmt.Errorf("KBusBase.Publish(): topic='%v',bus already closed", topic)
+		sf.log.Err(err.Error())
+		return err
 	}
 	// Асинхронный запуск чтения
 	go sf.dictSub.Read(topic, binMsg)

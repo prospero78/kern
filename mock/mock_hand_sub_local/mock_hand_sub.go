@@ -1,5 +1,5 @@
 // package mock_hand_sub -- мок-обработчик подписки
-package mock_hand_sub
+package mock_hand_sub_local
 
 import (
 	"crypto/rand"
@@ -18,12 +18,12 @@ type MockHandlerSub struct {
 }
 
 // NewMockHandlerSub -- возвращает новый обработчик подписки
-func NewMockHandlerSub(topic ATopic, webHook string) *MockHandlerSub {
+func NewMockHandlerSub(topic ATopic, localHook string) *MockHandlerSub {
 	Hassert(topic != "", "NewMockHandlerSub(): topic is empty")
-	Hassert(webHook != "", "NewMockHandlerSub(): name is empty")
+	Hassert(localHook != "", "NewMockHandlerSub(): name is empty")
 	sf := &MockHandlerSub{
 		Topic_: topic,
-		Name_:  AHandlerName(webHook + "_" + rand.Text()),
+		Name_:  AHandlerName(localHook + "_" + rand.Text()),
 	}
 	_ = IBusHandlerSubscribe(sf)
 	return sf

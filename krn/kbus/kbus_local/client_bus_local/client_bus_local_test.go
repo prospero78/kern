@@ -8,7 +8,7 @@ import (
 
 type tester struct {
 	t  *testing.T
-	cl IClientBus
+	cl IBusClient
 }
 
 func TestClientBusLocal(t *testing.T) {

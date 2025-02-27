@@ -12,7 +12,7 @@ type ClientBusLocal struct {
 }
 
 // NewClientBusLocal -- клиент локальной шины
-func NewClientBusLocal() IClientBus {
+func NewClientBusLocal() IBusClient {
 	sf := &ClientBusLocal{
 		IKernelBus: kbus_local.GetKernelBusLocal(),
 	}

@@ -84,7 +84,7 @@ type IKernelBus interface {
 	Log() ILogBuf
 }
 
-// IClientBus -- интерфейс клиента к шину
-type IClientBus interface {
+// IBusClient -- интерфейс клиента к шину
+type IBusClient interface {
 	IKernelBus
 }

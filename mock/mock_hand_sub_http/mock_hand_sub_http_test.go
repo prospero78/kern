@@ -1,4 +1,4 @@
-package handler_http_sub
+package mock_hand_sub_http
 
 import (
 	"strings"
@@ -16,7 +16,7 @@ type tester struct {
 	t     *testing.T
 	ctx   IKernelCtx
 	isBad bool // Признак испорченности обработчика
-	hand  *handlerHttpSub
+	hand  *MockHandSubHttp
 }
 
 func TestHandlerHttpSub(t *testing.T) {
@@ -49,7 +49,7 @@ func (sf *tester) backBad2() {
 	_ = mock_env.MakeEnv()
 	kernServ := kserv_http.GetKernelServHttp()
 	fiberApp := kernServ.Fiber()
-	sf.hand.webHook = "http://localhost:18200/test/local"
+	sf.hand.WebHook_ = "http://localhost:18200/test/local"
 	fiberApp.Post("/test/local", sf.testLocal)
 	go kernServ.Run()
 	sf.isBad = true
@@ -85,15 +85,22 @@ func (sf *tester) newGood1() {
 			sf.t.Fatalf("newGood1(): panic=%v", _panic)
 		}
 	}()
-	sf.hand = NewHandlerHttpSub("test_topic", "/test/local").(*handlerHttpSub)
+	sf.hand = NewMockHandSubHttp("test_topic", "/test/local").(*MockHandSubHttp)
 	if sf.hand == nil {
 		sf.t.Fatalf("newGood1(): handler==nil")
 	}
 	if name := sf.hand.Name(); !strings.Contains(string(name), "/test/local_") {
 		sf.t.Fatalf("newGood1(): name(%v)!='/test/local_'", name)
 	}
+	sf.hand.SetName("test_name")
+	if name := sf.hand.Name(); name != "test_name" {
+		sf.t.Fatalf("newGood1(): name(%v)!='test_name'", name)
+	}
 	if topic := sf.hand.Topic(); topic != "test_topic" {
 		sf.t.Fatalf("newGood1(): bad topic(%v) 'test_topic'", topic)
+	}
+	if msg := sf.hand.Msg(); msg != "" {
+		sf.t.Fatalf("newGood1(): msg(%v) not empty", msg)
 	}
 }
 
@@ -105,5 +112,5 @@ func (sf *tester) newBad1() {
 			sf.t.Fatalf("newBad1(): panic==nil")
 		}
 	}()
-	_ = NewHandlerHttpSub("", "/test/local")
+	_ = NewMockHandSubHttp("", "/test/local")
 }

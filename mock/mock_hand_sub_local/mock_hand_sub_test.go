@@ -1,4 +1,4 @@
-package mock_hand_sub
+package mock_hand_sub_local
 
 import (
 	"strings"
@@ -50,6 +50,9 @@ func (sf *tester) newGood1() {
 	}
 	if topic := sf.hand.Topic(); topic != "test_topic" {
 		sf.t.Fatalf("newGood1(): topic(%v)!='test_topic'", topic)
+	}
+	if msg := sf.hand.Msg(); msg != "" {
+		sf.t.Fatalf("newGood1(): msg not empty")
 	}
 }
 

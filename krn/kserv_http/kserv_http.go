@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -31,7 +32,7 @@ type kServHttp struct {
 	kCtx     IKernelCtx
 	ctx      ILocalCtx
 	log      ILogBuf
-	strPort  string // Порт ,на котором слушает HTTP-сервер
+	strUrl   string // URL, на котором слушает HTTP-сервер
 	fiberApp *fiber.App
 	isWork   ISafeBool
 	block    sync.Mutex
@@ -54,8 +55,8 @@ func GetKernelServHttp() IKernelServerHttp {
 	if kernServHttp != nil {
 		return kernServHttp
 	}
-	strPort := os.Getenv("SERVER_HTTP_PORT")
-	Hassert(strPort != "", "GetKernelServHttp(): env SERVER_HTTP_PORT not set")
+	strUrl := os.Getenv("LOCAL_HTTP_URL")
+	Hassert(strUrl != "", "GetKernelServHttp(): env LOCAL_HTTP_URL not set")
 	confFiber := fiber.Config{
 		ServerHeader:      ctx.Get("monolitName").Val().(string),
 		UnescapePath:      true,
@@ -68,7 +69,7 @@ func GetKernelServHttp() IKernelServerHttp {
 	sf := &kServHttp{
 		kCtx:     ctx,
 		ctx:      local_ctx.NewLocalCtx(ctx.BaseCtx()),
-		strPort:  strPort,
+		strUrl:   strUrl,
 		fiberApp: fiber.New(confFiber),
 		isWork:   safe_bool.NewSafeBool(),
 	}
@@ -105,8 +106,12 @@ func (sf *kServHttp) Fiber() *fiber.App {
 func (sf *kServHttp) Run() {
 	go sf.close()
 	sf.isWork.Set()
-	sf.log.Debug("kServHttp.Run(): port='%v'", sf.strPort)
-	err := sf.fiberApp.Listen(":" + sf.strPort)
+	sf.log.Debug("kServHttp.Run(): url='%v'", sf.strUrl)
+	lstPort := strings.Split(sf.strUrl, ":")
+	strPort := lstPort[len(lstPort)-1]
+	strPort = strings.ReplaceAll(strPort, "/", "")
+	strPort = strings.ReplaceAll(strPort, `"`, "")
+	err := sf.fiberApp.Listen(":" + strPort)
 	if err != nil {
 		strOut := fmt.Sprintf("kServHttp.Run(): in listen, err=\n\t%v", err)
 		sf.log.Err(strOut)

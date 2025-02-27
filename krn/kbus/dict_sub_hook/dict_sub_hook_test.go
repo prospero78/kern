@@ -3,21 +3,21 @@ package dict_sub_hook
 import (
 	"testing"
 
-	"github.com/prospero78/kern/mock/mock_hand_sub"
+	"github.com/prospero78/kern/mock/mock_hand_sub_local"
 )
 
 type tester struct {
 	t        *testing.T
 	dict     *dictSubHook
-	handSub  *mock_hand_sub.MockHandlerSub
-	handSub2 *mock_hand_sub.MockHandlerSub
+	handSub  *mock_hand_sub_local.MockHandlerSub
+	handSub2 *mock_hand_sub_local.MockHandlerSub
 }
 
 func TestDictSubWebHook(t *testing.T) {
 	sf := &tester{
 		t:        t,
-		handSub:  mock_hand_sub.NewMockHandlerSub("hand_topic1", "hand_name1"),
-		handSub2: mock_hand_sub.NewMockHandlerSub("hand_topic2", "hand_name2"),
+		handSub:  mock_hand_sub_local.NewMockHandlerSub("hand_topic1", "hand_name1"),
+		handSub2: mock_hand_sub_local.NewMockHandlerSub("hand_topic2", "hand_name2"),
 	}
 	sf.new()
 	sf.add()

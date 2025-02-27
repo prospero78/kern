@@ -5,20 +5,20 @@ import (
 
 	. "github.com/prospero78/kern/krn/ktypes"
 	"github.com/prospero78/kern/mock/mock_hand_serve"
-	"github.com/prospero78/kern/mock/mock_hand_sub"
+	"github.com/prospero78/kern/mock/mock_hand_sub_local"
 )
 
 type tester struct {
 	t        *testing.T
 	bus      IKernelBus
-	handSub  *mock_hand_sub.MockHandlerSub
+	handSub  *mock_hand_sub_local.MockHandlerSub
 	handServ *mock_hand_serve.MockHandlerServe
 }
 
 func TestKernelBusLocal(t *testing.T) {
 	sf := &tester{
 		t:        t,
-		handSub:  mock_hand_sub.NewMockHandlerSub("topic_hand_sub", "mock_hand_sub"),
+		handSub:  mock_hand_sub_local.NewMockHandlerSub("topic_hand_sub", "mock_hand_sub"),
 		handServ: mock_hand_serve.NewMockHandlerServe("topic_hand_serv", "mock_hand_serv"),
 	}
 	sf.new()

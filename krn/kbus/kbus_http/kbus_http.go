@@ -8,7 +8,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/prospero78/kern/krn/kbus/kbus_base"
-	"github.com/prospero78/kern/krn/kbus/kbus_http/handler_http_sub"
 	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_pub"
 	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_serve"
 	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_sub"
@@ -16,6 +15,7 @@ import (
 	"github.com/prospero78/kern/krn/kctx"
 	"github.com/prospero78/kern/krn/kserv_http"
 	. "github.com/prospero78/kern/krn/ktypes"
+	"github.com/prospero78/kern/mock/mock_hand_sub_http"
 )
 
 // kBusHttp -- шина данных поверх HTTP
@@ -73,7 +73,7 @@ func (sf *kBusHttp) postSub(ctx *fiber.Ctx) error {
 // Процесс подписки веб-хука
 func (sf *kBusHttp) processSubscribe(req *msg_sub.SubscribeReq) *msg_sub.SubscribeResp {
 	req.SelfCheck()
-	handler := handler_http_sub.NewHandlerHttpSub(req.Topic_, req.WebHook_)
+	handler := mock_hand_sub_http.NewMockHandSubHttp(req.Topic_, req.WebHook_)
 	resp := &msg_sub.SubscribeResp{
 		Status_: "ok",
 		Uuid_:   req.Uuid_,

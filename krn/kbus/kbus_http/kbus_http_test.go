@@ -16,19 +16,19 @@ import (
 	"github.com/prospero78/kern/krn/kserv_http"
 	"github.com/prospero78/kern/mock/mock_env"
 	"github.com/prospero78/kern/mock/mock_hand_serve"
-	"github.com/prospero78/kern/mock/mock_hand_sub"
+	"github.com/prospero78/kern/mock/mock_hand_sub_local"
 )
 
 type tester struct {
 	t        *testing.T
-	handSub  *mock_hand_sub.MockHandlerSub
+	handSub  *mock_hand_sub_local.MockHandlerSub
 	handServ *mock_hand_serve.MockHandlerServe
 }
 
 func TestKernelBusHttp(t *testing.T) {
 	sf := &tester{
 		t:        t,
-		handSub:  mock_hand_sub.NewMockHandlerSub("topic_sub", "http://localhost:18200/bus/pub"),
+		handSub:  mock_hand_sub_local.NewMockHandlerSub("topic_sub", "http://localhost:18200/bus/pub"),
 		handServ: mock_hand_serve.NewMockHandlerServe("topic_serv", "name_serv"),
 	}
 	ctx := kctx.GetKernelCtx()
@@ -49,6 +49,7 @@ func (sf *tester) unsub() {
 	sf.unsubBad3()
 	sf.unsubGood2()
 }
+
 func (sf *tester) unsubGood2() {
 	sf.t.Log("unsubGood2")
 	err := bus.Subscribe(sf.handSub)
@@ -63,10 +64,11 @@ func (sf *tester) unsubGood2() {
 	body := strings.NewReader(string(binReq))
 	fibApp := kserv_http.GetKernelServHttp().Fiber()
 	hReq, err := http.NewRequest("POST", "/bus/unsub", body)
-	hReq.Header.Add("Content-Type", "application/json")
 	if err != nil {
 		sf.t.Fatalf("unsubGood2(): err=%v", err)
 	}
+	hReq.Header.Add("Content-Type", "application/json")
+
 	_resp, err := fibApp.Test(hReq)
 	if err != nil {
 		sf.t.Fatalf("unsubGood2(): after request, err=%v", err)

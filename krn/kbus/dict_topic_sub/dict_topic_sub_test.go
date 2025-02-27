@@ -3,19 +3,19 @@ package dict_topic_sub
 import (
 	"testing"
 
-	"github.com/prospero78/kern/mock/mock_hand_sub"
+	"github.com/prospero78/kern/mock/mock_hand_sub_local"
 )
 
 type tester struct {
 	t    *testing.T
 	dict *dictTopicSub
-	hand *mock_hand_sub.MockHandlerSub
+	hand *mock_hand_sub_local.MockHandlerSub
 }
 
 func TestDictSub(t *testing.T) {
 	sf := &tester{
 		t:    t,
-		hand: mock_hand_sub.NewMockHandlerSub("topic_dict_sub", "name_dict_sub"),
+		hand: mock_hand_sub_local.NewMockHandlerSub("topic_dict_sub", "name_dict_sub"),
 	}
 	sf.new()
 	sf.addBad1()
