@@ -24,8 +24,8 @@ const (
 	streamName = "kernel_server_http" // Контрольная строка для ожидателя потока
 )
 
-// kernelServHttp -- встроенный HTTP-сервер
-type kernelServHttp struct {
+// kServHttp -- встроенный HTTP-сервер
+type kServHttp struct {
 	ctx      IKernelCtx
 	strPort  string // Порт ,на котором слушает HTTP-сервер
 	fiberApp *fiber.App
@@ -37,31 +37,31 @@ type kernelServHttp struct {
 var embedDirStatic embed.FS
 
 var (
-	kernServHttp *kernelServHttp
+	kernServHttp *kServHttp
 	block        sync.Mutex
 )
 
 // GetKernelServHttp -- возвращает  встроенный HTTP-сервер
 func GetKernelServHttp() IKernelServerHttp {
-	log.Println("NewKernelServHttp()")
+	log.Println("GetKernelServHttp()")
 	block.Lock()
 	defer block.Unlock()
+	ctx := kctx.GetKernelCtx()
 	if kernServHttp != nil {
 		return kernServHttp
 	}
 	strPort := os.Getenv("SERVER_HTTP_PORT")
-	Hassert(strPort != "", "NewKernelServHttp(): env SERVER_HTTP_PORT not set")
+	Hassert(strPort != "", "GetKernelServHttp(): env SERVER_HTTP_PORT not set")
 	confFiber := fiber.Config{
-		ServerHeader:      "KernelHttpServer",
+		ServerHeader:      ctx.Get("monolitName").Val().(string),
 		UnescapePath:      true,
 		ReadTimeout:       time.Second * 15,
 		WriteTimeout:      time.Second * 15,
-		AppName:           "KernelHttpServer",
+		AppName:           ctx.Get("monolitName").Val().(string),
 		Network:           "tcp4",
 		EnablePrintRoutes: true,
 	}
-	ctx := kctx.GetKernelCtx()
-	sf := &kernelServHttp{
+	sf := &kServHttp{
 		ctx:      ctx,
 		strPort:  strPort,
 		fiberApp: fiber.New(confFiber),
@@ -79,31 +79,31 @@ func GetKernelServHttp() IKernelServerHttp {
 	sf.fiberApp.Get("/monitor", monitor.New(monitor.Config{Title: "KernelHttpServer"}))
 	err := sf.ctx.Wg().Add(streamName)
 	Hassert(err == nil, "NewKernelServHttp(): in add stream %v, err=\n\t%v", streamName, err)
-	ctx.Set("fiberApp", sf.fiberApp)
+	ctx.Set("fiberApp", sf.fiberApp, "kServHttp: internal fiber app")
 	kernServHttp = sf
-	ctx.Set("kernServHttp", kernServHttp)
+	ctx.Set("kServHttp", kernServHttp, "kServHttp")
 	return kernServHttp
 }
 
 // Fiber -- возвращает объект веб-приложения fiber
-func (sf *kernelServHttp) Fiber() *fiber.App {
+func (sf *kServHttp) Fiber() *fiber.App {
 	return sf.fiberApp
 }
 
 // Run -- запускает сервер в работу (блокирующий вызов)
-func (sf *kernelServHttp) Run() {
+func (sf *kServHttp) Run() {
 	go sf.close()
 	sf.isWork.Set()
 	err := sf.fiberApp.Listen(":" + sf.strPort)
 	if err != nil {
-		log.Printf("kernelServHttp.Run(): in listen, err=\n\t%v\n", err)
+		log.Printf("kServHttp.Run(): in listen, err=\n\t%v\n", err)
 		sf.ctx.Cancel()
 	}
 }
 
 // Ожидает окончания работы
-func (sf *kernelServHttp) close() {
-	<-sf.ctx.Ctx().Done()
+func (sf *kServHttp) close() {
+	sf.ctx.Done()
 	sf.block.Lock()
 	defer sf.block.Unlock()
 	if !sf.isWork.Get() {
@@ -111,7 +111,7 @@ func (sf *kernelServHttp) close() {
 	}
 	sf.isWork.Reset()
 	err := sf.fiberApp.Server().Shutdown()
-	Assert(err == nil, "kernelServHttp.close(): in close server, err=\n\t%v", err)
+	Assert(err == nil, "kServHttp.close(): in close server, err=\n\t%v", err)
 	sf.ctx.Wg().Done(streamName)
-	log.Println("kernelServHttp.close(): end")
+	log.Println("kServHttp.close(): end")
 }

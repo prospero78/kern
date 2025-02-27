@@ -58,7 +58,7 @@ func (sf *dictServe) SendRequest(topic ATopic, binReq []byte) ([]byte, error) {
 		chErr  = make(chan error, 2)
 		binRes []byte
 	)
-	ctx, fnCancel := context.WithTimeout(sf.ctx.Ctx(), time.Millisecond*time.Duration(TimeoutDefault))
+	ctx, fnCancel := context.WithTimeout(sf.ctx.BaseCtx(), time.Millisecond*time.Duration(TimeoutDefault))
 	defer fnCancel()
 	fnCall := func() {
 		defer close(chErr)

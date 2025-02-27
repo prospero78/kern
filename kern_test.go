@@ -67,12 +67,12 @@ func (sf *tester) new() {
 		sf.t.Fatalf("new(): (http) IKernelBus==nil")
 	}
 
-	monLocal := NewMonolitLocal()
+	monLocal := NewMonolitLocal("mon_local")
 	if monLocal == nil {
 		sf.t.Fatalf("new(): (local) IKernelMonolit==nil")
 	}
 
-	monHttp := NewMonolitHttp()
+	monHttp := NewMonolitHttp("mon_http")
 	if monHttp == nil {
 		sf.t.Fatalf("new(): (http) IKernelMonolit==nil")
 	}

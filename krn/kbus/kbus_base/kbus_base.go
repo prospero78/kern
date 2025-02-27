@@ -19,8 +19,8 @@ const (
 	strBusBaseStream = "bus_base"
 )
 
-// KernelBusBase -- базовая часть шины данных
-type KernelBusBase struct {
+// KBusBase -- базовая часть шины данных
+type KBusBase struct {
 	Ctx_      IKernelCtx
 	IsWork_   ISafeBool
 	dictSub   IDictTopicSub
@@ -29,16 +29,16 @@ type KernelBusBase struct {
 }
 
 var (
-	Bus_ *KernelBusBase
+	Bus_ *KBusBase
 )
 
 // GetKernelBusBase -- возвращает базовую шину сообщений
-func GetKernelBusBase() *KernelBusBase {
+func GetKernelBusBase() *KBusBase {
 	if Bus_ != nil {
 		return Bus_
 	}
 	ctx := kctx.GetKernelCtx()
-	Bus_ = &KernelBusBase{
+	Bus_ = &KBusBase{
 		Ctx_:      ctx,
 		IsWork_:   safe_bool.NewSafeBool(),
 		dictSub:   dict_topic_sub.NewDictTopicSub(),
@@ -48,18 +48,18 @@ func GetKernelBusBase() *KernelBusBase {
 	err := Bus_.Ctx_.Wg().Add(strBusBaseStream)
 	Hassert(err == nil, "GetKernelBusBase(): in add name stream '%v' Wg, err=%v", strBusBaseStream, err)
 	Bus_.IsWork_.Set()
-	ctx.Set("kernBusBase", Bus_)
+	ctx.Set("kernBusBase", Bus_, "base of data bus")
 	_ = IKernelBus(Bus_)
 	return Bus_
 }
 
 // Unsubscribe -- отписывает обработчик от топика
-func (sf *KernelBusBase) Unsubscribe(handler IBusHandlerSubscribe) {
+func (sf *KBusBase) Unsubscribe(handler IBusHandlerSubscribe) {
 	sf.dictSub.Unsubscribe(handler)
 }
 
 // Subscribe -- подписывает обработчик на топик
-func (sf *KernelBusBase) Subscribe(handler IBusHandlerSubscribe) error {
+func (sf *KBusBase) Subscribe(handler IBusHandlerSubscribe) error {
 	sf.block.Lock()
 	defer sf.block.Unlock()
 	if !sf.IsWork_.Get() {
@@ -70,7 +70,7 @@ func (sf *KernelBusBase) Subscribe(handler IBusHandlerSubscribe) error {
 }
 
 // SendRequest -- отправляет запрос в шину данных
-func (sf *KernelBusBase) SendRequest(topic ATopic, binReq []byte) ([]byte, error) {
+func (sf *KBusBase) SendRequest(topic ATopic, binReq []byte) ([]byte, error) {
 	sf.block.Lock()
 	defer sf.block.Unlock()
 	if !sf.IsWork_.Get() {
@@ -84,13 +84,13 @@ func (sf *KernelBusBase) SendRequest(topic ATopic, binReq []byte) ([]byte, error
 }
 
 // RegisterServe -- регистрирует обработчики входящих запросов
-func (sf *KernelBusBase) RegisterServe(handler IBusHandlerServe) {
+func (sf *KBusBase) RegisterServe(handler IBusHandlerServe) {
 	Hassert(handler != nil, "KernelBusBase.Subscribe(): IBusHandlerSubscribe==nil")
 	sf.dictServe.Register(handler)
 }
 
 // Publish -- публикует сообщение в шину
-func (sf *KernelBusBase) Publish(topic ATopic, binMsg []byte) (err error) {
+func (sf *KBusBase) Publish(topic ATopic, binMsg []byte) (err error) {
 	sf.block.Lock()
 	defer sf.block.Unlock()
 	if !sf.IsWork_.Get() {
@@ -102,13 +102,13 @@ func (sf *KernelBusBase) Publish(topic ATopic, binMsg []byte) (err error) {
 }
 
 // IsWork -- возвращает признак работы шины
-func (sf *KernelBusBase) IsWork() bool {
+func (sf *KBusBase) IsWork() bool {
 	return sf.IsWork_.Get()
 }
 
 // Ожидает закрытия шины в отдельном потоке
-func (sf *KernelBusBase) close() {
-	<-sf.Ctx_.Ctx().Done()
+func (sf *KBusBase) close() {
+	sf.Ctx_.Done()
 	sf.block.Lock()
 	defer sf.block.Unlock()
 	if !sf.IsWork_.Get() {

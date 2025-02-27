@@ -43,7 +43,7 @@ func (sf *dictSubHook) Subscribe(handler IBusHandlerSubscribe) {
 	Hassert(handler != nil, "dictSubHook.Subscribe(): handler==nil")
 	handlerName := handler.Name()
 	sf.dict[handlerName] = true
-	sf.ctx.Set(string(handlerName), handler)
+	sf.ctx.Set(string(handlerName), handler, "subscribe handler")
 }
 
 // Read -- вызывает все обработчики словаря подписок
@@ -51,7 +51,7 @@ func (sf *dictSubHook) Read(binMsg []byte) {
 	sf.block.RLock()
 	defer sf.block.RUnlock()
 	for handlerName := range sf.dict {
-		handler := sf.ctx.Get(string(handlerName)).(IBusHandlerSubscribe)
+		handler := sf.ctx.Get(string(handlerName)).Val().(IBusHandlerSubscribe)
 		go handler.FnBack(binMsg)
 	}
 }

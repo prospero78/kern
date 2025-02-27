@@ -16,13 +16,13 @@ import (
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
-// kernelBusHttp -- шина данных поверх HTTP
-type kernelBusHttp struct {
-	*kbus_base.KernelBusBase
+// kBusHttp -- шина данных поверх HTTP
+type kBusHttp struct {
+	*kbus_base.KBusBase
 }
 
 var (
-	bus *kernelBusHttp
+	bus *kBusHttp
 )
 
 // GetKernelBusHttp -- возвращает шину HTTP
@@ -31,10 +31,10 @@ func GetKernelBusHttp() IKernelBus {
 		return bus
 	}
 	ctx := kctx.GetKernelCtx()
-	bus = &kernelBusHttp{
-		KernelBusBase: kbus_base.GetKernelBusBase(),
+	bus = &kBusHttp{
+		KBusBase: kbus_base.GetKernelBusBase(),
 	}
-	ctx.Set("kernBus", bus)
+	ctx.Set("kernBus", bus, "http data bus")
 	fibApp := kserv_http.GetKernelServHttp().Fiber()
 	fibApp.Post("/bus/sub", bus.postSub)             // Топик подписки, IN
 	fibApp.Post("/bus/unsub", bus.postUnsub)         // Топик отписки, IN
@@ -65,7 +65,7 @@ type SubscribeResp struct {
 }
 
 // Входящий запрос HTTP на подписку
-func (sf *kernelBusHttp) postSub(ctx *fiber.Ctx) error {
+func (sf *kBusHttp) postSub(ctx *fiber.Ctx) error {
 	ctx.Set("Content-type", "text/html; charset=utf8")
 	ctx.Set("Content-type", "text/json")
 	ctx.Set("Cache-Control", "no-cache")
@@ -84,7 +84,7 @@ func (sf *kernelBusHttp) postSub(ctx *fiber.Ctx) error {
 }
 
 // Процесс подписки веб-хука
-func (sf *kernelBusHttp) processSubscribe(req *SubscribeReq) *SubscribeResp {
+func (sf *kBusHttp) processSubscribe(req *SubscribeReq) *SubscribeResp {
 	req.SelfCheck()
 	handler := handler_http_sub.NewHandlerHttpSub(req.Topic_, req.WebHook_)
 	resp := &SubscribeResp{
@@ -120,7 +120,7 @@ type PublishResp struct {
 }
 
 // Входящая публикация
-func (sf *kernelBusHttp) postPublish(ctx *fiber.Ctx) error {
+func (sf *kBusHttp) postPublish(ctx *fiber.Ctx) error {
 	ctx.Set("Content-type", "text/html; charset=utf8")
 	ctx.Set("Content-type", "text/json")
 	ctx.Set("Cache-Control", "no-cache")
@@ -139,7 +139,7 @@ func (sf *kernelBusHttp) postPublish(ctx *fiber.Ctx) error {
 }
 
 // Выполняет процесс публикации
-func (sf *kernelBusHttp) processPublish(req *PublishReq) *PublishResp {
+func (sf *kBusHttp) processPublish(req *PublishReq) *PublishResp {
 	req.SelfCheck()
 	err := sf.Publish(req.Topic_, req.BinMsg)
 	resp := &PublishResp{
@@ -173,7 +173,7 @@ type ServeResp struct {
 }
 
 // Входящий запрос
-func (sf *kernelBusHttp) postSendRequest(ctx *fiber.Ctx) error {
+func (sf *kBusHttp) postSendRequest(ctx *fiber.Ctx) error {
 	ctx.Set("Content-type", "text/html; charset=utf8")
 	ctx.Set("Content-type", "text/json")
 	ctx.Set("Cache-Control", "no-cache")
@@ -192,7 +192,7 @@ func (sf *kernelBusHttp) postSendRequest(ctx *fiber.Ctx) error {
 }
 
 // Обрабатывает входящий запрос
-func (sf *kernelBusHttp) processSendRequest(req *ServeReq) *ServeResp {
+func (sf *kBusHttp) processSendRequest(req *ServeReq) *ServeResp {
 	req.SelfCheck()
 	binResp, err := sf.SendRequest(req.Topic_, req.BinReq_)
 	resp := &ServeResp{
@@ -226,7 +226,7 @@ type UnsubResp struct {
 }
 
 // Входящая отписка от топика по HTTP
-func (sf *kernelBusHttp) postUnsub(ctx *fiber.Ctx) error {
+func (sf *kBusHttp) postUnsub(ctx *fiber.Ctx) error {
 	ctx.Set("Content-type", "text/html; charset=utf8")
 	ctx.Set("Content-type", "text/json")
 	ctx.Set("Cache-Control", "no-cache")
@@ -245,7 +245,7 @@ func (sf *kernelBusHttp) postUnsub(ctx *fiber.Ctx) error {
 }
 
 // Процесс отписки от топика
-func (sf *kernelBusHttp) processUnsubRequest(req *UnsubReq) *UnsubResp {
+func (sf *kBusHttp) processUnsubRequest(req *UnsubReq) *UnsubResp {
 	req.SelfCheck()
 	_hand := sf.Ctx_.Get(string(req.Name_))
 	resp := &UnsubResp{
@@ -256,7 +256,7 @@ func (sf *kernelBusHttp) processUnsubRequest(req *UnsubReq) *UnsubResp {
 		resp.Status_ = fmt.Sprintf("kernelBusHttp.processUnsubRequest(): handler name(%v) not exists", req.Name_)
 		return resp
 	}
-	hand := _hand.(IBusHandlerSubscribe)
+	hand := _hand.Val().(IBusHandlerSubscribe)
 	sf.Unsubscribe(hand)
 	return resp
 }

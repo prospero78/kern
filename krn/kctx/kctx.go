@@ -6,6 +6,7 @@ import (
 	"log"
 	"sync"
 
+	"github.com/prospero78/kern/kc/local_ctx"
 	"github.com/prospero78/kern/krn/kctx/kernel_keeper"
 	"github.com/prospero78/kern/krn/kctx/kwg"
 	. "github.com/prospero78/kern/krn/ktypes"
@@ -13,13 +14,12 @@ import (
 
 // kernelCtx -- контекст ядра
 type kernelCtx struct {
-	ctxBg      context.Context        // Неотменяемый контекст ядра
-	ctx        context.Context        // Отменяемый контекст ядра
-	fnCancel   func()                 // Функция отмены контекста ядра
-	dictVal    map[string]interface{} // Словарь различных значений
-	kernKeeper IKernelKeeper          // Встроенный сторож отмены контекста системным сигналом
-	kernWg     IKernelWg              // Встроенный ожидатель потока
-	block      sync.RWMutex
+	ILocalCtx
+	ctxBg      context.Context // Неотменяемый контекст ядра
+	ctx        context.Context // Отменяемый контекст ядра
+	fnCancel   func()          // Функция отмены контекста ядра
+	kernKeeper IKernelKeeper   // Встроенный сторож отмены контекста системным сигналом
+	kernWg     IKernelWg       // Встроенный ожидатель потока
 }
 
 var (
@@ -40,8 +40,8 @@ func GetKernelCtx() IKernelCtx {
 		ctxBg:    ctxBg,
 		ctx:      ctx,
 		fnCancel: fnCancel,
-		dictVal:  map[string]interface{}{},
 	}
+	sf.ILocalCtx = local_ctx.NewLocalCtx(sf.ctx)
 	sf.kernWg = kwg.GetKernelWg(sf.ctx)
 	sf.kernKeeper = kernel_keeper.GetKernelKeeper(sf.ctx, sf.fnCancel, sf.kernWg)
 	kernCtx = sf
@@ -51,27 +51,6 @@ func GetKernelCtx() IKernelCtx {
 // Wg -- возвращает ожидатель потоков
 func (sf *kernelCtx) Wg() IKernelWg {
 	return sf.kernWg
-}
-
-// Get -- возвращает хранимое значение
-func (sf *kernelCtx) Get(key string) interface{} {
-	sf.block.RLock()
-	defer sf.block.RUnlock()
-	return sf.dictVal[key]
-}
-
-// Del -- удаляет значение из контекста
-func (sf *kernelCtx) Del(key string) {
-	sf.block.Lock()
-	defer sf.block.Unlock()
-	delete(sf.dictVal, key)
-}
-
-// Set -- добавляет значение в контекст
-func (sf *kernelCtx) Set(key string, val interface{}) {
-	sf.block.Lock()
-	defer sf.block.Unlock()
-	sf.dictVal[key] = val
 }
 
 // Done -- блокирующий вызов ожидания отмены контекста ядра
@@ -85,8 +64,8 @@ func (sf *kernelCtx) CtxBg() context.Context {
 	return sf.ctxBg
 }
 
-// Ctx -- возвращает контекст ядра
-func (sf *kernelCtx) Ctx() context.Context {
+// BaseCtx -- возвращает контекст ядра
+func (sf *kernelCtx) BaseCtx() context.Context {
 	return sf.ctx
 }
 

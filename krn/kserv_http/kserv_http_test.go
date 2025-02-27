@@ -62,6 +62,7 @@ func (sf *tester) newGood1() {
 		}
 	}()
 	sf.me = mock_env.MakeEnv()
+	sf.ctx.Set("monolitName", "test_monolit", "comment")
 	serv := GetKernelServHttp()
 	if serv != kernServHttp {
 		sf.t.Fatalf("newGood1(): bad IKernelServHttp")

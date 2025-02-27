@@ -20,8 +20,8 @@ const (
 	storeStreamName = "kernel_store" // Имя потока для ожидателя потоков
 )
 
-// kernelStore -- локальное хранилище ядра
-type kernelStore struct {
+// kStore -- локальное хранилище ядра
+type kStore struct {
 	ctx        IKernelCtx
 	wg         IKernelWg
 	storePath  string
@@ -32,7 +32,7 @@ type kernelStore struct {
 }
 
 var (
-	kernStore *kernelStore // Глобальный объект
+	kernStore *kStore // Глобальный объект
 	block     sync.Mutex
 )
 
@@ -45,19 +45,19 @@ func GetKernelStore() IKernelStore {
 		return kernStore
 	}
 	ctx := kctx.GetKernelCtx()
-	sf := &kernelStore{
+	sf := &kStore{
 		ctx:    ctx,
 		wg:     ctx.Wg(),
 		isWork: safe_bool.NewSafeBool(),
 	}
 	sf.open()
 	kernStore = sf
-	ctx.Set("kernStore", kernStore)
+	ctx.Set("kernStoreKV", kernStore, "fast KV store on Badger")
 	return kernStore
 }
 
 // Set -- устанавливает значение по ключу
-func (sf *kernelStore) Set(key string, val []byte) error {
+func (sf *kStore) Set(key string, val []byte) error {
 	sf.block.Lock()
 	defer sf.block.Unlock()
 	// if !sf.isWork.Get() {
@@ -75,7 +75,7 @@ func (sf *kernelStore) Set(key string, val []byte) error {
 }
 
 // Get -- возвращает значение по ключу
-func (sf *kernelStore) Get(key string) ([]byte, error) {
+func (sf *kStore) Get(key string) ([]byte, error) {
 	sf.block.RLock()
 	defer sf.block.RUnlock()
 	var binVal []byte
@@ -95,7 +95,7 @@ func (sf *kernelStore) Get(key string) ([]byte, error) {
 }
 
 // Delete -- удалить ключ из хранилища
-func (sf *kernelStore) Delete(key string) error {
+func (sf *kStore) Delete(key string) error {
 	sf.block.Lock()
 	defer sf.block.Unlock()
 
@@ -111,7 +111,7 @@ func (sf *kernelStore) Delete(key string) error {
 }
 
 // Открывает базу при создании
-func (sf *kernelStore) open() {
+func (sf *kStore) open() {
 	sf.block.Lock()
 	defer sf.block.Unlock()
 	strPath := os.Getenv("LOCAL_STORE_PATH")
@@ -131,7 +131,7 @@ func (sf *kernelStore) open() {
 }
 
 // Выполняет периодическую сборку мусора в файле
-func (sf *kernelStore) clean() {
+func (sf *kStore) clean() {
 	chRun := make(chan int, 2)
 	defer close(chRun)
 	fnClean := func() {
@@ -142,7 +142,7 @@ func (sf *kernelStore) clean() {
 	chRun <- 1
 	for {
 		select {
-		case <-sf.ctx.Ctx().Done(): // надо прекратить работу
+		case <-sf.ctx.BaseCtx().Done(): // надо прекратить работу
 			return
 		case <-chRun: // Пора поработать
 			fnClean()
@@ -152,7 +152,7 @@ func (sf *kernelStore) clean() {
 }
 
 // Ожидает последнего потока под отдельной блокировкой
-func (sf *kernelStore) wait(chWait chan int) {
+func (sf *kStore) wait(chWait chan int) {
 	for {
 		time.Sleep(time.Millisecond * 5)
 		if sf.wg.Len() <= 1 {
@@ -163,8 +163,8 @@ func (sf *kernelStore) wait(chWait chan int) {
 }
 
 // Ожидает закрытия контекста ядра, закрывает хранилище
-func (sf *kernelStore) close() {
-	<-sf.ctx.Ctx().Done()
+func (sf *kStore) close() {
+	sf.ctx.Done()
 	sf.blockClose.Lock()
 	defer sf.blockClose.Unlock()
 	if !sf.isWork.Get() {

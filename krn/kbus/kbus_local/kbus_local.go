@@ -8,7 +8,7 @@ import (
 
 // Локальная шина данных
 type kernelBusLocal struct {
-	*kbus_base.KernelBusBase
+	*kbus_base.KBusBase
 }
 
 var (
@@ -21,7 +21,7 @@ func GetKernelBusLocal() IKernelBus {
 		return bus
 	}
 	bus = &kernelBusLocal{
-		KernelBusBase: kbus_base.GetKernelBusBase(),
+		KBusBase: kbus_base.GetKernelBusBase(),
 	}
 	return bus
 }

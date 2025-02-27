@@ -152,7 +152,7 @@ func (sf *tester) close() {
 	ctx := kctx.GetKernelCtx()
 	ctx.Cancel()
 	ctx.Wg().Wait()
-	sf.bus.(*KernelBusBase).close()
+	sf.bus.(*KBusBase).close()
 	if sf.bus.IsWork() {
 		sf.t.Fatalf("close(): bus work")
 	}

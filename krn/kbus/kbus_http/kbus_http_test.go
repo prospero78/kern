@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/prospero78/kern/krn/kctx"
 	"github.com/prospero78/kern/krn/kserv_http"
 	"github.com/prospero78/kern/mock/mock_env"
 	"github.com/prospero78/kern/mock/mock_hand_serve"
@@ -26,6 +27,8 @@ func TestKernelBusHttp(t *testing.T) {
 		handSub:  mock_hand_sub.NewMockHandlerSub("topic_sub", "http://localhost:18200/bus/pub"),
 		handServ: mock_hand_serve.NewMockHandlerServe("topic_serv", "name_serv"),
 	}
+	ctx := kctx.GetKernelCtx()
+	ctx.Set("monolitName", "test_monolit", "comment")
 	sf.get()
 	sf.req()
 	sf.sub()
@@ -388,23 +391,6 @@ func (sf *tester) subBad1() {
 // Входящий запрос
 func (sf *tester) req() {
 	sf.t.Log("req")
-	/*
-		fibApp := kernel_serv_http.GetKernelServHttp().Fiber()
-		req := &ServeReq{
-			Topic_:  sf.handServ.Topic_,
-			Uuid_:   "test_uud",
-			BinReq_: []byte("test_req"),
-		}
-		var body io.Reader
-		hReq := http.NewRequest("POST", "/bus/request", body)
-		fibApp.Test(hReq)
-		if err != nil {
-			sf.t.Fatalf("redirect(): after request, err=%v", err)
-		}
-		if resp.StatusCode != 303 {
-			sf.t.Fatalf("redirect(): statusCode(%v)!=303", resp.StatusCode)
-		}
-	*/
 	sf.reqBad1()
 	sf.reqBad2()
 	sf.reqBad3()

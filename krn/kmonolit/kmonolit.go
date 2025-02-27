@@ -12,9 +12,10 @@ import (
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
-// kernMonolit -- объект модульного монолита
-type kernMonolit struct {
+// kMonolit -- объект модульного монолита
+type kMonolit struct {
 	ctx     IKernelCtx
+	name    string
 	isLocal bool
 	isWork  ISafeBool
 	isEnd   bool
@@ -23,24 +24,32 @@ type kernMonolit struct {
 }
 
 // NewMonolit -- возвращает новый монолит
-func NewMonolit() IKernelMonolit {
+func NewMonolit(name string) IKernelMonolit {
+	Hassert(name != "", "NewMonolit(): name is empty")
 	ctx := kctx.GetKernelCtx()
-	sf := &kernMonolit{
+	sf := &kMonolit{
 		ctx:     ctx,
+		name:    name,
 		dict:    map[AModuleName]IKernelModule{},
 		isWork:  safe_bool.NewSafeBool(),
-		isLocal: ctx.Get("isLocal").(bool),
+		isLocal: ctx.Get("isLocal").Val().(bool),
 	}
+	ctx.Set("monolitName", name, "name of monolit")
 	return sf
 }
 
+// Name -- возвращает имя монолита
+func (sf *kMonolit) Name() string {
+	return sf.name
+}
+
 // Add -- добавляет модуль в монолит
-func (sf *kernMonolit) Add(module IKernelModule) {
+func (sf *kMonolit) Add(module IKernelModule) {
 	sf.block.Lock()
 	defer sf.block.Unlock()
-	Hassert(module != nil, "kernMonolit.Add(): module==nil")
+	Hassert(module != nil, "kMonolit.Add(): module==nil")
 	_, isOk := sf.dict[module.Name()]
-	Hassert(!isOk, "kernMonolit.Add(): module(%v) already exists", module.Name())
+	Hassert(!isOk, "kMonolit.Add(): module(%v) already exists", module.Name())
 	sf.dict[module.Name()] = module
 	if sf.isWork.Get() {
 		go module.Run()
@@ -48,7 +57,7 @@ func (sf *kernMonolit) Add(module IKernelModule) {
 }
 
 // Run -- запускает монолит в работу
-func (sf *kernMonolit) Run() {
+func (sf *kMonolit) Run() {
 	sf.block.Lock()
 	defer sf.block.Unlock()
 	if sf.isEnd {
@@ -62,20 +71,20 @@ func (sf *kernMonolit) Run() {
 }
 
 // IsLocal -- возвращает признак локальной шины
-func (sf *kernMonolit) IsLocal() bool {
+func (sf *kMonolit) IsLocal() bool {
 	return sf.isLocal
 }
 
 // IsWork -- возвращает признак работы монолита
-func (sf *kernMonolit) IsWork() bool {
+func (sf *kMonolit) IsWork() bool {
 	return sf.isWork.Get()
 }
 
 // Ожидание завершения работы монолита
-func (sf *kernMonolit) close() {
-	<-sf.ctx.Ctx().Done()
+func (sf *kMonolit) close() {
+	sf.ctx.Done()
 	sf.ctx.Wg().Wait()
 	sf.isWork.Reset()
 	sf.isEnd = true
-	log.Printf("kernMonolit.close(): done")
+	log.Printf("kMonolit.close(): done")
 }

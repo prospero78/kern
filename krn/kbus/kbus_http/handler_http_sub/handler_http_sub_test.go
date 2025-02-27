@@ -8,24 +8,27 @@ import (
 
 	"github.com/prospero78/kern/krn/kctx"
 	"github.com/prospero78/kern/krn/kserv_http"
+	. "github.com/prospero78/kern/krn/ktypes"
 	"github.com/prospero78/kern/mock/mock_env"
 )
 
 type tester struct {
 	t     *testing.T
+	ctx   IKernelCtx
 	isBad bool // Признак испорченности обработчика
 	hand  *handlerHttpSub
 }
 
 func TestHandlerHttpSub(t *testing.T) {
 	sf := &tester{
-		t: t,
+		t:   t,
+		ctx: kctx.GetKernelCtx(),
 	}
+	sf.ctx.Set("monolitName", "test_monolit", "comment")
 	sf.new()
 	sf.back()
-	ctx := kctx.GetKernelCtx()
-	ctx.Cancel()
-	ctx.Wg().Wait()
+	sf.ctx.Cancel()
+	sf.ctx.Wg().Wait()
 }
 
 // Проверка работы обратного вызова

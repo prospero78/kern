@@ -40,6 +40,8 @@ func NewSafeBool() ISafeBool {
 
 // NewKernelBusLocal -- возвращает локальную шину данных
 func NewKernelBusLocal() IKernelBus {
+	ctx := kctx.GetKernelCtx()
+	ctx.Set("monolitName", "unknown monolit", "GetKernelBusLocal()")
 	bus := kbus_local.GetKernelBusLocal()
 	return bus
 }
@@ -51,20 +53,20 @@ func NewKernelBusHttp() IKernelBus {
 }
 
 // NewMonolitLocal -- возвращает монолит с локальной шиной
-func NewMonolitLocal() IKernelMonolit {
+func NewMonolitLocal(name string) IKernelMonolit {
 	ctx := kctx.GetKernelCtx()
+	ctx.Set("isLocal", true, "bus type")
+	monolit := kmonolit.NewMonolit(name)
 	_ = kbus_local.GetKernelBusLocal()
-	ctx.Set("isLocal", true)
-	monolit := kmonolit.NewMonolit()
 	return monolit
 }
 
 // NewMonolitHttp -- возвращает монолит с локальной шиной поверх HTTP
-func NewMonolitHttp() IKernelMonolit {
+func NewMonolitHttp(name string) IKernelMonolit {
 	ctx := kctx.GetKernelCtx()
 	_ = kbus_http.GetKernelBusHttp()
-	ctx.Set("isLocal", false)
-	monolit := kmonolit.NewMonolit()
+	ctx.Set("isLocal", false, "bus type")
+	monolit := kmonolit.NewMonolit(name)
 	return monolit
 }
 
