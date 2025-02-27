@@ -2,10 +2,10 @@
 package kmonolit
 
 import (
-	"log"
 	"sync"
 
 	. "github.com/prospero78/kern/kc/helpers"
+	"github.com/prospero78/kern/kc/local_ctx"
 	"github.com/prospero78/kern/kc/safe_bool"
 	. "github.com/prospero78/kern/krn/kalias"
 	"github.com/prospero78/kern/krn/kctx"
@@ -14,7 +14,9 @@ import (
 
 // kMonolit -- объект модульного монолита
 type kMonolit struct {
-	ctx     IKernelCtx
+	kCtx    IKernelCtx
+	ctx     ILocalCtx
+	log     ILogBuf
 	name    string
 	isLocal bool
 	isWork  ISafeBool
@@ -26,16 +28,23 @@ type kMonolit struct {
 // NewMonolit -- возвращает новый монолит
 func NewMonolit(name string) IKernelMonolit {
 	Hassert(name != "", "NewMonolit(): name is empty")
-	ctx := kctx.GetKernelCtx()
+	kCtx := kctx.GetKernelCtx()
 	sf := &kMonolit{
-		ctx:     ctx,
+		kCtx:    kCtx,
+		ctx:     local_ctx.NewLocalCtx(kCtx.BaseCtx()),
 		name:    name,
 		dict:    map[AModuleName]IKernelModule{},
 		isWork:  safe_bool.NewSafeBool(),
-		isLocal: ctx.Get("isLocal").Val().(bool),
+		isLocal: kCtx.Get("isLocal").Val().(bool),
 	}
-	ctx.Set("monolitName", name, "name of monolit")
+	sf.log = sf.ctx.Log()
+	kCtx.Set("monolitName", name, "name of monolit")
 	return sf
+}
+
+// Log -- возвращает лог монолита
+func (sf *kMonolit) Log() ILogBuf {
+	return sf.ctx.Log()
 }
 
 // Name -- возвращает имя монолита
@@ -51,8 +60,10 @@ func (sf *kMonolit) Add(module IKernelModule) {
 	_, isOk := sf.dict[module.Name()]
 	Hassert(!isOk, "kMonolit.Add(): module(%v) already exists", module.Name())
 	sf.dict[module.Name()] = module
+	sf.log.Debug("kMonolit.Add(): module='%v'", module.Name())
 	if sf.isWork.Get() {
 		go module.Run()
+		sf.log.Debug("kMonolit.Add(): module='%v' is run", module.Name())
 	}
 }
 
@@ -68,6 +79,7 @@ func (sf *kMonolit) Run() {
 		go module.Run()
 	}
 	go sf.close()
+	sf.log.Debug("kMonolit.Run()")
 }
 
 // IsLocal -- возвращает признак локальной шины
@@ -82,9 +94,11 @@ func (sf *kMonolit) IsWork() bool {
 
 // Ожидание завершения работы монолита
 func (sf *kMonolit) close() {
-	sf.ctx.Done()
-	sf.ctx.Wg().Wait()
+	sf.kCtx.Done()
+	sf.kCtx.Wg().Wait()
+	sf.block.Lock()
+	defer sf.block.Unlock()
 	sf.isWork.Reset()
 	sf.isEnd = true
-	log.Printf("kMonolit.close(): done")
+	sf.log.Debug("kMonolit.close(): end")
 }

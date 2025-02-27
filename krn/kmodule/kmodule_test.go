@@ -58,6 +58,9 @@ func (sf *tester) newGood1() {
 	if ctx := sf.mod.Ctx(); ctx == nil {
 		sf.t.Fatalf("newGood1(): ctx==nil")
 	}
+	if _log := sf.mod.Log(); _log == nil {
+		sf.t.Fatalf("newGood1(): log==nil")
+	}
 }
 
 // Нет имени модуля

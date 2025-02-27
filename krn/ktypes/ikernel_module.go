@@ -14,4 +14,6 @@ type IKernelModule interface {
 	Name() AModuleName
 	// Ctx -- возвращает контекст модуля
 	Ctx() ILocalCtx
+	// Log -- возвращает буферный лог модуля
+	Log() ILogBuf
 }

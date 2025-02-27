@@ -9,8 +9,8 @@ import (
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
-// kernelModule -- модуль на основе ядра
-type kernelModule struct {
+// kModule -- модуль на основе ядра
+type kModule struct {
 	kCtx IKernelCtx
 	ctx  ILocalCtx
 	name AModuleName
@@ -20,7 +20,7 @@ type kernelModule struct {
 func NewKernelModule(name AModuleName) IKernelModule {
 	Hassert(name != "", "NewKernelModule(): name is empty")
 	kCtx := kctx.GetKernelCtx()
-	sf := &kernelModule{
+	sf := &kModule{
 		kCtx: kCtx,
 		ctx:  local_ctx.NewLocalCtx(kCtx.BaseCtx()),
 		name: name,
@@ -28,23 +28,28 @@ func NewKernelModule(name AModuleName) IKernelModule {
 	return sf
 }
 
+// Log -- возвращает буферный лог
+func (sf *kModule) Log() ILogBuf {
+	return sf.ctx.Log()
+}
+
 // Ctx -- возвращает контекст модуля
-func (sf *kernelModule) Ctx() ILocalCtx {
+func (sf *kModule) Ctx() ILocalCtx {
 	return sf.kCtx
 }
 
 // Run -- запускает модуль в работу
-func (sf *kernelModule) Run() {
-	Hassert(false, "kernelModule.Run(): module='%v', parent not realised this method", sf.name)
+func (sf *kModule) Run() {
+	Hassert(false, "kModule.Run(): module='%v', parent not realised this method", sf.name)
 }
 
 // Name -- возвращает уникальное имя модуля
-func (sf *kernelModule) Name() AModuleName {
+func (sf *kModule) Name() AModuleName {
 	return sf.name
 }
 
 // IsWork -- возвращает признак состояния работы
-func (sf *kernelModule) IsWork() bool {
-	Hassert(false, "kernelModule.IsWork(): module='%v', parent not realised this method", sf.name)
+func (sf *kModule) IsWork() bool {
+	Hassert(false, "kModule.IsWork(): module='%v', parent not realised this method", sf.name)
 	return false
 }

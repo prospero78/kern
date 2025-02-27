@@ -93,6 +93,9 @@ func (sf *tester) newGood1() {
 	if name := sf.mon.Name(); name != "test_monolit" {
 		sf.t.Fatalf("newGood1(): name(%v)!='test_monolit'", name)
 	}
+	if log := sf.mon.Log(); log == nil {
+		sf.t.Fatalf("newGood1(): log==nil")
+	}
 }
 
 // Нет признака локальности

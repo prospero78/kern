@@ -12,4 +12,6 @@ type IKernelMonolit interface {
 	Run()
 	// Add -- добавляет модуль в монолит
 	Add(IKernelModule)
+	// Log -- возвращает лог монолита
+	Log() ILogBuf
 }
