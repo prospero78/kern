@@ -8,9 +8,9 @@ import (
 
 // PublishReq -- запрос на публикацию
 type PublishReq struct {
-	Topic_ ATopic `json:"topic"`
-	Uuid_  string `json:"uuid"`
-	BinMsg []byte `json:"msg"`
+	Topic_  ATopic `json:"topic"`
+	Uuid_   string `json:"uuid"`
+	BinMsg_ []byte `json:"msg"`
 }
 
 // SelfCheck -- проверяет правильность своих полей

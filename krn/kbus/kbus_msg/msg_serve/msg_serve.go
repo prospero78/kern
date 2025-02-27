@@ -25,3 +25,8 @@ type ServeResp struct {
 	Uuid_    string `json:"uuid"`
 	BinResp_ []byte `json:"resp"`
 }
+
+// SelfCheck -- проверяет правильность своих полей
+func (sf *ServeResp) SelfCheck() {
+	Hassert(sf.Status_ != "", "ServeResp.SelfCheck(): status is empty")
+}

@@ -162,9 +162,9 @@ func (sf *tester) pub() {
 func (sf *tester) pubGood2() {
 	sf.t.Log("pubGood2")
 	req := &msg_pub.PublishReq{
-		Topic_: "topic_sub",
-		Uuid_:  "test_uuid",
-		BinMsg: []byte("http_pub"),
+		Topic_:  "topic_sub",
+		Uuid_:   "test_uuid",
+		BinMsg_: []byte("http_pub"),
 	}
 	binReq, _ := json.MarshalIndent(req, "", "  ")
 	body := strings.NewReader(string(binReq))
@@ -221,9 +221,9 @@ func (sf *tester) pubBad2() {
 	defer bus.IsWork_.Set()
 
 	req := &msg_pub.PublishReq{
-		Topic_: "topic_sub",
-		Uuid_:  "test_uuid",
-		BinMsg: []byte("test_pub"),
+		Topic_:  "topic_sub",
+		Uuid_:   "test_uuid",
+		BinMsg_: []byte("test_pub"),
 	}
 	resp := bus.processPublish(req)
 	if resp.Status_ == "ok" {
@@ -239,9 +239,9 @@ func (sf *tester) pubGood1() {
 		sf.t.Fatalf("pubGood1(): err=%v", err)
 	}
 	req := &msg_pub.PublishReq{
-		Topic_: "topic_sub",
-		Uuid_:  "test_uuid",
-		BinMsg: []byte("test_pub"),
+		Topic_:  "topic_sub",
+		Uuid_:   "test_uuid",
+		BinMsg_: []byte("test_pub"),
 	}
 	_ = bus.processPublish(req)
 	msg := string(sf.handSub.Msg())

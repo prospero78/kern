@@ -60,11 +60,13 @@ func (sf *kBusHttp) postSub(ctx *fiber.Ctx) error {
 			Status_: fmt.Sprintf("kernelBusHttp.postSub(): in parse request, err=\n\t%v\n", err),
 			Uuid_:   req.Uuid_,
 		}
+		resp.SelfCheck()
 		ctx.Response().SetStatusCode(http.StatusBadRequest)
 		sf.log.Err(resp.Status_)
 		return ctx.JSON(resp)
 	}
 	resp := sf.processSubscribe(req)
+	resp.SelfCheck()
 	return ctx.JSON(resp)
 }
 
@@ -98,18 +100,20 @@ func (sf *kBusHttp) postPublish(ctx *fiber.Ctx) error {
 			Status_: fmt.Sprintf("kernelBusHttp.postPublish(): in parse request, err=\n\t%v\n", err),
 			Uuid_:   req.Uuid_,
 		}
+		resp.SelfCheck()
 		ctx.Response().SetStatusCode(http.StatusBadRequest)
 		sf.log.Err(resp.Status_)
 		return ctx.JSON(resp)
 	}
 	resp := sf.processPublish(req)
+	resp.SelfCheck()
 	return ctx.JSON(resp)
 }
 
 // Выполняет процесс публикации
 func (sf *kBusHttp) processPublish(req *msg_pub.PublishReq) *msg_pub.PublishResp {
 	req.SelfCheck()
-	err := sf.Publish(req.Topic_, req.BinMsg)
+	err := sf.Publish(req.Topic_, req.BinMsg_)
 	resp := &msg_pub.PublishResp{
 		Status_: "ok",
 		Uuid_:   req.Uuid_,
@@ -133,11 +137,13 @@ func (sf *kBusHttp) postSendRequest(ctx *fiber.Ctx) error {
 			Status_: fmt.Sprintf("kernelBusHttp.postSendRequest(): err=\n\t%v", err),
 			Uuid_:   req.Uuid_,
 		}
+		resp.SelfCheck()
 		ctx.Response().SetStatusCode(http.StatusBadRequest)
 		sf.log.Err(resp.Status_)
 		return ctx.JSON(resp)
 	}
 	resp := sf.processSendRequest(req)
+	resp.SelfCheck()
 	return ctx.JSON(resp)
 }
 
@@ -170,11 +176,13 @@ func (sf *kBusHttp) postUnsub(ctx *fiber.Ctx) error {
 			Status_: fmt.Sprintf("kernelBusHttp.postSendRequest(): err=\n\t%v", err),
 			Uuid_:   req.Uuid_,
 		}
+		resp.SelfCheck()
 		ctx.Response().SetStatusCode(http.StatusBadRequest)
 		sf.log.Err(resp.Status_)
 		return ctx.JSON(resp)
 	}
 	resp := sf.processUnsubRequest(req)
+	resp.SelfCheck()
 	return ctx.JSON(resp)
 }
 

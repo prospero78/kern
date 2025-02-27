@@ -1,4 +1,4 @@
-package msg_pub
+package msg_sub
 
 import (
 	"testing"
@@ -20,7 +20,7 @@ func TestPublishMsg(t *testing.T) {
 func (sf *tester) resp() {
 	sf.t.Log("resp")
 	sf.respBad1()
-	resp := &PublishResp{
+	resp := &SubscribeResp{
 		Status_: "test_ok",
 	}
 	resp.SelfCheck()
@@ -34,7 +34,7 @@ func (sf *tester) respBad1() {
 			sf.t.Fatalf("respBad1(): panic==nil")
 		}
 	}()
-	resp := &PublishResp{}
+	resp := &SubscribeResp{}
 	resp.SelfCheck()
 }
 
@@ -42,10 +42,10 @@ func (sf *tester) respBad1() {
 func (sf *tester) req() {
 	sf.t.Log("req")
 	sf.reqBad1()
-	req := &PublishReq{
-		Topic_:  "test_topic",
-		Uuid_:   "test_uuid",
-		BinMsg_: []byte("test msg"),
+	req := &SubscribeReq{
+		Topic_:   "test_topic",
+		Uuid_:    "test_uuid",
+		WebHook_: "test msg",
 	}
 	req.SelfCheck()
 }
@@ -58,6 +58,6 @@ func (sf *tester) reqBad1() {
 			sf.t.Fatalf("reqBad1(): panic==nil")
 		}
 	}()
-	req := &PublishReq{}
+	req := &SubscribeReq{}
 	req.SelfCheck()
 }

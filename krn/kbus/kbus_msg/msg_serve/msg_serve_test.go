@@ -1,4 +1,4 @@
-package msg_pub
+package msg_serve
 
 import (
 	"testing"
@@ -8,7 +8,7 @@ type tester struct {
 	t *testing.T
 }
 
-func TestPublishMsg(t *testing.T) {
+func TestServeMsg(t *testing.T) {
 	sf := &tester{
 		t: t,
 	}
@@ -20,7 +20,7 @@ func TestPublishMsg(t *testing.T) {
 func (sf *tester) resp() {
 	sf.t.Log("resp")
 	sf.respBad1()
-	resp := &PublishResp{
+	resp := &ServeResp{
 		Status_: "test_ok",
 	}
 	resp.SelfCheck()
@@ -34,7 +34,7 @@ func (sf *tester) respBad1() {
 			sf.t.Fatalf("respBad1(): panic==nil")
 		}
 	}()
-	resp := &PublishResp{}
+	resp := &ServeResp{}
 	resp.SelfCheck()
 }
 
@@ -42,10 +42,10 @@ func (sf *tester) respBad1() {
 func (sf *tester) req() {
 	sf.t.Log("req")
 	sf.reqBad1()
-	req := &PublishReq{
+	req := &ServeReq{
 		Topic_:  "test_topic",
 		Uuid_:   "test_uuid",
-		BinMsg_: []byte("test msg"),
+		BinReq_: []byte("test msg"),
 	}
 	req.SelfCheck()
 }
@@ -58,6 +58,6 @@ func (sf *tester) reqBad1() {
 			sf.t.Fatalf("reqBad1(): panic==nil")
 		}
 	}()
-	req := &PublishReq{}
+	req := &ServeReq{}
 	req.SelfCheck()
 }

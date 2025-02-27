@@ -26,3 +26,8 @@ type SubscribeResp struct {
 	Uuid_   string       `json:"uuid"`
 	Name_   AHandlerName `json:"name"` // Уникальное имя подписки
 }
+
+// SelfCheck -- проверяет правильность своих полей
+func (sf *SubscribeResp) SelfCheck() {
+	Hassert(sf.Status_ != "", "SubscribeResp.SelfCheck(): status is empty")
+}

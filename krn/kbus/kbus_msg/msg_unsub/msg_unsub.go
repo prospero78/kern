@@ -23,3 +23,8 @@ type UnsubResp struct {
 	Status_ string `json:"status"`
 	Uuid_   string `json:"uuid"`
 }
+
+// SelfCheck -- проверяет правильность своих полей
+func (sf *UnsubResp) SelfCheck() {
+	Hassert(sf.Status_ != "", "UnsubResp.SelfCheck(): status is empty")
+}
