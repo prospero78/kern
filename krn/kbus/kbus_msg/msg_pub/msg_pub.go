@@ -24,3 +24,8 @@ type PublishResp struct {
 	Status_ string `json:"status"`
 	Uuid_   string `json:"uuid"`
 }
+
+// SelfCheck -- проверяет правильность своих полей
+func (sf *PublishResp) SelfCheck() {
+	Hassert(sf.Status_ != "", "PublishResp.SelfCheck(): status is empty")
+}
