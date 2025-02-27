@@ -185,4 +185,7 @@ func (sf *tester) newGood1() {
 	if !sf.bus.IsWork() {
 		sf.t.Fatalf("newGood1(): bus not work")
 	}
+	if log := sf.bus.Log(); log == nil {
+		sf.t.Fatalf("newGood1(): log==nil")
+	}
 }

@@ -80,4 +80,6 @@ type IKernelBus interface {
 
 	// IsWork -- возвращает признак работы шины
 	IsWork() bool
+	// Log -- возвращает буферный лог
+	Log() ILogBuf
 }

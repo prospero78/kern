@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	. "github.com/prospero78/kern/kc/helpers"
+	"github.com/prospero78/kern/kc/local_ctx"
 	"github.com/prospero78/kern/kc/safe_bool"
 	. "github.com/prospero78/kern/krn/kalias"
 	"github.com/prospero78/kern/krn/kbus/dict_topic_serve"
@@ -23,6 +24,8 @@ const (
 type KBusBase struct {
 	Ctx_      IKernelCtx
 	IsWork_   ISafeBool
+	ctx       ILocalCtx
+	log       ILogBuf
 	dictSub   IDictTopicSub
 	dictServe IDictTopicServe
 	block     sync.Mutex
@@ -43,7 +46,9 @@ func GetKernelBusBase() *KBusBase {
 		IsWork_:   safe_bool.NewSafeBool(),
 		dictSub:   dict_topic_sub.NewDictTopicSub(),
 		dictServe: dict_topic_serve.NewDictServe(),
+		ctx:       local_ctx.NewLocalCtx(ctx.BaseCtx()),
 	}
+	Bus_.log = Bus_.ctx.Log()
 	go Bus_.close()
 	err := Bus_.Ctx_.Wg().Add(strBusBaseStream)
 	Hassert(err == nil, "GetKernelBusBase(): in add name stream '%v' Wg, err=%v", strBusBaseStream, err)
@@ -53,8 +58,14 @@ func GetKernelBusBase() *KBusBase {
 	return Bus_
 }
 
+// Log -- возвращает лог шины
+func (sf *KBusBase) Log() ILogBuf {
+	return sf.log
+}
+
 // Unsubscribe -- отписывает обработчик от топика
 func (sf *KBusBase) Unsubscribe(handler IBusHandlerSubscribe) {
+	sf.log.Debug("KBusBase.Unsubscribe(): handler='%v'", handler.Name())
 	sf.dictSub.Unsubscribe(handler)
 }
 
@@ -62,8 +73,11 @@ func (sf *KBusBase) Unsubscribe(handler IBusHandlerSubscribe) {
 func (sf *KBusBase) Subscribe(handler IBusHandlerSubscribe) error {
 	sf.block.Lock()
 	defer sf.block.Unlock()
+	sf.log.Debug("KBusBase.Subscribe(): handler='%v'", handler.Name())
 	if !sf.IsWork_.Get() {
-		return fmt.Errorf("KernelBusBase.Subscribe(): bus already closed")
+		strOut := fmt.Sprintf("KernelBusBase.Subscribe():  handler='%v', bus already closed", handler.Name())
+		sf.log.Err(strOut)
+		return fmt.Errorf(strOut, "")
 	}
 	sf.dictSub.Subscribe(handler)
 	return nil
@@ -73,12 +87,17 @@ func (sf *KBusBase) Subscribe(handler IBusHandlerSubscribe) error {
 func (sf *KBusBase) SendRequest(topic ATopic, binReq []byte) ([]byte, error) {
 	sf.block.Lock()
 	defer sf.block.Unlock()
+	sf.log.Debug("KBusBase.SendRequest(): topic='%v'", topic)
 	if !sf.IsWork_.Get() {
-		return nil, fmt.Errorf("KernelBusBase.SendRequest(): bus already closed")
+		strOut := fmt.Sprintf("KernelBusBase.SendRequest():  topic='%v', bus already closed", topic)
+		sf.log.Err(strOut)
+		return nil, fmt.Errorf(strOut, "")
 	}
 	binResp, err := sf.dictServe.SendRequest(topic, binReq)
 	if err != nil {
-		return nil, fmt.Errorf("KernelBusBase.SendRequest(): topic='%v', err=\n\t%w", topic, err)
+		strOut := fmt.Sprintf("KernelBusBase.SendRequest(): topic='%v', err=\n\t%v", topic, err)
+		sf.log.Err(strOut)
+		return nil, fmt.Errorf(strOut, "")
 	}
 	return binResp, nil
 }
