@@ -25,24 +25,60 @@ func TestPageMonolit(t *testing.T) {
 		ctx: kctx.GetKernelCtx(),
 	}
 	sf.new()
-	sf.get()
+	sf.getMonolit()
+	sf.postMonolitState()
+	sf.postMonolitCtx()
 	sf.done()
 }
 
-// Возвращает главную страницу монолита
-func (sf *tester) get() {
-	sf.t.Log("get")
+// Возвращает состояние контекста монолита
+func (sf *tester) postMonolitCtx() {
+	sf.t.Log("postMonolitCtx")
 	fiberApp := sf.serv.Fiber()
-	req, err := http.NewRequest("GET", "/monolit", nil)
+	req, err := http.NewRequest("POST", "/monolit_ctx", nil)
 	if err != nil {
-		sf.t.Fatalf("get(): in net request, err=%v", err)
+		sf.t.Fatalf("postMonolitCtx(): in net request, err=%v", err)
 	}
 	resp, err := fiberApp.Test(req)
 	if err != nil {
-		sf.t.Fatalf("get(): in make GET, err=%v", err)
+		sf.t.Fatalf("postMonolitCtx(): in make POST, err=%v", err)
 	}
 	if resp.StatusCode != 200 {
-		sf.t.Fatalf("get(): status(%v)!=200", resp.StatusCode)
+		sf.t.Fatalf("postMonolitCtx(): status(%v)!=200", resp.StatusCode)
+	}
+}
+
+// Возвращает состояние монолита
+func (sf *tester) postMonolitState() {
+	sf.t.Log("postMonolitState")
+	fiberApp := sf.serv.Fiber()
+	req, err := http.NewRequest("POST", "/monolit_state", nil)
+	if err != nil {
+		sf.t.Fatalf("postMonolitState(): in net request, err=%v", err)
+	}
+	resp, err := fiberApp.Test(req)
+	if err != nil {
+		sf.t.Fatalf("postMonolitState(): in make POST, err=%v", err)
+	}
+	if resp.StatusCode != 200 {
+		sf.t.Fatalf("postMonolitState(): status(%v)!=200", resp.StatusCode)
+	}
+}
+
+// Возвращает главную страницу монолита
+func (sf *tester) getMonolit() {
+	sf.t.Log("getMonolit")
+	fiberApp := sf.serv.Fiber()
+	req, err := http.NewRequest("GET", "/monolit", nil)
+	if err != nil {
+		sf.t.Fatalf("getMonolit(): in net request, err=%v", err)
+	}
+	resp, err := fiberApp.Test(req)
+	if err != nil {
+		sf.t.Fatalf("getMonolit(): in make GET, err=%v", err)
+	}
+	if resp.StatusCode != 200 {
+		sf.t.Fatalf("getMonolit(): status(%v)!=200", resp.StatusCode)
 	}
 }
 

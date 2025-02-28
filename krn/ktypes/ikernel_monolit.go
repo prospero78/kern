@@ -16,4 +16,6 @@ type IKernelMonolit interface {
 	Add(IKernelModule)
 	// Log -- возвращает лог монолита
 	Log() ILogBuf
+	// Ctx -- возвращает контекст монолита
+	Ctx() ILocalCtx
 }

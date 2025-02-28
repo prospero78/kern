@@ -46,8 +46,15 @@ func GetMonolit(name string) IKernelMonolit {
 	}
 	sf.log = sf.ctx.Log()
 	kCtx.Set("monolitName", name, "name of monolit")
+	kCtx.Set("monolit", sf, "monolit-app")
+	sf.ctx.Set("monolitName", name, "name of monolit")
 	mon = sf
 	return sf
+}
+
+// Ctx -- возвращает контекст монолита
+func (sf *kMonolit) Ctx() ILocalCtx {
+	return sf.ctx
 }
 
 // Log -- возвращает лог монолита

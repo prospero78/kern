@@ -16,23 +16,23 @@
     <body hx-boost="true">
 
         <!-- заголовок -->
-        <div id="header">
+        <div id="header" class="cointainer">
             <div class="container-fluid align-middle"><!-- контейнер заголовка -->
                 <div class="row border align-items-center">
                     <div class="col-auto border border-primary rounded btn btn-dark">
                         <h1>kern</h1>
                     </div>
                     <div class="col">
-                        <a class="btn btn-primary" href="/monolit/ctx">ctx</a>
-                        <a class="btn btn-primary" href="/monolit">Monolit</a>
-                        <a class="btn btn-primary" href="/monolit/module">Modules</a>
+                        <span class="btn btn-primary" hx-post="/ctx" hx-target="#main">ctx</span>
+                        <span class="btn btn-primary" hx-post="/monolit_state" hx-target="#main">Monolit</span>
+                        <span class="btn btn-primary" hx-post="/modules" hx-target="#main">Modules</span>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- main -->
-        <div id="main">
+        <div id="main" hx-post="/monolit_state" hx-trigger="load">
             <!-- тест для hyperscript
                 <div class="container-fluid">
                     <div class="counter">
@@ -44,13 +44,13 @@
                 </div>
             -->
         </div>
-        <p hx-trigger="load" hx-target="main" hx-post="/monolit/state"></p>
+
         <!-- подвал -->
-        <div class="container-fluid border rounded text bg-info">
+         <p></p>
+        <div id="footer" class="container-fluid border rounded text bg-info">
             <span>Like project on <a href="https://github.com/prospero78/kern">github.com/prospero78/kern</a></span>
-            <span> <b>Time:</b> </span><span id="serv_time" hx-post="/api/time" hx-trigger="every 1s load"></span>
-            <span hx-post="/api/time" hx-trigger="load" hx-target="#serv_time"></span
-            <span hx-post="/api/count_start" hx-trigger="every 30s"></span>
+            <span> <b>Time:</b> </span><span id="serv_time" hx-post="/api_time" hx-trigger="every 1s"></span>
+            <span hx-post="/api_time" hx-trigger="load" hx-target="#serv_time"></span>
         </div>
         <script src="/static/js/bootstrap.bundle.min.js"></script>
     </body>

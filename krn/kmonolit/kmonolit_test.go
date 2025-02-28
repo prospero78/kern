@@ -97,6 +97,9 @@ func (sf *tester) newGood1() {
 	if log := sf.mon.Log(); log == nil {
 		sf.t.Fatalf("newGood1(): log==nil")
 	}
+	if ctx := sf.mon.Ctx(); ctx == nil {
+		sf.t.Fatalf("newGood1(): ctx==nil")
+	}
 	sf.mon = GetMonolit("")
 }
 

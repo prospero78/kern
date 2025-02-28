@@ -33,7 +33,7 @@ func TestPageMonolit(t *testing.T) {
 func (sf *tester) getTime() {
 	sf.t.Log("get")
 	fiberApp := sf.serv.Fiber()
-	req, err := http.NewRequest("POST", "/api/time", nil)
+	req, err := http.NewRequest("POST", "/api_time", nil)
 	if err != nil {
 		sf.t.Fatalf("get(): in net request, err=%v", err)
 	}

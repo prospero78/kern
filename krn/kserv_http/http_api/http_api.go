@@ -17,7 +17,7 @@ func NewHttpApi() *HttpApi {
 	sf := &HttpApi{}
 	kCtx := kctx.GetKernelCtx()
 	fiberApp := kCtx.Get("fiberApp").Val().(*fiber.App)
-	fiberApp.Post("/api/time", sf.postTime)
+	fiberApp.Post("/api_time", sf.postTime)
 	return sf
 }
 

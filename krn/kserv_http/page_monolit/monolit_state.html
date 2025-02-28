@@ -1,0 +1,56 @@
+<div class="container border rounded m-3 text-center">
+    <h2>Monolit</h2>
+</div>
+
+<p></p>
+
+<div class="container border rounded m-3 text-center">
+    <span class="btn btn-primary" hx-post="/monolit_state" hx-target="#main">Monolit</span>
+    <span class="btn btn-primary" hx-post="/monolit_ctx" hx-target="#main">ctx</span>
+    <span class="btn btn-primary" hx-post="/monolit_log" hx-target="#main">log</span>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-2 border bg-info">
+            <b>Param</b>
+        </div>
+        <div class="col border bg-info">
+            <b>Value</b>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 border">
+            <b>Name:</b>
+        </div>
+        <div class="col border">
+            {.name}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 border">
+            <b>CreateAt:</b>
+        </div>
+        <div class="col border">
+            {.createAt}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 border">
+            <b>UpdateAt:</b>
+        </div>
+        <div class="col border">
+            {.updateAt}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 border">
+            <b>Comment:</b>
+        </div>
+        <div class="col border">
+            {.comment}
+        </div>
+    </div>
+</div>
+
+<span hx-post="/monolit_state" hx-trigger="every 2s" hx-target="#main"></span>
