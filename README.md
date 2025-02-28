@@ -84,8 +84,9 @@ tree -I vendor -I bin_dev -d
 ## Команды сборки
 
 ```bash
-make      # ОБновление зависимостей
-Make mod  # -//-
+make      # Запуск демо
+make demo # -//-
+make mod  # Обновление зависимостей
 make test # Запуск тестов
 make lint # Запуск линтеров
 ```
