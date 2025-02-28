@@ -5,7 +5,9 @@ import (
 	"github.com/prospero78/kern/kc/safe_bool"
 	. "github.com/prospero78/kern/krn/kalias"
 	"github.com/prospero78/kern/krn/kbus/kbus_http"
+	"github.com/prospero78/kern/krn/kbus/kbus_http/client_bus_http"
 	"github.com/prospero78/kern/krn/kbus/kbus_local"
+	"github.com/prospero78/kern/krn/kbus/kbus_local/client_bus_local"
 	"github.com/prospero78/kern/krn/kctx"
 	"github.com/prospero78/kern/krn/kmodule"
 	"github.com/prospero78/kern/krn/kmonolit"
@@ -74,4 +76,16 @@ func NewMonolitHttp(name string) IKernelMonolit {
 func NewKernelModule(name AModuleName) IKernelModule {
 	mod := kmodule.NewKernelModule(name)
 	return mod
+}
+
+// NewClientBusLocal -- возвращает клиент для работы с локальной шиной
+func NewClientBusLocal() IBusClient {
+	client := client_bus_local.NewClientBusLocal()
+	return client
+}
+
+// NewClientBusHttp -- возвращает клиент для работы с шиной поверх HTTP
+func NewClientBusHttp(url string) IBusClient {
+	client := client_bus_http.NewClientBusHttp(url)
+	return client
 }

@@ -79,9 +79,17 @@ func (sf *tester) new() {
 
 	mod := NewKernelModule("test_mod")
 	if mod == nil {
-		sf.t.Fatalf("new():IKernelModule==nil")
+		sf.t.Fatalf("new(): IKernelModule==nil")
 	}
 
+	clientLocal := NewClientBusLocal()
+	if clientLocal == nil {
+		sf.t.Fatalf("new(): (local) IBusClient==nil")
+	}
+	clientHttp := NewClientBusHttp("test_url")
+	if clientHttp == nil {
+		sf.t.Fatalf("new(): (http) IBusClient==nil")
+	}
 	kernServHttp := NewKernelServerHttp()
 	go kernServHttp.Run()
 	ctx.Cancel()
