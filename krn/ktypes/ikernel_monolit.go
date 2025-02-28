@@ -10,6 +10,8 @@ type IKernelMonolit interface {
 	IsWork() bool
 	// Run -- запускает монолит в работу
 	Run()
+	// Wait -- ожидание окончания работы
+	Wait()
 	// Add -- добавляет модуль в монолит
 	Add(IKernelModule)
 	// Log -- возвращает лог монолита

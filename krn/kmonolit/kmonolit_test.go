@@ -29,7 +29,8 @@ func (sf *tester) done() {
 	ctx := kctx.GetKernelCtx()
 	ctx.Cancel()
 	ctx.Wg().Wait()
-	sf.mon.(*kMonolit).close()
+	sf.mon.Run()
+	sf.mon.Wait()
 	sf.mon.Run()
 }
 

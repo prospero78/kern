@@ -86,7 +86,6 @@ func (sf *kMonolit) Run() {
 	for _, module := range sf.dict {
 		go module.Run()
 	}
-	go sf.close()
 	sf.log.Debug("kMonolit.Run()")
 }
 
@@ -101,7 +100,7 @@ func (sf *kMonolit) IsWork() bool {
 }
 
 // Ожидание завершения работы монолита
-func (sf *kMonolit) close() {
+func (sf *kMonolit) Wait() {
 	sf.kCtx.Done()
 	sf.kCtx.Wg().Wait()
 	sf.block.Lock()

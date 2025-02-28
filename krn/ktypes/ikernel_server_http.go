@@ -10,4 +10,6 @@ type IKernelServerHttp interface {
 	Fiber() *fiber.App
 	// Log -- возвращает локальный лог
 	Log() ILogBuf
+	// IsWork -- возвращает признак работы
+	IsWork() bool
 }
