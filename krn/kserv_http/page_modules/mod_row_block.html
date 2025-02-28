@@ -1,0 +1,31 @@
+<div class="container border rounded m-3 text-center">
+    <h2>Modules</h2>
+</div>
+
+<p></p>
+
+<div class="container">
+    <div class="row">
+        <div class="col-1 border bg-info">
+            <b>Key</b>
+        </div>
+        <div class="col-2 border bg-info">
+            <b>Name</b>
+        </div>
+        <div class="col-2 border bg-info">
+            <b>Type</b>
+        </div>
+        <div class="col-2 border bg-info">
+            <b>CreateAt</b>
+        </div>
+        <div class="col-2 border bg-info">
+            <b>UpdateAt</b>
+        </div>
+        <div class="col border bg-info">
+            <b>Comment</b>
+        </div>
+    </div>
+    {.mod_block}
+</div>
+
+<span hx-post="/modules" hx-trigger="every 2s" hx-target="#main"></span>

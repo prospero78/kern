@@ -1,0 +1,20 @@
+<div class="row">
+    <div class="col-1 border">
+        {.key}
+    </div>
+    <div class="col-2 border">
+        <span class="btn btn-info" hx-post="/{.key}" hx-target="#main">{.name}</span>
+    </div>
+    <div class="col-2 border">
+        {.type}
+    </div>
+    <div class="col-2 border">
+        {.createAt}
+    </div>
+    <div class="col-2 border">
+        {.updateAt}
+    </div>
+    <div class="col border">
+        {.comment}
+    </div>
+</div>

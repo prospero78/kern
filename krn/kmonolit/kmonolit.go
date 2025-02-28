@@ -2,6 +2,7 @@
 package kmonolit
 
 import (
+	"fmt"
 	"sync"
 
 	. "github.com/prospero78/kern/kc/helpers"
@@ -80,6 +81,9 @@ func (sf *kMonolit) Add(module IKernelModule) {
 		go module.Run()
 		sf.log.Debug("kMonolit.Add(): module='%v' is run", module.Name())
 	}
+	key := fmt.Sprintf("module/%v", len(sf.dict))
+	moduleName := string(module.Name())
+	sf.ctx.Set(key, module, "kMonolit.Add(): module="+moduleName)
 }
 
 // Run -- запускает монолит в работу

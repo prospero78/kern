@@ -5,6 +5,8 @@ import (
 	"github.com/prospero78/kern/krn/kmodule"
 	"github.com/prospero78/kern/krn/kserv_http"
 	"github.com/prospero78/kern/krn/kserv_http/http_api"
+	"github.com/prospero78/kern/krn/kserv_http/page_module"
+	"github.com/prospero78/kern/krn/kserv_http/page_modules"
 	"github.com/prospero78/kern/krn/kserv_http/page_monolit"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
@@ -24,6 +26,8 @@ func NewModuleServHttp() *ModuleServHttp {
 	}
 	sf.log = sf.Ctx().Log()
 	_ = page_monolit.NewPageMonolit()
+	_ = page_modules.NewPageModules()
+	_ = page_module.NewPageModule()
 
 	_ = http_api.NewHttpApi()
 	return sf

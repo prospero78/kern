@@ -35,7 +35,7 @@ func (sf *kModule) Log() ILogBuf {
 
 // Ctx -- возвращает контекст модуля
 func (sf *kModule) Ctx() ILocalCtx {
-	return sf.kCtx
+	return sf.ctx
 }
 
 // Run -- запускает модуль в работу

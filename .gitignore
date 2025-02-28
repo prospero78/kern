@@ -18,3 +18,4 @@
 go.work
 bin_dev
 .token
+.vscode
