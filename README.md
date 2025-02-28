@@ -6,7 +6,6 @@
 ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
 ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 ![Stat](https://starchart.cc/prospero78/kern.svg)
 
 **kern** -- модульные компоненты ядра с высокой надёжностью для любого микросервиса или модульного монолита.
@@ -17,11 +16,10 @@
 
 ## Статус проекта
 
-Готовность: `100%` .
-
-Покрытие тестами: 100%
-
-Линтеры: ошибок нет; цикломатическая сложность менее 11.
+* готовность: `90%`;
+* покрытие тестами: `100%`;
+* линтеры: `no errors`;
+* цикломатическая сложность: `< 11`.
 
 ## Состав
 
