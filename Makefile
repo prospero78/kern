@@ -1,3 +1,8 @@
+demo:
+	clear
+	go fmt ./...
+	go build -race -o ./bin_dev/demo ./cmd/demo/main.go
+	./demo.sh
 mod:
 	clear
 	go get -u ./...
