@@ -58,7 +58,7 @@ func NewKernelBusHttp() IKernelBus {
 func NewMonolitLocal(name string) IKernelMonolit {
 	ctx := kctx.GetKernelCtx()
 	ctx.Set("isLocal", true, "bus type")
-	monolit := kmonolit.NewMonolit(name)
+	monolit := kmonolit.GetMonolit(name)
 	_ = kbus_local.GetKernelBusLocal()
 	return monolit
 }
@@ -68,7 +68,7 @@ func NewMonolitHttp(name string) IKernelMonolit {
 	ctx := kctx.GetKernelCtx()
 	_ = kbus_http.GetKernelBusHttp()
 	ctx.Set("isLocal", false, "bus type")
-	monolit := kmonolit.NewMonolit(name)
+	monolit := kmonolit.GetMonolit(name)
 	return monolit
 }
 

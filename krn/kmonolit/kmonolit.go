@@ -25,8 +25,15 @@ type kMonolit struct {
 	block   sync.Mutex
 }
 
-// NewMonolit -- возвращает новый монолит
-func NewMonolit(name string) IKernelMonolit {
+var (
+	mon *kMonolit
+)
+
+// GetMonolit -- возвращает монолит
+func GetMonolit(name string) IKernelMonolit {
+	if mon != nil {
+		return mon
+	}
 	Hassert(name != "", "NewMonolit(): name is empty")
 	kCtx := kctx.GetKernelCtx()
 	sf := &kMonolit{
@@ -39,6 +46,7 @@ func NewMonolit(name string) IKernelMonolit {
 	}
 	sf.log = sf.ctx.Log()
 	kCtx.Set("monolitName", name, "name of monolit")
+	mon = sf
 	return sf
 }
 

@@ -85,7 +85,7 @@ func (sf *tester) newGood1() {
 	}()
 	ctx := kctx.GetKernelCtx()
 	ctx.Set("isLocal", true, "type bus")
-	sf.mon = NewMonolit("test_monolit")
+	sf.mon = GetMonolit("test_monolit")
 	isLocal := sf.mon.IsLocal()
 	if !isLocal {
 		sf.t.Fatalf("newGood1(): isLocal==false")
@@ -96,6 +96,7 @@ func (sf *tester) newGood1() {
 	if log := sf.mon.Log(); log == nil {
 		sf.t.Fatalf("newGood1(): log==nil")
 	}
+	sf.mon = GetMonolit("")
 }
 
 // Нет признака локальности
@@ -106,5 +107,5 @@ func (sf *tester) newBad1() {
 			sf.t.Fatalf("newBad1(): panic==nil")
 		}
 	}()
-	_ = NewMonolit("test_32")
+	_ = GetMonolit("test_32")
 }
