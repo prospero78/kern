@@ -1,12 +1,14 @@
 # kern
 
+![Coverage](./docs/img/coverage.svg)
 ![MX Linux](https://img.shields.io/badge/-MX%20Linux-%23000000?style=for-the-badge&logo=MXlinux&logoColor=white)
 ![Go](https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&logo=go&logoColor=white)
-![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
 ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Stat](https://starchart.cc/{username}/{repo}.svg)
 
-**kern** -- лёгкое универсальное ядро для любого микросервиса
+**kern** -- модульные компоненты ядра с высокой надёжностью для любого микросервиса или модульного монолита.
 
 ## Контакты
 
@@ -14,7 +16,7 @@
 
 ## Статус проекта
 
-Готовность: `100%`.
+Готовность: `100%` .
 
 Покрытие тестами: 100%
 
