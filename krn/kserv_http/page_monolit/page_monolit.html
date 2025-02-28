@@ -1,0 +1,58 @@
+<!doctype html>
+<HTML lang="ru">
+
+    <head>
+        <title>kern</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta pragma="no-cache">
+        <!-- Bootstrap CSS -->
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+        <!-- htmx -->
+        <script src="/static/js/htmx.min.js"></script>
+        <script src="/static/js/hyperscript.min.js"></script>
+    </head>
+
+    <body hx-boost="true">
+
+        <!-- заголовок -->
+        <div id="header">
+            <div class="container-fluid align-middle"><!-- контейнер заголовка -->
+                <div class="row border align-items-center">
+                    <div class="col-auto border border-primary rounded btn btn-dark">
+                        <h1>kern</h1>
+                    </div>
+                    <div class="col">
+                        <a class="btn btn-primary" href="/monolit/ctx">ctx</a>
+                        <a class="btn btn-primary" href="/monolit">Monolit</a>
+                        <a class="btn btn-primary" href="/monolit/module">Modules</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- main -->
+        <div id="main">
+            <!-- тест для hyperscript
+                <div class="container-fluid">
+                    <div class="counter">
+                        <button _="on click increment the textContent of the next <output/>">Прибавить</button>
+                        [<output>0</output>]
+                        <button _="on click decrement the textContent of the previous <output/>">убавить</button><br>
+                    </div>
+                    <br>
+                </div>
+            -->
+        </div>
+        <p hx-trigger="load" hx-target="main" hx-post="/monolit/state"></p>
+        <!-- подвал -->
+        <div class="container-fluid border rounded text bg-info">
+            <span>Like project on <a href="https://github.com/prospero78/kern">github.com/prospero78/kern</a></span>
+            <span> <b>Time:</b> </span><span id="serv_time" hx-post="/api/time" hx-trigger="every 1s load"></span>
+            <span hx-post="/api/time" hx-trigger="load" hx-target="#serv_time"></span
+            <span hx-post="/api/count_start" hx-trigger="every 30s"></span>
+        </div>
+        <script src="/static/js/bootstrap.bundle.min.js"></script>
+    </body>
+
+</HTML>

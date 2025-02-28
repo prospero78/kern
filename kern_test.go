@@ -19,6 +19,8 @@ func TestBuilders(t *testing.T) {
 	}
 	_ = os.Unsetenv("LOCAL_STORE_PATH")
 	_ = os.Setenv("LOCAL_STORE_PATH", "/store/store_builder")
+	_ = os.Unsetenv("LOCAL_HTTP_URL")
+	os.Setenv("LOCAL_HTTP_URL", "http://localhost:18311/")
 	fnClear := func() {
 		pwd := sf.me.Pwd() + "/store/store_builder"
 		_ = os.RemoveAll(pwd)

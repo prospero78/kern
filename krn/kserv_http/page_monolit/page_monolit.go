@@ -2,7 +2,10 @@
 package page_monolit
 
 import (
+	_ "embed"
+
 	"github.com/gofiber/fiber/v2"
+
 	"github.com/prospero78/kern/krn/kctx"
 )
 
@@ -19,7 +22,11 @@ func NewPageMonolit() *PageMonolit {
 	return sf
 }
 
+//go:embed page_monolit.html
+var strPageMonolit string
+
 // Индексная страница монолита
 func (sf *PageMonolit) getMonolit(ctx *fiber.Ctx) error {
-	return ctx.SendString("hello, monolit")
+	ctx.Set("Content-type", "text/html; charset=utf8;\n\n")
+	return ctx.SendString(strPageMonolit)
 }

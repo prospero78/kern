@@ -35,6 +35,7 @@ type kServHttp struct {
 	strUrl   string // URL, на котором слушает HTTP-сервер
 	fiberApp *fiber.App
 	isWork   ISafeBool
+	isEnd    ISafeBool
 	block    sync.Mutex
 }
 
@@ -72,6 +73,7 @@ func GetKernelServHttp() IKernelServerHttp {
 		strUrl:   strUrl,
 		fiberApp: fiber.New(confFiber),
 		isWork:   safe_bool.NewSafeBool(),
+		isEnd:    safe_bool.NewSafeBool(),
 	}
 	sf.log = sf.ctx.Log()
 	sf.fiberApp.Use(compress.New(compress.Config{
@@ -109,6 +111,12 @@ func (sf *kServHttp) Fiber() *fiber.App {
 
 // Run -- запускает сервер в работу (блокирующий вызов)
 func (sf *kServHttp) Run() {
+	if sf.isEnd.Get() {
+		return
+	}
+	if sf.isWork.Get() {
+		return
+	}
 	go sf.close()
 	sf.isWork.Set()
 	sf.log.Debug("kServHttp.Run(): url='%v'", sf.strUrl)
@@ -117,12 +125,11 @@ func (sf *kServHttp) Run() {
 	strPort = strings.ReplaceAll(strPort, "/", "")
 	strPort = strings.ReplaceAll(strPort, `"`, "")
 	err := sf.fiberApp.Listen(":" + strPort)
-	if err != nil {
-		strOut := fmt.Sprintf("kServHttp.Run(): in listen, err=\n\t%v", err)
-		sf.log.Err(strOut)
-		sf.kCtx.Cancel()
-	}
+	strOut := fmt.Sprintf("kServHttp.Run(): in listen, err=\n\t%v", err)
+	sf.log.Err(strOut)
+	sf.kCtx.Cancel()
 	sf.isWork.Reset()
+	sf.isEnd.Set()
 }
 
 // Ожидает окончания работы
@@ -134,6 +141,7 @@ func (sf *kServHttp) close() {
 		return
 	}
 	sf.isWork.Reset()
+	sf.isEnd.Set()
 	err := sf.fiberApp.Server().Shutdown()
 	Assert(err == nil, "kServHttp.close(): in close server, err=\n\t%v", err)
 	sf.kCtx.Wg().Done(streamName)

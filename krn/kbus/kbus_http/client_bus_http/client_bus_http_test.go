@@ -25,7 +25,7 @@ type tester struct {
 }
 
 func TestClientBusHttp(t *testing.T) {
-	handSub := mock_hand_sub_http.NewMockHandSubHttp("test_topic_sub", "http://localhost:18300/").(*mock_hand_sub_http.MockHandSubHttp)
+	handSub := mock_hand_sub_http.NewMockHandSubHttp("test_topic_sub", "http://localhost:18314/").(*mock_hand_sub_http.MockHandSubHttp)
 	handServ := mock_hand_serve.NewMockHandlerServe("test_topic_serv", "local_hook")
 	sf := &tester{
 		t:        t,
@@ -350,9 +350,9 @@ func (sf *tester) newGood1() {
 	}()
 	_ = mock_env.MakeEnv()
 	_ = os.Unsetenv("LOCAL_HTTP_URL")
-	_ = os.Setenv("LOCAL_HTTP_URL", "http://localhost:18300/")
+	_ = os.Setenv("LOCAL_HTTP_URL", "http://localhost:18314/")
 	sf.ctx.Set("monolitName", "test_monolit", "comment")
-	sf.cl = NewClientBusHttp("http://localhost:18300/").(*ClientBusHttp)
+	sf.cl = NewClientBusHttp("http://localhost:18314/").(*ClientBusHttp)
 	kServHttp := kserv_http.GetKernelServHttp()
 	go kServHttp.Run()
 	time.Sleep(time.Millisecond * 250)

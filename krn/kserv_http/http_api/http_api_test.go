@@ -1,4 +1,4 @@
-package page_monolit
+package http_api
 
 import (
 	"net/http"
@@ -16,7 +16,7 @@ type tester struct {
 	t    *testing.T
 	ctx  IKernelCtx
 	serv IKernelServerHttp
-	page *PageMonolit
+	api  *HttpApi
 }
 
 func TestPageMonolit(t *testing.T) {
@@ -25,21 +25,21 @@ func TestPageMonolit(t *testing.T) {
 		ctx: kctx.GetKernelCtx(),
 	}
 	sf.new()
-	sf.get()
+	sf.getTime()
 	sf.done()
 }
 
 // Возвращает главную страницу монолита
-func (sf *tester) get() {
+func (sf *tester) getTime() {
 	sf.t.Log("get")
 	fiberApp := sf.serv.Fiber()
-	req, err := http.NewRequest("GET", "/monolit", nil)
+	req, err := http.NewRequest("POST", "/api/time", nil)
 	if err != nil {
 		sf.t.Fatalf("get(): in net request, err=%v", err)
 	}
 	resp, err := fiberApp.Test(req)
 	if err != nil {
-		sf.t.Fatalf("get(): in make GET, err=%v", err)
+		sf.t.Fatalf("get(): in make POST, err=%v", err)
 	}
 	if resp.StatusCode != 200 {
 		sf.t.Fatalf("get(): status(%v)!=200", resp.StatusCode)
@@ -58,13 +58,13 @@ func (sf *tester) new() {
 	sf.t.Log("new")
 	_ = mock_env.MakeEnv()
 	_ = os.Unsetenv("LOCAL_HTTP_URL")
-	os.Setenv("LOCAL_HTTP_URL", "http://localhost:18310/")
+	os.Setenv("LOCAL_HTTP_URL", "http://localhost:18312/")
 	sf.ctx.Set("isLocal", true, "testing")
 	_ = kmonolit.GetMonolit("test_monolit")
 	sf.serv = kserv_http.GetKernelServHttp()
 
-	sf.page = NewPageMonolit()
-	if sf.page == nil {
+	sf.api = NewHttpApi()
+	if sf.api == nil {
 		sf.t.Fatalf("new(): page==nil")
 	}
 	go sf.serv.Run()

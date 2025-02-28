@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -532,6 +533,8 @@ func (sf *tester) reqBad1() {
 func (sf *tester) get() {
 	sf.t.Log("get")
 	_ = mock_env.MakeEnv()
+	_ = os.Unsetenv("LOCAL_HTTP_URL")
+	os.Setenv("LOCAL_HTTP_URL", "http://localhost:18312/")
 	_ = GetKernelBusHttp()
 	if bus == nil {
 		sf.t.Fatalf("get(): bus==nil")

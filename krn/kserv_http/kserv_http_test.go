@@ -38,6 +38,7 @@ func (sf *tester) close() {
 	if kernServHttp.IsWork() {
 		sf.t.Fatalf("close(): isWork==true")
 	}
+	kernServHttp.Run()
 }
 
 // Создание сервера HTTP
@@ -54,7 +55,7 @@ func (sf *tester) newBad3() {
 	sf.t.Log("newBad3()")
 	serv := GetKernelServHttp()
 	go serv.Run()
-	time.Sleep(time.Millisecond * 20)
+	time.Sleep(time.Millisecond * 10)
 }
 
 func (sf *tester) newGood1() {
@@ -79,6 +80,7 @@ func (sf *tester) newGood1() {
 		sf.t.Fatalf("newGood1(): log==nil")
 	}
 	go serv.Run()
+	time.Sleep(time.Millisecond * 50)
 }
 
 // Не указана SERVER_HTTP_PORT
