@@ -14,6 +14,7 @@ import (
 	"github.com/prospero78/kern/krn/kserv_http"
 	"github.com/prospero78/kern/krn/kstore_kv"
 	. "github.com/prospero78/kern/krn/ktypes"
+	"github.com/prospero78/kern/mds/mod_serv_http"
 )
 
 // NewKernelCtx -- возвращает контекст ядра
@@ -88,4 +89,10 @@ func NewClientBusLocal() IBusClient {
 func NewClientBusHttp(url string) IBusClient {
 	client := client_bus_http.NewClientBusHttp(url)
 	return client
+}
+
+// NewModuleServHttp -- возвращает новый модуль для IKernelServHttp
+func NewModuleServHttp() IKernelModule {
+	modServHttp := mod_serv_http.NewModuleServHttp()
+	return modServHttp
 }

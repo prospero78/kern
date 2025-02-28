@@ -1,6 +1,7 @@
 package kserv_http
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -34,6 +35,9 @@ func (sf *tester) close() {
 	sf.ctx.Cancel()
 	sf.wg.Wait()
 	kernServHttp.close()
+	if kernServHttp.IsWork() {
+		sf.t.Fatalf("close(): isWork==true")
+	}
 }
 
 // Создание сервера HTTP
@@ -61,6 +65,8 @@ func (sf *tester) newGood1() {
 		}
 	}()
 	sf.me = mock_env.MakeEnv()
+	_ = os.Unsetenv("LOCAL_HTTP_URL")
+	os.Setenv("LOCAL_HTTP_URL", "http://localhost:18303/")
 	sf.ctx.Set("monolitName", "test_monolit", "comment")
 	serv := GetKernelServHttp().(*kServHttp)
 	if serv != kernServHttp {

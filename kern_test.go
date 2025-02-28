@@ -90,6 +90,12 @@ func (sf *tester) new() {
 	if clientHttp == nil {
 		sf.t.Fatalf("new(): (http) IBusClient==nil")
 	}
+
+	modServHttp := NewModuleServHttp()
+	if modServHttp == nil {
+		sf.t.Fatalf("new(): modServHttp==nil")
+	}
+
 	kernServHttp := NewKernelServerHttp()
 	go kernServHttp.Run()
 	ctx.Cancel()

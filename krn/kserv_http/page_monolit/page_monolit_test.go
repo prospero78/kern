@@ -1,0 +1,71 @@
+package page_monolit
+
+import (
+	"net/http"
+	"os"
+	"testing"
+
+	"github.com/prospero78/kern/krn/kctx"
+	"github.com/prospero78/kern/krn/kmonolit"
+	"github.com/prospero78/kern/krn/kserv_http"
+	. "github.com/prospero78/kern/krn/ktypes"
+	"github.com/prospero78/kern/mock/mock_env"
+)
+
+type tester struct {
+	t    *testing.T
+	ctx  IKernelCtx
+	serv IKernelServerHttp
+	page *PageMonolit
+}
+
+func TestPageMonolit(t *testing.T) {
+	sf := &tester{
+		t:   t,
+		ctx: kctx.GetKernelCtx(),
+	}
+	sf.new()
+	sf.get()
+	sf.done()
+}
+
+// Возвращает главную страницу монолита
+func (sf *tester) get() {
+	sf.t.Log("get")
+	fiberApp := sf.serv.Fiber()
+	req, err := http.NewRequest("GET", "/monolit", nil)
+	if err != nil {
+		sf.t.Fatalf("get(): in net request, err=%v", err)
+	}
+	resp, err := fiberApp.Test(req)
+	if err != nil {
+		sf.t.Fatalf("get(): in make GET, err=%v", err)
+	}
+	if resp.StatusCode != 200 {
+		sf.t.Fatalf("get(): status(%v)!=200", resp.StatusCode)
+	}
+}
+
+// Освобождает ресурсы
+func (sf *tester) done() {
+	sf.t.Log("done")
+	sf.ctx.Cancel()
+	sf.ctx.Wg().Wait()
+}
+
+// Создаёт новую страницу монолита
+func (sf *tester) new() {
+	sf.t.Log("new")
+	_ = mock_env.MakeEnv()
+	_ = os.Unsetenv("LOCAL_HTTP_URL")
+	os.Setenv("LOCAL_HTTP_URL", "http://localhost:18302/")
+	sf.ctx.Set("isLocal", true, "testing")
+	_ = kmonolit.GetMonolit("test_monolit")
+	sf.serv = kserv_http.GetKernelServHttp()
+
+	sf.page = NewPageMonolit()
+	if sf.page == nil {
+		sf.t.Fatalf("new(): page==nil")
+	}
+	go sf.serv.Run()
+}

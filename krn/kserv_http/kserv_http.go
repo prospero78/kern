@@ -92,6 +92,11 @@ func GetKernelServHttp() IKernelServerHttp {
 	return kernServHttp
 }
 
+// IsWork -- возвращает признак работы
+func (sf *kServHttp) IsWork() bool {
+	return sf.isWork.Get()
+}
+
 // Log -- возвращает локальный лог
 func (sf *kServHttp) Log() ILogBuf {
 	return sf.log
@@ -117,6 +122,7 @@ func (sf *kServHttp) Run() {
 		sf.log.Err(strOut)
 		sf.kCtx.Cancel()
 	}
+	sf.isWork.Reset()
 }
 
 // Ожидает окончания работы

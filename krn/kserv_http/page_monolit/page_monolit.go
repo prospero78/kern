@@ -1,0 +1,25 @@
+// package page_monolit -- страница показа монолита
+package page_monolit
+
+import (
+	"github.com/gofiber/fiber/v2"
+	"github.com/prospero78/kern/krn/kctx"
+)
+
+// PageMonolit -- страница показа монолита
+type PageMonolit struct {
+}
+
+// NewPageMonolit -- возвращает новую страницу монолита
+func NewPageMonolit() *PageMonolit {
+	sf := &PageMonolit{}
+	kCtx := kctx.GetKernelCtx()
+	fiberApp := kCtx.Get("fiberApp").Val().(*fiber.App)
+	fiberApp.Get("/monolit", sf.getMonolit)
+	return sf
+}
+
+// Индексная страница монолита
+func (sf *PageMonolit) getMonolit(ctx *fiber.Ctx) error {
+	return ctx.SendString("hello, monolit")
+}
