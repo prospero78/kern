@@ -45,6 +45,9 @@ func (sf *tester) hassert() {
 	sf.hassertLocal()
 	sf.hassertProd()
 	sf.hassertProdGood1()
+	if strTime := TimeNow(); strTime == "" {
+		sf.t.Fatalf("hassert(): strTime==''")
+	}
 }
 
 // Мягкая ТВЁРДАЯ проверка на ок

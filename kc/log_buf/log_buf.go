@@ -46,13 +46,13 @@ func (sf *logBuf) Get(num int) ILogMsg {
 	sf.block.RLock()
 	defer sf.block.RUnlock()
 	if len(sf.lst) == 0 {
-		return log_msg.NewLogMsg(log_msg.DEBUG, "not msg")
+		return log_msg.NewLogMsg(log_msg.DEBUG, "*no msg*")
 	}
 	if num >= len(sf.lst) {
-		return sf.lst[len(sf.lst)-1]
+		return log_msg.NewLogMsg(log_msg.DEBUG, "*no msg*")
 	}
 	if num <= 0 {
-		return sf.lst[0]
+		return log_msg.NewLogMsg(log_msg.DEBUG, "*no msg*")
 	}
 	return sf.lst[num]
 }

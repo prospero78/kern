@@ -6,6 +6,9 @@ package helpers
 import (
 	"fmt"
 	"os"
+	"time"
+
+	. "github.com/prospero78/kern/krn/kalias"
 )
 
 var (
@@ -32,6 +35,12 @@ func Hassert(isCond bool, msgFormat string, args ...interface{}) {
 	}
 	msg := fmt.Sprintf("HARD ASSERT "+msgFormat+"\n", args...)
 	panic(msg)
+}
+
+// TimeNow -- возвращает стандартную строку сейчас-времени "2006-01-02 15:04:05.000 -07 MST"
+func TimeNow() ATime {
+	strTime := time.Now().Local().Format("2006-01-02 15:04:05.000 -07 MST")
+	return ATime(strTime)
 }
 
 func init_() {

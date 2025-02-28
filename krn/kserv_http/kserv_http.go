@@ -85,7 +85,7 @@ func GetKernelServHttp() IKernelServerHttp {
 		Browse:     true,
 		MaxAge:     3600 * 24,
 	}))
-	sf.fiberApp.Get("/monitor", monitor.New(monitor.Config{Title: "KernelHttpServer"}))
+	sf.fiberApp.Get("/monitor", monitor.New(monitor.Config{Title: ctx.Get("monolitName").Val().(string)}))
 	err := sf.kCtx.Wg().Add(streamName)
 	Hassert(err == nil, "NewKernelServHttp(): in add stream %v, err=\n\t%v", streamName, err)
 	ctx.Set("fiberApp", sf.fiberApp, "kServHttp: internal fiber app")

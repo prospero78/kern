@@ -2,10 +2,9 @@
 package http_api
 
 import (
-	"time"
-
 	"github.com/gofiber/fiber/v2"
 
+	. "github.com/prospero78/kern/kc/helpers"
 	"github.com/prospero78/kern/krn/kctx"
 )
 
@@ -23,6 +22,6 @@ func NewHttpApi() *HttpApi {
 
 // Возвращает текущее время сервера
 func (sf *HttpApi) postTime(ctx *fiber.Ctx) error {
-	strTime := time.Now().Local().Format("2006-01-02 15:04:05.000 -07 MST")
-	return ctx.SendString(strTime)
+	strTime := TimeNow()
+	return ctx.SendString(string(strTime))
 }

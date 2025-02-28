@@ -28,7 +28,28 @@ func TestPageMonolit(t *testing.T) {
 	sf.getMonolit()
 	sf.postMonolitState()
 	sf.postMonolitCtx()
+	sf.postMonolitLog()
 	sf.done()
+}
+
+// Возвращает состояние лога монолита
+func (sf *tester) postMonolitLog() {
+	sf.t.Log("postMonolitCtx")
+	mon := sf.ctx.Get("monolit").Val().(IKernelMonolit)
+	log := mon.Log()
+	log.Debug("test msg")
+	fiberApp := sf.serv.Fiber()
+	req, err := http.NewRequest("POST", "/monolit_log", nil)
+	if err != nil {
+		sf.t.Fatalf("postMonolitLog(): in net request, err=%v", err)
+	}
+	resp, err := fiberApp.Test(req)
+	if err != nil {
+		sf.t.Fatalf("postMonolitLog(): in make POST, err=%v", err)
+	}
+	if resp.StatusCode != 200 {
+		sf.t.Fatalf("postMonolitLog(): status(%v)!=200", resp.StatusCode)
+	}
 }
 
 // Возвращает состояние контекста монолита

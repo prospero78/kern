@@ -28,77 +28,43 @@ func NewPageMonolit() *PageMonolit {
 	fiberApp.Get("/monolit", sf.getMonolit)
 	fiberApp.Post("/monolit_state", sf.postMonolitState)
 	fiberApp.Post("/monolit_ctx", sf.postMonolitCtx)
+	fiberApp.Post("/monolit_log", sf.postMonolitLog)
 	return sf
 }
 
-const (
-	strRowVal = `
-<div class="row">
-    <div class="col-2 border">
-        {.key}
-    </div>
-    <div class="col-2 border">
-        {.value}
-    </div>
-	<div class="col-1 border">
-        {.type}
-    </div>
-    <div class="col-2 border">
-        {.createAt}
-    </div>
-    <div class="col-2 border">
-        {.updateAt}
-    </div>
-    <div class="col border">
-        {.comment}
-    </div>
-</div>
-`
-)
+//go:embed log_block.html
+var strLogBlock string
+
+// Возвращает страницу лога монолита
+func (sf *PageMonolit) postMonolitLog(ctx *fiber.Ctx) error {
+	mon := sf.ctx.Get("monolit").Val().(IKernelMonolit)
+	_log := mon.Log()
+	strOut := ""
+	for i := range 100 {
+		msg := _log.Get(i).String()
+		if strings.Contains(msg, "*no msg*") {
+			continue
+		}
+		strOut += msg + "\n"
+	}
+	strOut = strings.ReplaceAll(strLogBlock, "{.log}", strOut)
+	return ctx.SendString(strOut)
+}
+
+//go:embed ctx_row_val.html
+var strCtxRowVal string
+
+//go:embed ctx_row_block.html
+var strCtxRowBlock string
 
 // Возвращает блок контекста монолита
 func (sf *PageMonolit) postMonolitCtx(ctx *fiber.Ctx) error {
 	mon := sf.ctx.Get("monolit").Val().(IKernelMonolit)
 	ctxMon := mon.Ctx().(*local_ctx.LocalCtx)
 	dictVal := ctxMon.DictVal_
-	strOut := `
-<div class="container border rounded m-3 text-center">
-    <h2>Monolit</h2>
-</div>
-
-<p></p>
-
-<div class="container border rounded m-3 text-center">
-<span class="btn btn-primary" hx-post="/monolit_state" hx-target="#main">Monolit</span>
-    <span class="btn btn-primary" hx-post="/monolit_ctx" hx-target="#main">ctx</span>
-    <span class="btn btn-primary" hx-post="/monolit_log" hx-target="#main">log</span>
-</div>
-
-<div class="container">
-
-<div class="row">
-    <div class="col-2 border bg-info">
-        <b>Key</b>
-    </div>
-    <div class="col-2 border bg-info">
-        <b>Value</b>
-    </div>
-	<div class="col-1 border bg-info">
-        <b>Type</b>
-    </div>
-    <div class="col-2 border bg-info">
-        <b>CreateAt</b>
-    </div>
-    <div class="col-2 border bg-info">
-        <b>UpdateAt</b>
-    </div>
-    <div class="col border bg-info">
-        <b>Comment</b>
-    </div>
-</div>`
-
+	strOut := ``
 	for key, val := range dictVal {
-		strRow := strRowVal
+		strRow := strCtxRowVal
 		strRow = strings.ReplaceAll(strRow, "{.key}", key)
 		strRow = strings.ReplaceAll(strRow, "{.value}", fmt.Sprint(val.Val()))
 		strRow = strings.ReplaceAll(strRow, "{.type}", fmt.Sprintf("%#T", val.Val()))
@@ -107,10 +73,7 @@ func (sf *PageMonolit) postMonolitCtx(ctx *fiber.Ctx) error {
 		strRow = strings.ReplaceAll(strRow, "{.comment}", val.Comment())
 		strOut += strRow
 	}
-	strOut += `
-</div>
-
-<span hx-post="/monolit_ctx" hx-trigger="every 2s" hx-target="#main"></span>`
+	strOut = strings.ReplaceAll(strCtxRowBlock, "{.ctx_block}", strOut)
 	return ctx.SendString(strOut)
 }
 

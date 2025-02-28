@@ -3,8 +3,8 @@ package ctx_value
 
 import (
 	"sync"
-	"time"
 
+	. "github.com/prospero78/kern/kc/helpers"
 	. "github.com/prospero78/kern/krn/kalias"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
@@ -23,7 +23,7 @@ func NewCtxValue(val any, comment string) ICtxValue {
 	sf := &ctxValue{
 		val:      val,
 		comment:  comment,
-		createAt: ATime(time.Now().Local().Format("2006-01-02 15:04:05.000 -07 MST")),
+		createAt: TimeNow(),
 	}
 	return sf
 }
@@ -34,7 +34,7 @@ func (sf *ctxValue) Update(val any, comment string) {
 	defer sf.block.Unlock()
 	sf.val = val
 	sf.comment = comment
-	sf.updateAt = ATime(time.Now().Local().Format("2006-01-02 15:04:05.000 -07 MST"))
+	sf.updateAt = TimeNow()
 }
 
 // Val -- возвращает хранимое значение

@@ -3,7 +3,6 @@ package log_msg
 
 import (
 	"fmt"
-	"time"
 
 	. "github.com/prospero78/kern/kc/helpers"
 	. "github.com/prospero78/kern/krn/kalias"
@@ -27,7 +26,7 @@ type logMsg struct {
 // NewLogMsg -- возвращает новое сообщение логгера
 func NewLogMsg(level int, msg string) ILogMsg {
 	sf := &logMsg{
-		createAt: ATime(time.Now().Local().String()),
+		createAt: TimeNow(),
 		msg:      msg,
 	}
 	sf.check(level)
