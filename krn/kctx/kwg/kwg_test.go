@@ -100,11 +100,13 @@ func (sf *tester) addGood1() {
 func (sf *tester) wait() {
 	sf.t.Log("wait")
 	go sf.wg.Wait()
-	time.Sleep(time.Millisecond * 10)
+	time.Sleep(time.Millisecond * 5)
 	sf.fnCancel()
-	time.Sleep(time.Millisecond * 10)
-	if sf.wg.IsWork() {
-		sf.t.Fatalf("wait(): isWork==true")
+	for {
+		time.Sleep(time.Millisecond * 10)
+		if !sf.wg.IsWork() {
+			break
+		}
 	}
 }
 

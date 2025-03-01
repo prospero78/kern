@@ -79,7 +79,7 @@ func (sf *kernelWg) Done(name AStreamName) {
 // Wait -- блокирующий вызов; возвращает управление, только когда все потоки завершили работу
 func (sf *kernelWg) Wait() {
 	for {
-		time.Sleep(time.Millisecond * 5)
+		time.Sleep(time.Millisecond * 1)
 		if !sf.isWork.Get() {
 			break
 		}

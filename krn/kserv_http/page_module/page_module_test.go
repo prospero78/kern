@@ -128,7 +128,7 @@ func (sf *tester) new() {
 	sf.t.Log("new")
 	_ = mock_env.MakeEnv()
 	_ = os.Unsetenv("LOCAL_HTTP_URL")
-	os.Setenv("LOCAL_HTTP_URL", "http://localhost:18315/")
+	os.Setenv("LOCAL_HTTP_URL", "http://localhost:18318/")
 	sf.ctx.Set("isLocal", true, "testing")
 	_ = kmonolit.GetMonolit("test_monolit")
 	sf.serv = kserv_http.GetKernelServHttp()
