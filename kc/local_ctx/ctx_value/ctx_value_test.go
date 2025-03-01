@@ -50,6 +50,9 @@ func (sf *tester) new() {
 	if val := sf.val.Val().(int); val != 5 {
 		sf.t.Fatalf("new(): val(%v)!=5", val)
 	}
+	if val := sf.val.ValStr(); val != "5" {
+		sf.t.Fatalf("new(): val(%v)!='5'", val)
+	}
 	create := sf.val.CreateAt()
 	if create == "" {
 		sf.t.Fatalf("new(): create is empty")

@@ -37,7 +37,7 @@ func NewLocalCtx(ctx context.Context) ILocalCtx {
 }
 
 // SortedList -- возвращает сортированный список значений
-func (sf *LocalCtx) SortedList() []ICtxValue {
+func (sf *LocalCtx) SortedList() <-chan ICtxValue {
 	sf.block.RLock()
 	defer sf.block.RUnlock()
 	return sf.lstSort.List()

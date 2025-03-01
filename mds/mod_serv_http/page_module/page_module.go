@@ -50,6 +50,10 @@ func (sf *PageModule) postModuleLog(ctx *fiber.Ctx) error {
 		return ctx.SendString(strOut)
 	}
 	_log := module.Log()
+	if module.Name() == "kCtx" {
+		_log = sf.ctx.Log()
+	}
+
 	strOut := ""
 	for i := range 100 {
 		msg := _log.Get(i).String()
@@ -80,13 +84,19 @@ func (sf *PageModule) postModuleCtx(ctx *fiber.Ctx) error {
 		strOut = strings.ReplaceAll(strOut, "{.ctx_block}", "")
 		return ctx.SendString(strOut)
 	}
-	lst := module.Ctx().SortedList()
+	chLst := module.Ctx().SortedList()
+	if module.Name() == "kCtx" {
+		chLst = sf.ctx.SortedList()
+	}
 	strOut := ""
-	for _, val := range lst {
+	for val := range chLst {
 		strRow := strCtxRowVal
 		strRow = strings.ReplaceAll(strRow, "{.key}", val.Key())
-		strRow = strings.ReplaceAll(strRow, "{.value}", fmt.Sprint(val.Val()))
-		strRow = strings.ReplaceAll(strRow, "{.type}", fmt.Sprintf("%#T", val.Val()))
+		_val := val.Val()
+		strVal := val.ValStr()
+		strRow = strings.ReplaceAll(strRow, "{.value}", strVal)
+		_type := fmt.Sprintf("%#T", _val)
+		strRow = strings.ReplaceAll(strRow, "{.type}", _type)
 		strRow = strings.ReplaceAll(strRow, "{.createAt}", string(val.CreateAt()))
 		strRow = strings.ReplaceAll(strRow, "{.updateAt}", string(val.UpdateAt()))
 		strRow = strings.ReplaceAll(strRow, "{.comment}", val.Comment())
@@ -124,12 +134,12 @@ func (sf *PageModule) postModuleState(ctx *fiber.Ctx) error {
 // Возвращает модуль
 func (sf *PageModule) getModule(id string) (IKernelModule, ICtxValue) {
 	mon := sf.ctx.Get("monolit").Val().(IKernelMonolit)
-	lst := mon.Ctx().SortedList()
+	chLst := mon.Ctx().SortedList()
 	var (
 		val    ICtxValue
 		isFind bool
 	)
-	for _, val = range lst {
+	for val = range chLst {
 		name := "module_" + id
 		if name == val.Key() {
 			isFind = true

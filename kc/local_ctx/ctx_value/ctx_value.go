@@ -2,6 +2,7 @@
 package ctx_value
 
 import (
+	"fmt"
 	"sync"
 
 	. "github.com/prospero78/kern/kc/helpers"
@@ -43,6 +44,13 @@ func (sf *ctxValue) Update(val any, comment string) {
 // Key -- возвращает ключ значения
 func (sf *ctxValue) Key() string {
 	return sf.key
+}
+
+// ValStr -- возвращает строковое представление значения
+func (sf *ctxValue) ValStr() string {
+	sf.block.RLock()
+	defer sf.block.RUnlock()
+	return fmt.Sprint(sf.val)
 }
 
 // Val -- возвращает хранимое значение

@@ -44,9 +44,9 @@ var strModRowBlank string
 func (sf *PageModules) postModules(ctx *fiber.Ctx) error {
 	ctx.Set("Content-type", "text/html; charset=utf8;\n\n")
 	mon := sf.ctx.Get("monolit").Val().(IKernelMonolit)
-	lst := mon.Ctx().SortedList()
+	chLst := mon.Ctx().SortedList()
 	strOut := ``
-	for _, val := range lst {
+	for val := range chLst {
 		if !strings.Contains(val.Key(), "module_") {
 			continue
 		}

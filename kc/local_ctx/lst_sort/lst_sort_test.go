@@ -24,39 +24,41 @@ func TestLstSort(t *testing.T) {
 // Удаляет элемент в середине
 func (sf *tester) del2() {
 	sf.t.Log("del2")
-	val := sf.lst.List()
-	val3 := val[3]
+	val3 := sf.lst.Get(3)
 	sf.lst.Del(val3)
-	if _len := sf.lst.Len(); _len != 4 {
+	if _len := sf.lst.Size(); _len != 4 {
 		sf.t.Fatalf("del2(): len(%v)!=4", _len)
 	}
-	val = sf.lst.List()
-	val4 := val[3]
+	val4 := sf.lst.Get(3)
 	if val4.Key() != "val4" {
 		sf.t.Fatalf("del2(): key(%v)!='val4'", val4.Key())
 	}
 	sf.lst.Add(val3)
-	if _len := sf.lst.Len(); _len != 5 {
+	if _len := sf.lst.Size(); _len != 5 {
 		sf.t.Fatalf("del2(): len(%v)!=5", _len)
+	}
+	for val := range sf.lst.List() {
+		if val == nil {
+			sf.t.Fatalf("del2(): val==nil")
+		}
 	}
 }
 
 // Удаляет элемент из списка в конце
 func (sf *tester) del() {
 	sf.t.Log("del")
-	val := sf.lst.List()
-	val4 := val[4]
+	val4 := sf.lst.Get(4)
+	_ = sf.lst.Get(10)
 	sf.lst.Del(val4)
-	if _len := sf.lst.Len(); _len != 4 {
+	if _len := sf.lst.Size(); _len != 4 {
 		sf.t.Fatalf("del(): len(%v)!=4", _len)
 	}
-	val = sf.lst.List()
-	val3 := val[3]
+	val3 := sf.lst.Get(3)
 	if val3.Key() != "val3" {
 		sf.t.Fatalf("del(): key(%v)!='val3'", val3.Key())
 	}
 	sf.lst.Add(val4)
-	if _len := sf.lst.Len(); _len != 5 {
+	if _len := sf.lst.Size(); _len != 5 {
 		sf.t.Fatalf("del(): len(%v)!=5", _len)
 	}
 }
@@ -74,7 +76,7 @@ func (sf *tester) add() {
 	sf.lst.Add(val0)
 	sf.lst.Add(val2)
 	sf.lst.Add(val3)
-	if _len := sf.lst.Len(); _len != 5 {
+	if _len := sf.lst.Size(); _len != 5 {
 		sf.t.Fatalf("add(): len(%v)!=5", _len)
 	}
 }

@@ -15,7 +15,7 @@ import (
 // ModuleKernelCtx -- модуль контекста ядра
 type ModuleKernelCtx struct {
 	IKernelModule
-	ctx       IKernelCtx
+	kCtx      IKernelCtx
 	kServHttp IKernelServerHttp
 	log       ILogBuf
 }
@@ -23,11 +23,11 @@ type ModuleKernelCtx struct {
 // NewModuleKernelCtx -- возвращает новый модуль контекста ядра
 func NewModuleKernelCtx() *ModuleKernelCtx {
 	sf := &ModuleKernelCtx{
-		ctx:           kctx.GetKernelCtx(),
+		kCtx:          kctx.GetKernelCtx(),
 		IKernelModule: kmodule.NewKernelModule("kCtx"),
 		kServHttp:     kserv_http.GetKernelServHttp(),
 	}
-	sf.log = sf.ctx.Log()
+	sf.log = sf.Ctx().Log()
 	_ = page_monolit.GetPageMonolit()
 	_ = page_modules.GetPageModules()
 	_ = page_module.GetPageModule()
@@ -44,5 +44,5 @@ func (sf *ModuleKernelCtx) Run() {
 
 // IsWork -- признак работы модуля
 func (sf *ModuleKernelCtx) IsWork() bool {
-	return sf.ctx.Wg().IsWork()
+	return sf.kCtx.Wg().IsWork()
 }

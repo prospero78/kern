@@ -41,7 +41,7 @@ func (sf *tester) postModuleState1() {
 	sf.t.Log("postModuleState1")
 	mon := kmonolit.GetMonolit("test_monolit")
 	ctxMon := mon.Ctx()
-	module := kmodule.NewKernelModule("test_module")
+	module := kmodule.NewKernelModule("kCtx")
 	module.Log().Debug("test msg")
 	module.Log().Debug("test msg")
 	ctxMod := module.Ctx()

@@ -52,11 +52,12 @@ func (sf *tester) newGood1() {
 	if sf.mod == nil {
 		sf.t.Fatalf("newGood1(): mod==nil")
 	}
+
 	go sf.mod.Run()
 	for {
 		time.Sleep(time.Millisecond * 1)
 		if sf.mod.IsWork() {
-			return
+			break
 		}
 	}
 }

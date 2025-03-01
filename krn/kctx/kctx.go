@@ -57,6 +57,8 @@ func (sf *kCtx) Wg() IKernelWg {
 // Done -- блокирующий вызов ожидания отмены контекста ядра
 func (sf *kCtx) Done() {
 	<-sf.ctx.Done()
+	block.Lock()
+	defer block.Unlock()
 	sf.log.Debug("kCtx.Done()")
 }
 

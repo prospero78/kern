@@ -10,6 +10,8 @@ type ICtxValue interface {
 	Key() string
 	// Val -- возвращает хранимое значение
 	Val() any
+	// ValStr -- возвращает строковое представление значения
+	ValStr() string
 	// CreateAt -- возвращает метку времени создания
 	CreateAt() ATime
 	// UpdateAt -- возвращает метку времени обновления
@@ -29,7 +31,7 @@ type ILocalCtx interface {
 	// Set -- добавляет значение в контекст
 	Set(key string, val any, comment string)
 	// SortedList -- возвращает сортированный список объектов контекста
-	SortedList() []ICtxValue
+	SortedList() <-chan ICtxValue
 	// Cancel -- отменяет контекст
 	Cancel()
 	// Done -- ожидает отмены контекста
