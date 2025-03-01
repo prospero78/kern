@@ -11,6 +11,7 @@ import (
 
 // ctxValue -- потокобезопасное значение локального контекста
 type ctxValue struct {
+	key      string
 	val      any
 	createAt ATime
 	updateAt ATime
@@ -19,8 +20,10 @@ type ctxValue struct {
 }
 
 // NewCtxValue -- возвращает новое потокобезопасное значение локального контекста
-func NewCtxValue(val any, comment string) ICtxValue {
+func NewCtxValue(key string, val any, comment string) ICtxValue {
+	Hassert(key != "", "NewCtxValue(): key is empty")
 	sf := &ctxValue{
+		key:      key,
 		val:      val,
 		comment:  comment,
 		createAt: TimeNow(),
@@ -35,6 +38,11 @@ func (sf *ctxValue) Update(val any, comment string) {
 	sf.val = val
 	sf.comment = comment
 	sf.updateAt = TimeNow()
+}
+
+// Key -- возвращает ключ значения
+func (sf *ctxValue) Key() string {
+	return sf.key
 }
 
 // Val -- возвращает хранимое значение

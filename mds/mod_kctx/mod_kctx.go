@@ -1,7 +1,8 @@
-// package mod_serv_http -- модуль HTTP-сервера
-package mod_serv_http
+// package mod_kctx -- модуль контекста ядра
+package mod_kctx
 
 import (
+	"github.com/prospero78/kern/krn/kctx"
 	"github.com/prospero78/kern/krn/kmodule"
 	"github.com/prospero78/kern/krn/kserv_http"
 	. "github.com/prospero78/kern/krn/ktypes"
@@ -11,20 +12,22 @@ import (
 	"github.com/prospero78/kern/mds/mod_serv_http/page_monolit"
 )
 
-// ModuleServHttp -- модуль HTTP-сервера
-type ModuleServHttp struct {
+// ModuleKernelCtx -- модуль контекста ядра
+type ModuleKernelCtx struct {
 	IKernelModule
+	ctx       IKernelCtx
 	kServHttp IKernelServerHttp
 	log       ILogBuf
 }
 
-// NewModuleServHttp -- возвращает новый модуль HTTP-сервера
-func NewModuleServHttp() *ModuleServHttp {
-	sf := &ModuleServHttp{
-		IKernelModule: kmodule.NewKernelModule("kServHttp"),
+// NewModuleKernelCtx -- возвращает новый модуль контекста ядра
+func NewModuleKernelCtx() *ModuleKernelCtx {
+	sf := &ModuleKernelCtx{
+		ctx:           kctx.GetKernelCtx(),
+		IKernelModule: kmodule.NewKernelModule("kCtx"),
 		kServHttp:     kserv_http.GetKernelServHttp(),
 	}
-	sf.log = sf.Ctx().Log()
+	sf.log = sf.ctx.Log()
 	_ = page_monolit.GetPageMonolit()
 	_ = page_modules.GetPageModules()
 	_ = page_module.GetPageModule()
@@ -34,12 +37,12 @@ func NewModuleServHttp() *ModuleServHttp {
 }
 
 // Run -- запускает модуль в работу
-func (sf *ModuleServHttp) Run() {
-	sf.log.Info("ModuleServHttp.Run(): module=%v, is run", sf.Name())
+func (sf *ModuleKernelCtx) Run() {
+	sf.log.Info("ModuleKernelCtx.Run(): module=%v, is run", sf.Name())
 	go sf.kServHttp.Run()
 }
 
 // IsWork -- признак работы модуля
-func (sf *ModuleServHttp) IsWork() bool {
-	return sf.kServHttp.IsWork()
+func (sf *ModuleKernelCtx) IsWork() bool {
+	return sf.ctx.Wg().IsWork()
 }

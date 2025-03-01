@@ -8,7 +8,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/prospero78/kern/kc/local_ctx"
 	"github.com/prospero78/kern/krn/kctx"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
@@ -18,8 +17,13 @@ type PageModule struct {
 	ctx IKernelCtx
 }
 
-// NewPageModule -- возвращает новую страницу модуля
-func NewPageModule() *PageModule {
+var page *PageModule
+
+// GetPageModule -- возвращает страницу модуля
+func GetPageModule() *PageModule {
+	if page != nil {
+		return page
+	}
 	kCtx := kctx.GetKernelCtx()
 	sf := &PageModule{
 		ctx: kCtx,
@@ -28,6 +32,7 @@ func NewPageModule() *PageModule {
 	fiberApp.Post("/module/:id", sf.postModuleState)
 	fiberApp.Post("/module_ctx/:id", sf.postModuleCtx)
 	fiberApp.Post("/module_log/:id", sf.postModuleLog)
+	page = sf
 	return sf
 }
 
@@ -75,12 +80,11 @@ func (sf *PageModule) postModuleCtx(ctx *fiber.Ctx) error {
 		strOut = strings.ReplaceAll(strOut, "{.ctx_block}", "")
 		return ctx.SendString(strOut)
 	}
-	ctxMod := module.Ctx().(*local_ctx.LocalCtx)
-	dictVal := ctxMod.DictVal_
+	lst := module.Ctx().SortedList()
 	strOut := ""
-	for key, val := range dictVal {
+	for _, val := range lst {
 		strRow := strCtxRowVal
-		strRow = strings.ReplaceAll(strRow, "{.key}", key)
+		strRow = strings.ReplaceAll(strRow, "{.key}", val.Key())
 		strRow = strings.ReplaceAll(strRow, "{.value}", fmt.Sprint(val.Val()))
 		strRow = strings.ReplaceAll(strRow, "{.type}", fmt.Sprintf("%#T", val.Val()))
 		strRow = strings.ReplaceAll(strRow, "{.createAt}", string(val.CreateAt()))
@@ -120,16 +124,14 @@ func (sf *PageModule) postModuleState(ctx *fiber.Ctx) error {
 // Возвращает модуль
 func (sf *PageModule) getModule(id string) (IKernelModule, ICtxValue) {
 	mon := sf.ctx.Get("monolit").Val().(IKernelMonolit)
-	ctxMon := mon.Ctx().(*local_ctx.LocalCtx)
-	dict := ctxMon.DictVal_
+	lst := mon.Ctx().SortedList()
 	var (
-		moduleVal ICtxValue
-		key       string
-		isFind    bool
+		val    ICtxValue
+		isFind bool
 	)
-	for key, moduleVal = range dict {
-		name := "module/" + id
-		if key == name {
+	for _, val = range lst {
+		name := "module_" + id
+		if name == val.Key() {
 			isFind = true
 			break
 		}
@@ -137,6 +139,6 @@ func (sf *PageModule) getModule(id string) (IKernelModule, ICtxValue) {
 	if !isFind {
 		return nil, nil
 	}
-	mod := moduleVal.Val().(IKernelModule)
-	return mod, moduleVal
+	mod := val.Val().(IKernelModule)
+	return mod, val
 }

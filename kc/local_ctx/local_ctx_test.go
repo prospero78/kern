@@ -28,12 +28,12 @@ func (sf *tester) done() {
 	sf.ctx.Done()
 }
 
-// Удаляет ключ из локального контекста
+// Удаляет несуществующий ключ из локального контекста
 func (sf *tester) del() {
 	sf.t.Log("del")
 	sf.ctx.Del("123")
 	sf.ctx.Del("count")
-	if _len := len(sf.ctx.DictVal_); _len != 0 {
+	if _len := len(sf.ctx.dictVal); _len != 0 {
 		sf.t.Fatalf("del(): len dict(%v)!=0", _len)
 	}
 }
@@ -67,6 +67,9 @@ func (sf *tester) newGood1() {
 	ctx := context.Background()
 	sf.ctx = NewLocalCtx(ctx).(*LocalCtx)
 	_ = sf.ctx.Log()
+	if lst := sf.ctx.SortedList(); lst == nil {
+		sf.t.Fatalf("newGood1(): lst==nil")
+	}
 }
 
 // Нет контекста ядра

@@ -43,7 +43,7 @@ func (sf *tester) upd() {
 // Создаёт значение локального контекста
 func (sf *tester) new() {
 	sf.t.Log("new")
-	sf.val = NewCtxValue(5, "test_value")
+	sf.val = NewCtxValue("test_key", 5, "test_value")
 	if sf.val == nil {
 		sf.t.Fatalf("new(): val==nil")
 	}
@@ -57,6 +57,9 @@ func (sf *tester) new() {
 	sf.create = create
 	if comment := sf.val.Comment(); comment != "test_value" {
 		sf.t.Fatalf("new(): comment(%v)!='test_value'", comment)
+	}
+	if key := sf.val.Key(); key != "test_key" {
+		sf.t.Fatalf("new(): key(%v)!='test_key'", key)
 	}
 	if update := sf.val.UpdateAt(); update != "" {
 		sf.t.Fatalf("new(): update not empty")

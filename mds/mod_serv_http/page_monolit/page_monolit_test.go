@@ -120,9 +120,10 @@ func (sf *tester) new() {
 	_ = kmonolit.GetMonolit("test_monolit")
 	sf.serv = kserv_http.GetKernelServHttp()
 
-	sf.page = NewPageMonolit()
+	sf.page = GetPageMonolit()
 	if sf.page == nil {
 		sf.t.Fatalf("new(): page==nil")
 	}
+	_ = GetPageMonolit()
 	go sf.serv.Run()
 }

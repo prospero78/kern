@@ -47,7 +47,7 @@ func (sf *tester) postModuleState1() {
 	ctxMod := module.Ctx()
 	ctxMod.Set("demo_key", "demo value", "for demo comment")
 	time.Sleep(time.Millisecond * 20)
-	ctxMon.Set("module/1", module, "test_module")
+	ctxMon.Set("module_1", module, "test_module")
 	fiberApp := sf.serv.Fiber()
 	req, err := http.NewRequest("POST", "/module/1", nil)
 	if err != nil {
@@ -133,9 +133,10 @@ func (sf *tester) new() {
 	_ = kmonolit.GetMonolit("test_monolit")
 	sf.serv = kserv_http.GetKernelServHttp()
 
-	sf.page = NewPageModule()
+	sf.page = GetPageModule()
 	if sf.page == nil {
 		sf.t.Fatalf("new(): page==nil")
 	}
+	_ = GetPageModule()
 	go sf.serv.Run()
 }

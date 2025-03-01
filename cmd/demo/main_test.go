@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -10,6 +11,8 @@ import (
 
 func TestMain(t *testing.T) {
 	_ = mock_env.MakeEnv()
+	_ = os.Unsetenv("LOCAL_HTTP_URL")
+	os.Setenv("LOCAL_HTTP_URL", "http://localhost:18320/")
 	go main()
 	time.Sleep(time.Millisecond * 250)
 	kCtx := kctx.GetKernelCtx()

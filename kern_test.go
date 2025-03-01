@@ -98,6 +98,11 @@ func (sf *tester) new() {
 		sf.t.Fatalf("new(): modServHttp==nil")
 	}
 
+	modKernelCtx := NewModuleKernelCtx()
+	if modKernelCtx == nil {
+		sf.t.Fatalf("new(): modKernelCtx==nil")
+	}
+
 	kernServHttp := NewKernelServerHttp()
 	go kernServHttp.Run()
 	ctx.Cancel()

@@ -8,7 +8,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/prospero78/kern/kc/local_ctx"
 	"github.com/prospero78/kern/krn/kctx"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
@@ -18,14 +17,20 @@ type PageModules struct {
 	ctx IKernelCtx
 }
 
-// NewPageModules -- возвращает новую страницу модулей
-func NewPageModules() *PageModules {
+var page *PageModules
+
+// GetPageModules -- возвращает страницу модулей
+func GetPageModules() *PageModules {
+	if page != nil {
+		return page
+	}
 	kCtx := kctx.GetKernelCtx()
 	sf := &PageModules{
 		ctx: kCtx,
 	}
 	fiberApp := kCtx.Get("fiberApp").Val().(*fiber.App)
 	fiberApp.Post("/modules", sf.postModules)
+	page = sf
 	return sf
 }
 
@@ -39,15 +44,17 @@ var strModRowBlank string
 func (sf *PageModules) postModules(ctx *fiber.Ctx) error {
 	ctx.Set("Content-type", "text/html; charset=utf8;\n\n")
 	mon := sf.ctx.Get("monolit").Val().(IKernelMonolit)
-	ctxMon := mon.Ctx().(*local_ctx.LocalCtx)
-	dictVal := ctxMon.DictVal_
+	lst := mon.Ctx().SortedList()
 	strOut := ``
-	for key, val := range dictVal {
-		if !strings.Contains(key, "module/") {
+	for _, val := range lst {
+		if !strings.Contains(val.Key(), "module_") {
 			continue
 		}
+		lstKey := strings.Split(val.Key(), "_")
+		id := lstKey[1]
 		strRow := strModRowBlank
-		strRow = strings.ReplaceAll(strRow, "{.key}", key)
+		strRow = strings.ReplaceAll(strRow, "{.id}", id)
+		strRow = strings.ReplaceAll(strRow, "{.key}", val.Key())
 		moduleName := string(val.Val().(IKernelModule).Name())
 		strRow = strings.ReplaceAll(strRow, "{.name}", moduleName)
 		type_ := fmt.Sprintf("%#T", val.Val())

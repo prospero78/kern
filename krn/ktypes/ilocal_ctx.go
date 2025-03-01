@@ -6,6 +6,8 @@ import (
 
 // ICtxValue -- интерфейс к значению локального контекста
 type ICtxValue interface {
+	// Key -- возвращает ключ значения
+	Key() string
 	// Val -- возвращает хранимое значение
 	Val() any
 	// CreateAt -- возвращает метку времени создания
@@ -26,6 +28,8 @@ type ILocalCtx interface {
 	Del(key string)
 	// Set -- добавляет значение в контекст
 	Set(key string, val any, comment string)
+	// SortedList -- возвращает сортированный список объектов контекста
+	SortedList() []ICtxValue
 	// Cancel -- отменяет контекст
 	Cancel()
 	// Done -- ожидает отмены контекста

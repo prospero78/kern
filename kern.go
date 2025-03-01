@@ -14,6 +14,7 @@ import (
 	"github.com/prospero78/kern/krn/kserv_http"
 	"github.com/prospero78/kern/krn/kstore_kv"
 	. "github.com/prospero78/kern/krn/ktypes"
+	"github.com/prospero78/kern/mds/mod_kctx"
 	"github.com/prospero78/kern/mds/mod_serv_http"
 )
 
@@ -95,4 +96,10 @@ func NewClientBusHttp(url string) IBusClient {
 func NewModuleServHttp() IKernelModule {
 	modServHttp := mod_serv_http.NewModuleServHttp()
 	return modServHttp
+}
+
+// NewModuleKernelCtx -- возвращает новый модуль для IKernelCtx
+func NewModuleKernelCtx() IKernelModule {
+	modKernelCtx := mod_kctx.NewModuleKernelCtx()
+	return modKernelCtx
 }

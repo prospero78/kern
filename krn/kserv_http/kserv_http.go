@@ -50,12 +50,13 @@ var (
 // GetKernelServHttp -- возвращает  встроенный HTTP-сервер
 func GetKernelServHttp() IKernelServerHttp {
 	log.Println("GetKernelServHttp()")
-	block.Lock()
-	defer block.Unlock()
-	ctx := kctx.GetKernelCtx()
 	if kernServHttp != nil {
 		return kernServHttp
 	}
+	block.Lock()
+	defer block.Unlock()
+	ctx := kctx.GetKernelCtx()
+
 	strUrl := os.Getenv("LOCAL_HTTP_URL")
 	Hassert(strUrl != "", "GetKernelServHttp(): env LOCAL_HTTP_URL not set")
 	confFiber := fiber.Config{

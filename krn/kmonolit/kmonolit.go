@@ -81,7 +81,7 @@ func (sf *kMonolit) Add(module IKernelModule) {
 		go module.Run()
 		sf.log.Debug("kMonolit.Add(): module='%v' is run", module.Name())
 	}
-	key := fmt.Sprintf("module/%v", len(sf.dict))
+	key := fmt.Sprintf("module_%v", len(sf.dict))
 	moduleName := string(module.Name())
 	sf.ctx.Set(key, module, "kMonolit.Add(): module="+moduleName)
 }
