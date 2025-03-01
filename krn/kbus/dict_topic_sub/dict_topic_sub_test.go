@@ -3,6 +3,7 @@ package dict_topic_sub
 import (
 	"testing"
 
+	. "github.com/prospero78/kern/kc/helpers"
 	"github.com/prospero78/kern/mock/mock_hand_sub_local"
 )
 
@@ -26,6 +27,27 @@ func TestDictSub(t *testing.T) {
 	sf.callBad2()
 	sf.delBad1()
 	sf.delGood2()
+	sf.unsub1()
+}
+
+// Прямой вызов отписки от топика которого точно нет
+func (sf *tester) unsub1() {
+	sf.t.Log("unsub1")
+	sf.dict.Unsubscribe(sf.hand)
+	sf.dict.Read("test_test", []byte("test test"))
+	hand := mock_hand_sub_local.NewMockHandlerSub("topic_dict_sub1", "name_dict_sub")
+	sf.dict.Unsubscribe(hand)
+	count := 0
+	for count < 100 {
+		SleepMs()
+		count++
+	}
+	sf.dict.Read("topic_dict_sub", []byte("test test"))
+	count = 0
+	for count < 200 {
+		SleepMs()
+		count++
+	}
 }
 
 func (sf *tester) delGood2() {
@@ -42,11 +64,6 @@ func (sf *tester) delGood2() {
 // Удаляет, чего нет
 func (sf *tester) delBad1() {
 	sf.t.Log("delBad1()")
-	defer func() {
-		if _panic := recover(); _panic == nil {
-			sf.t.Fatalf("delBad1(): panic==nil")
-		}
-	}()
 	sf.dict.Unsubscribe(nil)
 }
 

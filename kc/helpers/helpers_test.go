@@ -48,6 +48,7 @@ func (sf *tester) hassert() {
 	if strTime := TimeNow(); strTime == "" {
 		sf.t.Fatalf("hassert(): strTime==''")
 	}
+	SleepMs()
 }
 
 // Мягкая ТВЁРДАЯ проверка на ок

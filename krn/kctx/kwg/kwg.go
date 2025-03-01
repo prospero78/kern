@@ -27,10 +27,13 @@ type kernelWg struct {
 
 var (
 	kernWg *kernelWg // Глобальный объект
+	block  sync.Mutex
 )
 
 // GetKernelWg -- возвращает новый именованный ожидатель потоков ядра
 func GetKernelWg(ctx context.Context) IKernelWg {
+	block.Lock()
+	defer block.Unlock()
 	if kernWg != nil {
 		kernWg.log.Debug("GetKernelWg()")
 		return kernWg

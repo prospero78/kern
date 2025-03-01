@@ -5,6 +5,7 @@ import (
 	"context"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 
 	. "github.com/prospero78/kern/kc/helpers"
@@ -23,10 +24,13 @@ type kernelKeeper struct {
 
 var (
 	kernKeep *kernelKeeper
+	block    sync.Mutex
 )
 
 // GetKernelKeeper -- возвращает новый сторож системных сигналов
 func GetKernelKeeper(ctx context.Context, fnCancel func(), wg IKernelWg) *kernelKeeper {
+	block.Lock()
+	defer block.Unlock()
 	if kernKeep != nil {
 		kernKeep.log.Debug("GetKernelKeeper()")
 		return kernKeep

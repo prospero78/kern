@@ -41,9 +41,9 @@ var (
 
 // GetKernelStore -- возвращает новое локальное хранилище ядра
 func GetKernelStore() IKernelStoreKv {
-	log.Println("GetKernelStore()")
 	block.Lock()
 	defer block.Unlock()
+	log.Println("GetKernelStore()")
 	if kernStore != nil {
 		return kernStore
 	}

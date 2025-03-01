@@ -2,6 +2,7 @@
 package kern
 
 import (
+	. "github.com/prospero78/kern/kc/helpers"
 	"github.com/prospero78/kern/kc/safe_bool"
 	. "github.com/prospero78/kern/krn/kalias"
 	"github.com/prospero78/kern/krn/kbus/kbus_http"
@@ -15,6 +16,7 @@ import (
 	"github.com/prospero78/kern/krn/kstore_kv"
 	. "github.com/prospero78/kern/krn/ktypes"
 	"github.com/prospero78/kern/mds/mod_kctx"
+	"github.com/prospero78/kern/mds/mod_keeper"
 	"github.com/prospero78/kern/mds/mod_serv_http"
 )
 
@@ -60,6 +62,12 @@ func NewKernelBusHttp() IKernelBus {
 func NewMonolitLocal(name string) IKernelMonolit {
 	ctx := kctx.GetKernelCtx()
 	ctx.Set("isLocal", true, "bus type")
+	for {
+		SleepMs()
+		if ctx.Get("isLocal") != nil {
+			break
+		}
+	}
 	monolit := kmonolit.GetMonolit(name)
 	_ = kbus_local.GetKernelBusLocal()
 	return monolit
@@ -70,6 +78,12 @@ func NewMonolitHttp(name string) IKernelMonolit {
 	ctx := kctx.GetKernelCtx()
 	_ = kbus_http.GetKernelBusHttp()
 	ctx.Set("isLocal", false, "bus type")
+	for {
+		SleepMs()
+		if ctx.Get("isLocal") != nil {
+			break
+		}
+	}
 	monolit := kmonolit.GetMonolit(name)
 	return monolit
 }
@@ -102,4 +116,10 @@ func NewModuleServHttp() IKernelModule {
 func NewModuleKernelCtx() IKernelModule {
 	modKernelCtx := mod_kctx.NewModuleKernelCtx()
 	return modKernelCtx
+}
+
+// NewModuleKernelKeeper -- возвращает новый модуль для IKernelKeeper
+func NewModuleKernelKeeper() IKernelModule {
+	modKernelKeeper := mod_keeper.NewModuleKeeper()
+	return modKernelKeeper
 }

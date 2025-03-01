@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	. "github.com/prospero78/kern/kc/helpers"
 	"github.com/prospero78/kern/krn/kctx"
 	"github.com/prospero78/kern/krn/kmonolit"
 	"github.com/prospero78/kern/krn/kserv_http"
@@ -117,6 +118,12 @@ func (sf *tester) new() {
 	_ = os.Unsetenv("LOCAL_HTTP_URL")
 	os.Setenv("LOCAL_HTTP_URL", "http://localhost:18310/")
 	sf.ctx.Set("isLocal", true, "testing")
+	for {
+		SleepMs()
+		if sf.ctx.Get("isLocal") != nil {
+			break
+		}
+	}
 	_ = kmonolit.GetMonolit("test_monolit")
 	sf.serv = kserv_http.GetKernelServHttp()
 

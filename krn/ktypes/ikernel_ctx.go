@@ -12,4 +12,6 @@ type IKernelCtx interface {
 	BaseCtx() context.Context
 	// Wg -- возвращает ожидатель потоков
 	Wg() IKernelWg
+	// Keeper -- возвращает системный сторож
+	Keeper() IKernelKeeper
 }

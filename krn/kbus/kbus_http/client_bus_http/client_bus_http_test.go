@@ -4,8 +4,8 @@ import (
 	"os"
 	"strings"
 	"testing"
-	"time"
 
+	. "github.com/prospero78/kern/kc/helpers"
 	"github.com/prospero78/kern/krn/kbus/kbus_base"
 	"github.com/prospero78/kern/krn/kctx"
 	"github.com/prospero78/kern/krn/kserv_http"
@@ -156,7 +156,7 @@ func (sf *tester) pubBad2() {
 		sf.t.Fatalf("pubBad2(): err=%v", err)
 	}
 	for {
-		time.Sleep(time.Millisecond * 1)
+		SleepMs()
 		if sf.handSub.Msg() != "" {
 			break
 		}
@@ -182,7 +182,7 @@ func (sf *tester) pubGood1() {
 		sf.t.Fatalf("pubGood1(): err=%v", err)
 	}
 	for {
-		time.Sleep(time.Millisecond * 1)
+		SleepMs()
 		if sf.handSub.Msg() != "" {
 			break
 		}
@@ -238,7 +238,6 @@ func (sf *tester) subBad3() {
 		}
 		sf.t.Fatalf("subBad3(): err=%v", err)
 	}
-	time.Sleep(time.Millisecond * 150)
 }
 
 func (sf *tester) subGood1() {
@@ -355,7 +354,12 @@ func (sf *tester) newGood1() {
 	sf.cl = NewClientBusHttp("http://localhost:18314/").(*ClientBusHttp)
 	kServHttp := kserv_http.GetKernelServHttp()
 	go kServHttp.Run()
-	time.Sleep(time.Millisecond * 250)
+	for {
+		SleepMs()
+		if kServHttp.IsWork() {
+			break
+		}
+	}
 	if log := sf.cl.Log(); log == nil {
 		sf.t.Fatalf("newGood1(): log==nil")
 	}

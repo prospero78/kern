@@ -29,10 +29,14 @@ func (sf *tester) new() {
 		sf.t.Fatalf("new(): ctx!=kernel.ctx")
 	}
 	ctx.Set("counter", 5, "test_counter")
+	if ctx.Get("counter") == nil {
+		sf.t.Fatalf("new(): counter==nil")
+	}
 	counter := ctx.Get("counter").Val().(int)
 	if counter != 5 {
 		sf.t.Fatalf("new(): counter(%v)!=5", counter)
 	}
+	ctx.Del("counter")
 	ctx.Cancel()
 	ctx.Done()
 	ctx = GetKernelCtx()
@@ -42,5 +46,8 @@ func (sf *tester) new() {
 	if wg := ctx.Wg(); wg == nil {
 		sf.t.Fatalf("new(): IKernelWg==nil")
 	}
-	ctx.Del("counter")
+	if keep := ctx.Keeper(); keep == nil {
+		sf.t.Fatalf("new(): IKernelKeeper==nil")
+	}
+
 }

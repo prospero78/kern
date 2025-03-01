@@ -30,6 +30,9 @@ func (sf *tester) new() {
 	if msg == nil {
 		sf.t.Fatalf("new(): msg==nil")
 	}
+	sf.log.Debug("test msg: %v", 45)
+	sf.log.Info("test msg: %v", 46)
+	sf.log.Warn("test msg: %v", 47)
 	for i := range 120 {
 		sf.log.Err("test err: %v", i)
 	}
@@ -41,7 +44,5 @@ func (sf *tester) new() {
 
 	_ = sf.log.Get(19)
 	_ = sf.log.GetErr(20)
-	sf.log.Debug("test msg: %v", 45)
-	sf.log.Info("test msg: %v", 46)
-	sf.log.Warn("test msg: %v", 47)
+	_ = sf.log.Size()
 }

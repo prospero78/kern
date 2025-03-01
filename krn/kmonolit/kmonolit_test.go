@@ -3,6 +3,7 @@ package kmonolit
 import (
 	"testing"
 
+	. "github.com/prospero78/kern/kc/helpers"
 	. "github.com/prospero78/kern/krn/kalias"
 	"github.com/prospero78/kern/krn/kctx"
 	"github.com/prospero78/kern/krn/kmodule"
@@ -86,6 +87,12 @@ func (sf *tester) newGood1() {
 	}()
 	ctx := kctx.GetKernelCtx()
 	ctx.Set("isLocal", true, "type bus")
+	for {
+		SleepMs()
+		if ctx.Get("isLocal") != nil {
+			break
+		}
+	}
 	sf.mon = GetMonolit("test_monolit")
 	isLocal := sf.mon.IsLocal()
 	if !isLocal {

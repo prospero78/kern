@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 	"testing"
-	"time"
 
+	. "github.com/prospero78/kern/kc/helpers"
 	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_pub"
 	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_serve"
 	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_sub"
@@ -116,6 +116,11 @@ func (sf *tester) unsubGood1() {
 	if err != nil {
 		sf.t.Fatalf("unsubGood1(): err=%v", err)
 	}
+	count := 0
+	for count < 100 {
+		SleepMs()
+		count++
+	}
 	req := &msg_unsub.UnsubReq{
 		Name_: sf.handSub.Name_,
 		Uuid_: "test_uuid",
@@ -130,6 +135,11 @@ func (sf *tester) unsubGood1() {
 func (sf *tester) unsubBad2() {
 	sf.t.Log("unsubBad2")
 	bus.Unsubscribe(sf.handSub)
+	count := 0
+	for count < 100 {
+		SleepMs()
+		count++
+	}
 	req := &msg_unsub.UnsubReq{
 		Name_: sf.handSub.Name_,
 		Uuid_: "test_uuid",
@@ -247,19 +257,14 @@ func (sf *tester) pubGood1() {
 		BinMsg_: []byte("test_pub"),
 	}
 	_ = bus.processPublish(req)
-	msg := string(sf.handSub.Msg())
-	count := 1000
 	for {
-		time.Sleep(time.Millisecond * 1)
-		count--
-		if count < 0 {
-			sf.t.Fatalf("pubGood1(): count<0")
-		}
+		SleepMs()
+		msg := string(sf.handSub.Msg())
 		if msg != "" {
 			break
 		}
-		msg = string(sf.handSub.Msg())
 	}
+	msg := string(sf.handSub.Msg())
 	if msg != "test_pub" {
 		sf.t.Fatalf("pubGood1(): msg(%v)!='test_pub'", msg)
 	}

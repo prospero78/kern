@@ -46,11 +46,21 @@ func GetMonolit(name string) IKernelMonolit {
 		isLocal: kCtx.Get("isLocal").Val().(bool),
 	}
 	sf.log = sf.ctx.Log()
-	kCtx.Set("monolitName", name, "name of monolit")
-	kCtx.Set("monolit", sf, "monolit-app")
+	sf.setKCtx("monolitName", name, "name of monolit")
+	sf.setKCtx("monolit", sf, "monolit-app")
 	sf.ctx.Set("monolitName", name, "name of monolit")
 	mon = sf
 	return sf
+}
+
+func (sf *kMonolit) setKCtx(name string, val any, comment string) {
+	sf.kCtx.Set(name, val, comment)
+	for {
+		SleepMs()
+		if sf.kCtx.Get(name) != nil {
+			return
+		}
+	}
 }
 
 // Ctx -- возвращает контекст монолита

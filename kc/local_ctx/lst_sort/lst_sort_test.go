@@ -19,6 +19,15 @@ func TestLstSort(t *testing.T) {
 	sf.add()
 	sf.del()
 	sf.del2()
+	sf.del3()
+}
+
+// Нет такого элемента
+func (sf *tester) del3() {
+	sf.t.Log("del3")
+	val5 := ctx_value.NewCtxValue("val5", 5, "test 5")
+	sf.lst.Del(val5)
+	sf.lst.Del(nil)
 }
 
 // Удаляет элемент в середине
@@ -37,18 +46,14 @@ func (sf *tester) del2() {
 	if _len := sf.lst.Size(); _len != 5 {
 		sf.t.Fatalf("del2(): len(%v)!=5", _len)
 	}
-	for val := range sf.lst.List() {
-		if val == nil {
-			sf.t.Fatalf("del2(): val==nil")
-		}
-	}
 }
 
 // Удаляет элемент из списка в конце
 func (sf *tester) del() {
 	sf.t.Log("del")
+
 	val4 := sf.lst.Get(4)
-	_ = sf.lst.Get(10)
+
 	sf.lst.Del(val4)
 	if _len := sf.lst.Size(); _len != 4 {
 		sf.t.Fatalf("del(): len(%v)!=4", _len)
@@ -61,6 +66,7 @@ func (sf *tester) del() {
 	if _len := sf.lst.Size(); _len != 5 {
 		sf.t.Fatalf("del(): len(%v)!=5", _len)
 	}
+	_ = sf.lst.List()
 }
 
 // Добавление элементов в список
@@ -76,9 +82,6 @@ func (sf *tester) add() {
 	sf.lst.Add(val0)
 	sf.lst.Add(val2)
 	sf.lst.Add(val3)
-	if _len := sf.lst.Size(); _len != 5 {
-		sf.t.Fatalf("add(): len(%v)!=5", _len)
-	}
 }
 
 // Создание сортированного списка

@@ -46,7 +46,7 @@ func (sf *PageModules) postModules(ctx *fiber.Ctx) error {
 	mon := sf.ctx.Get("monolit").Val().(IKernelMonolit)
 	chLst := mon.Ctx().SortedList()
 	strOut := ``
-	for val := range chLst {
+	for _, val := range chLst {
 		if !strings.Contains(val.Key(), "module_") {
 			continue
 		}

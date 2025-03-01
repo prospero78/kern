@@ -38,6 +38,7 @@ func (sf *tester) upd() {
 	if update := sf.val.UpdateAt(); update == "" {
 		sf.t.Fatalf("upd(): update empty")
 	}
+	sf.val.Update("проверка обрезки длинного значения для теста", "new_value")
 }
 
 // Создаёт значение локального контекста
@@ -49,9 +50,6 @@ func (sf *tester) new() {
 	}
 	if val := sf.val.Val().(int); val != 5 {
 		sf.t.Fatalf("new(): val(%v)!=5", val)
-	}
-	if val := sf.val.ValStr(); val != "5" {
-		sf.t.Fatalf("new(): val(%v)!='5'", val)
 	}
 	create := sf.val.CreateAt()
 	if create == "" {

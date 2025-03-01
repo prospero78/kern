@@ -14,6 +14,9 @@ func main() {
 	modKernelCtx := kern.NewModuleKernelCtx()
 	app.Add(modKernelCtx)
 
+	modKernKeep := kern.NewModuleKernelKeeper()
+	app.Add(modKernKeep)
+
 	app.Run()
 	app.Wait()
 }

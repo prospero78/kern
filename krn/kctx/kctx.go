@@ -49,6 +49,11 @@ func GetKernelCtx() IKernelCtx {
 	return kernCtx
 }
 
+// Keeper -- возвращает сторож системных сигналов
+func (sf *kCtx) Keeper() IKernelKeeper {
+	return sf.kernKeeper
+}
+
 // Wg -- возвращает ожидатель потоков
 func (sf *kCtx) Wg() IKernelWg {
 	return sf.kernWg
@@ -57,8 +62,6 @@ func (sf *kCtx) Wg() IKernelWg {
 // Done -- блокирующий вызов ожидания отмены контекста ядра
 func (sf *kCtx) Done() {
 	<-sf.ctx.Done()
-	block.Lock()
-	defer block.Unlock()
 	sf.log.Debug("kCtx.Done()")
 }
 

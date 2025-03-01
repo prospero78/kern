@@ -67,7 +67,7 @@ func (sf *PageMonolit) postMonolitCtx(ctx *fiber.Ctx) error {
 	mon := sf.ctx.Get("monolit").Val().(IKernelMonolit)
 	chLst := mon.Ctx().SortedList()
 	strOut := ``
-	for val := range chLst {
+	for _, val := range chLst {
 		strRow := strCtxRowVal
 		strRow = strings.ReplaceAll(strRow, "{.key}", val.Key())
 		strRow = strings.ReplaceAll(strRow, "{.value}", fmt.Sprint(val.Val()))

@@ -32,4 +32,6 @@ type ILogBuf interface {
 	Get(num int) ILogMsg
 	// GetErr -- возвращает сообщение ошибки по номеру (0..99)
 	GetErr(num int) ILogMsg
+	// Size -- возвращает размер лога
+	Size() int
 }

@@ -35,7 +35,6 @@ type kServHttp struct {
 	fiberApp *fiber.App
 	isWork   ISafeBool
 	isEnd    ISafeBool
-	block    sync.Mutex
 }
 
 //go:embed static/*
@@ -48,12 +47,12 @@ var (
 
 // GetKernelServHttp -- возвращает  встроенный HTTP-сервер
 func GetKernelServHttp() IKernelServerHttp {
+	block.Lock()
+	defer block.Unlock()
 	if kernServHttp != nil {
 		kernServHttp.log.Debug("GetKernelServHttp()")
 		return kernServHttp
 	}
-	block.Lock()
-	defer block.Unlock()
 	ctx := kctx.GetKernelCtx()
 
 	strUrl := os.Getenv("LOCAL_HTTP_URL")
@@ -136,8 +135,6 @@ func (sf *kServHttp) Run() {
 // Ожидает окончания работы
 func (sf *kServHttp) close() {
 	sf.kCtx.Done()
-	sf.block.Lock()
-	defer sf.block.Unlock()
 	if !sf.isWork.Get() {
 		return
 	}

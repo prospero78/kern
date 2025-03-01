@@ -89,12 +89,12 @@ func (sf *PageModule) postModuleCtx(ctx *fiber.Ctx) error {
 		chLst = sf.ctx.SortedList()
 	}
 	strOut := ""
-	for val := range chLst {
+	for _, val := range chLst {
 		strRow := strCtxRowVal
 		strRow = strings.ReplaceAll(strRow, "{.key}", val.Key())
 		_val := val.Val()
-		strVal := val.ValStr()
-		strRow = strings.ReplaceAll(strRow, "{.value}", strVal)
+		valShort := fmt.Sprint(_val)
+		strRow = strings.ReplaceAll(strRow, "{.value}", valShort)
 		_type := fmt.Sprintf("%#T", _val)
 		strRow = strings.ReplaceAll(strRow, "{.type}", _type)
 		strRow = strings.ReplaceAll(strRow, "{.createAt}", string(val.CreateAt()))
@@ -139,7 +139,7 @@ func (sf *PageModule) getModule(id string) (IKernelModule, ICtxValue) {
 		val    ICtxValue
 		isFind bool
 	)
-	for val = range chLst {
+	for _, val = range chLst {
 		name := "module_" + id
 		if name == val.Key() {
 			isFind = true

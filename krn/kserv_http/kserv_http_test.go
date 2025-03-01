@@ -3,11 +3,10 @@ package kserv_http
 import (
 	"os"
 	"testing"
-	"time"
 
+	. "github.com/prospero78/kern/kc/helpers"
 	"github.com/prospero78/kern/krn/kctx"
 	. "github.com/prospero78/kern/krn/ktypes"
-
 	"github.com/prospero78/kern/mock/mock_env"
 )
 
@@ -55,7 +54,11 @@ func (sf *tester) newBad3() {
 	sf.t.Log("newBad3()")
 	serv := GetKernelServHttp()
 	go serv.Run()
-	time.Sleep(time.Millisecond * 10)
+	count := 0
+	for count < 20 {
+		SleepMs()
+		count++
+	}
 }
 
 func (sf *tester) newGood1() {
@@ -69,6 +72,12 @@ func (sf *tester) newGood1() {
 	_ = os.Unsetenv("LOCAL_HTTP_URL")
 	os.Setenv("LOCAL_HTTP_URL", "http://localhost:18303/")
 	sf.ctx.Set("monolitName", "test_monolit", "comment")
+	for {
+		SleepMs()
+		if sf.ctx.Get("monolitName") != nil {
+			break
+		}
+	}
 	serv := GetKernelServHttp().(*kServHttp)
 	if serv != kernServHttp {
 		sf.t.Fatalf("newGood1(): bad IKernelServHttp")
@@ -80,7 +89,11 @@ func (sf *tester) newGood1() {
 		sf.t.Fatalf("newGood1(): log==nil")
 	}
 	go serv.Run()
-	time.Sleep(time.Millisecond * 50)
+	count := 0
+	for count < 50 {
+		SleepMs()
+		count++
+	}
 }
 
 // Не указана SERVER_HTTP_PORT

@@ -43,6 +43,11 @@ func TimeNow() ATime {
 	return ATime(strTime)
 }
 
+// SleepMs -- спит миллисекунду
+func SleepMs() {
+	time.Sleep(time.Millisecond * 1)
+}
+
 func init_() {
 	strStage := os.Getenv("STAGE")
 	switch strStage {

@@ -1,4 +1,4 @@
-package mod_kctx
+package mod_keeper
 
 import (
 	"os"
@@ -16,7 +16,7 @@ type tester struct {
 	mod IKernelModule
 }
 
-func TestModKernelCtx(t *testing.T) {
+func TestModKeeper(t *testing.T) {
 	sf := &tester{
 		t:   t,
 		ctx: kctx.GetKernelCtx(),
@@ -47,8 +47,8 @@ func (sf *tester) newGood1() {
 	sf.t.Log("newGood1")
 	_ = mock_env.MakeEnv()
 	_ = os.Unsetenv("LOCAL_HTTP_URL")
-	os.Setenv("LOCAL_HTTP_URL", "http://localhost:18328/")
-	sf.mod = NewModuleKernelCtx()
+	os.Setenv("LOCAL_HTTP_URL", "http://localhost:18320/")
+	sf.mod = NewModuleKeeper()
 	if sf.mod == nil {
 		sf.t.Fatalf("newGood1(): mod==nil")
 	}
@@ -70,5 +70,5 @@ func (sf *tester) newBad1() {
 			sf.t.Fatalf("newBad1(): panic==nil")
 		}
 	}()
-	_ = NewModuleKernelCtx()
+	_ = NewModuleKeeper()
 }

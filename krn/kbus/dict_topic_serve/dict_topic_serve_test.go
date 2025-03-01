@@ -97,7 +97,6 @@ func (sf *tester) sendBad2() {
 // повторное добавление обработчика
 func (sf *tester) addBad2() {
 	sf.t.Log("addBad2")
-	sf.t.Log("addGood1()")
 	defer func() {
 		if _panic := recover(); _panic == nil {
 			sf.t.Fatalf("addGood1(): panic==nil")
