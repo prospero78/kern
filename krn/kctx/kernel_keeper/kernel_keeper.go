@@ -3,12 +3,12 @@ package kernel_keeper
 
 import (
 	"context"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
 	. "github.com/prospero78/kern/kc/helpers"
+	"github.com/prospero78/kern/kc/log_buf"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
@@ -17,6 +17,7 @@ type kernelKeeper struct {
 	ctx      context.Context
 	fnCancel func()
 	wg       IKernelWg
+	log      ILogBuf
 	chSys_   chan os.Signal
 }
 
@@ -27,6 +28,7 @@ var (
 // GetKernelKeeper -- возвращает новый сторож системных сигналов
 func GetKernelKeeper(ctx context.Context, fnCancel func(), wg IKernelWg) *kernelKeeper {
 	if kernKeep != nil {
+		kernKeep.log.Debug("GetKernelKeeper()")
 		return kernKeep
 	}
 	Hassert(ctx != nil, "NewKernelCtx(): ctx==nil")
@@ -36,8 +38,10 @@ func GetKernelKeeper(ctx context.Context, fnCancel func(), wg IKernelWg) *kernel
 		ctx:      ctx,
 		fnCancel: fnCancel,
 		wg:       wg,
+		log:      log_buf.NewLogBuf(),
 		chSys_:   make(chan os.Signal, 2),
 	}
+	sf.log.Debug("GetKernelKeeper(): first run")
 	err := sf.wg.Add("kernel_keeper")
 	Hassert(err == nil, "NewKernelCtx(): in add stream kernel keeper in IKernelWg, err=\n\t%v,err")
 
@@ -47,9 +51,14 @@ func GetKernelKeeper(ctx context.Context, fnCancel func(), wg IKernelWg) *kernel
 	return sf
 }
 
+// Log -- возвращает лог сторожа системных сигналов
+func (sf *kernelKeeper) Log() ILogBuf {
+	return sf.log
+}
+
 // Работает в отдельном потоке и ждёт сигналов прерываний работы
 func (sf *kernelKeeper) run(chSys chan os.Signal) {
-	log.Println("kernelKeeper.run()")
+	sf.log.Debug("kernelKeeper.run()")
 
 	// Регистрируем сигналы SIGINT (Ctrl+C) и SIGTERM (завершение процесса)
 	// syscall.SIGHUP: Сигнал, отправляемый при закрытии терминала.
@@ -57,11 +66,11 @@ func (sf *kernelKeeper) run(chSys chan os.Signal) {
 	signal.Notify(chSys, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP, syscall.SIGQUIT)
 	select {
 	case sig := <-chSys: // системный сигнал
-		log.Printf("kernelKeeper.run(): system signal, sig=%v\n", sig)
+		sf.log.Debug("kernelKeeper.run(): system signal, sig=%v\n", sig)
 		sf.fnCancel()
 	case <-sf.ctx.Done(): // сигнал от приложения
-		log.Printf("kernelKeeper.run(): cancel app context, err=\n\t%v\n", sf.ctx.Err())
+		sf.log.Debug("kernelKeeper.run(): cancel app context, err=\n\t%v\n", sf.ctx.Err())
 	}
 	sf.wg.Done("kernel_keeper")
-	log.Printf("kernelKeeper.run(): end")
+	sf.log.Debug("kernelKeeper.run(): end")
 }

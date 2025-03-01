@@ -69,6 +69,9 @@ func (sf *tester) get() {
 		sf.t.Fatalf("get(): IKernelKeeper==nil")
 	}
 	_ = GetKernelKeeper(sf.ctx, sf.fnCancel, sf.wg)
+	if log := keep.Log(); log == nil {
+		sf.t.Fatalf("get(): log==nil")
+	}
 	close(keep.chSys_)
 	time.Sleep(time.Millisecond * 10)
 }

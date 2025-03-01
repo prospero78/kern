@@ -1,4 +1,7 @@
 package ktypes
 
 // IKernelKeeper -- сторож ядра
-type IKernelKeeper interface{}
+type IKernelKeeper interface {
+	// Log -- возвращает лог сторожа
+	Log() ILogBuf
+}
