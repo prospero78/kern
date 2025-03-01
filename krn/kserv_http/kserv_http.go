@@ -4,7 +4,6 @@ package kserv_http
 import (
 	"embed"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -49,8 +48,8 @@ var (
 
 // GetKernelServHttp -- возвращает  встроенный HTTP-сервер
 func GetKernelServHttp() IKernelServerHttp {
-	log.Println("GetKernelServHttp()")
 	if kernServHttp != nil {
+		kernServHttp.log.Debug("GetKernelServHttp()")
 		return kernServHttp
 	}
 	block.Lock()
@@ -77,6 +76,7 @@ func GetKernelServHttp() IKernelServerHttp {
 		isEnd:    safe_bool.NewSafeBool(),
 	}
 	sf.log = sf.ctx.Log()
+	sf.log.Debug("GetKernelServHttp(): first run")
 	sf.fiberApp.Use(compress.New(compress.Config{
 		Level: compress.LevelBestCompression, // 2
 	}))

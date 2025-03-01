@@ -135,6 +135,9 @@ func (sf *tester) newGood1() {
 	if sf.wg != wg {
 		sf.t.Fatalf("newGood1(): bad IKernelWg")
 	}
+	if log := sf.wg.Log(); log == nil {
+		sf.t.Fatalf("newGood1(): log==nil")
+	}
 }
 
 // Нет контекста ядра

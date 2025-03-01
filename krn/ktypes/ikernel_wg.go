@@ -18,4 +18,6 @@ type IKernelWg interface {
 	List() []AStreamName
 	// Len -- возвращает размер списка потоков ожидания
 	Len() int
+	// Log -- возвращает логгер ожидателя групп
+	Log() ILogBuf
 }
