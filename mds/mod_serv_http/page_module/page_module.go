@@ -94,16 +94,20 @@ func (sf *PageModule) postModuleCtx(ctx *fiber.Ctx) error {
 	for _, val := range lst {
 		strRow := strCtxRowVal
 		strRow = strings.ReplaceAll(strRow, "{.key}", val.Key())
-		// mCtx.RLock()
 		_val := val.Val()
 		valShort := fmt.Sprint(_val)
+		runes := []rune(valShort)
+		if len(runes) > 20 {
+			runes = runes[:20]
+			valShort = string(runes)
+		}
 		strRow = strings.ReplaceAll(strRow, "{.value}", valShort)
 		_type := fmt.Sprintf("%#T", _val)
+		_type = strings.ReplaceAll(_type, ".", ".<br>")
 		strRow = strings.ReplaceAll(strRow, "{.type}", _type)
 		strRow = strings.ReplaceAll(strRow, "{.createAt}", string(val.CreateAt()))
 		strRow = strings.ReplaceAll(strRow, "{.updateAt}", string(val.UpdateAt()))
 		strRow = strings.ReplaceAll(strRow, "{.comment}", val.Comment())
-		// mCtx.RUnlock()
 		strOut += strRow
 	}
 	strOut = strings.ReplaceAll(strCtxRowBlock, "{.ctx_block}", strOut)
