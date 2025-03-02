@@ -21,7 +21,6 @@ const (
 
 // KBusBase -- базовая часть шины данных
 type KBusBase struct {
-	sync.Mutex
 	Ctx_      IKernelCtx
 	IsWork_   ISafeBool
 	ctx       ILocalCtx
@@ -81,8 +80,6 @@ func (sf *KBusBase) Unsubscribe(handler IBusHandlerSubscribe) {
 
 // Subscribe -- подписывает обработчик на топик
 func (sf *KBusBase) Subscribe(handler IBusHandlerSubscribe) error {
-	sf.Lock()
-	defer sf.Unlock()
 	sf.log.Debug("KBusBase.Subscribe(): handler='%v'", handler.Name())
 	if !sf.IsWork_.Get() {
 		err := fmt.Errorf("KBusBase.Subscribe():  handler='%v', bus already closed", handler.Name())
@@ -95,8 +92,6 @@ func (sf *KBusBase) Subscribe(handler IBusHandlerSubscribe) error {
 
 // SendRequest -- отправляет запрос в шину данных
 func (sf *KBusBase) SendRequest(topic ATopic, binReq []byte) ([]byte, error) {
-	sf.Lock()
-	defer sf.Unlock()
 	sf.log.Debug("KBusBase.SendRequest(): topic='%v'", topic)
 	if !sf.IsWork_.Get() {
 		err := fmt.Errorf("KBusBase.SendRequest():  topic='%v', bus already closed", topic)
@@ -121,8 +116,6 @@ func (sf *KBusBase) RegisterServe(handler IBusHandlerServe) {
 
 // Publish -- публикует сообщение в шину
 func (sf *KBusBase) Publish(topic ATopic, binMsg []byte) (err error) {
-	sf.Lock()
-	defer sf.Unlock()
 	sf.log.Debug("KBusBase.Publish(): topic='%v'", topic)
 	if !sf.IsWork_.Get() {
 		err := fmt.Errorf("KBusBase.Publish(): topic='%v',bus already closed", topic)
