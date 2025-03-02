@@ -7,6 +7,7 @@ import (
 	. "github.com/prospero78/kern/kc/helpers"
 	"github.com/prospero78/kern/kc/local_ctx"
 	"github.com/prospero78/kern/kc/safe_int"
+	"github.com/prospero78/kern/kc/safe_string"
 	. "github.com/prospero78/kern/krn/kalias"
 	"github.com/prospero78/kern/krn/kbus/kbus_local"
 	"github.com/prospero78/kern/krn/kctx"
@@ -20,6 +21,7 @@ type kModule struct {
 	name      AModuleName
 	bus       IKernelBus
 	timePhase ISafeInt
+	strLive   ISafeString
 }
 
 // NewKernelModule -- возвращает новый модуль на основе ядра
@@ -32,6 +34,7 @@ func NewKernelModule(name AModuleName) IKernelModule {
 		name:      name,
 		bus:       kbus_local.GetKernelBusLocal(),
 		timePhase: safe_int.NewSafeInt(),
+		strLive:   safe_string.NewSafeString(),
 	}
 	sf.timePhase.Set(1000) // 1000 msec
 	go sf.sigLive()
@@ -64,6 +67,11 @@ func (sf *kModule) IsWork() bool {
 	return false
 }
 
+// Live -- возвращает индикатор жизни модуля
+func (sf *kModule) Live() string {
+	return sf.strLive.Get()
+}
+
 // Сигнал жизни, каждые 5 сек публикует в шину метку
 func (sf *kModule) sigLive() {
 	var (
@@ -74,13 +82,17 @@ func (sf *kModule) sigLive() {
 	fnPhase := func() {
 		switch iPhase {
 		case 0:
-			err = sf.bus.Publish(ATopic(topic), []byte("|"))
+			sf.strLive.Set("|")
+			err = sf.bus.Publish(ATopic(topic), sf.strLive.Byte())
 		case 1:
-			err = sf.bus.Publish(ATopic(topic), []byte("/"))
+			sf.strLive.Set("/")
+			err = sf.bus.Publish(ATopic(topic), sf.strLive.Byte())
 		case 2:
-			err = sf.bus.Publish(ATopic(topic), []byte("-"))
+			sf.strLive.Set("-")
+			err = sf.bus.Publish(ATopic(topic), sf.strLive.Byte())
 		case 3:
-			err = sf.bus.Publish(ATopic(topic), []byte("\\"))
+			sf.strLive.Set("\\")
+			err = sf.bus.Publish(ATopic(topic), sf.strLive.Byte())
 			iPhase = -1
 		}
 		sf.recErr(err)

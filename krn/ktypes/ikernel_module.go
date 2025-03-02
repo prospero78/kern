@@ -16,4 +16,6 @@ type IKernelModule interface {
 	Ctx() ILocalCtx
 	// Log -- возвращает буферный лог модуля
 	Log() ILogBuf
+	// Live -- "сигнал жизни"
+	Live() string
 }

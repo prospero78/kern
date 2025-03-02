@@ -53,4 +53,17 @@
     </div>
 </div>
 
-<span hx-post="/module/{.id}" hx-trigger="every 2s" hx-target="#main"></span>
+<p></p>
+
+<div class="container">
+    <div class="row">
+        <div class="col-2 border bg-info">
+            <b>Live</b>
+        </div>
+        <div class="col border">
+            {.live}
+        </div>
+    </div>
+</div>
+
+<span hx-post="/module/{.id}" hx-trigger="every 1s" hx-target="#main"></span>

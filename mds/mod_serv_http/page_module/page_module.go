@@ -132,6 +132,7 @@ func (sf *PageModule) postModuleState(ctx *fiber.Ctx) error {
 	dictState["{.updateAt}"] = modVal.UpdateAt()
 	dictState["{.comment}"] = modVal.Comment()
 	dictState["{.id}"] = id
+	dictState["{.live}"] = module.Live()
 	strOut := strStateModule
 	for key, val := range dictState {
 		strOut = strings.ReplaceAll(strOut, key, fmt.Sprint(val))
