@@ -8,10 +8,10 @@ import (
 
 type tester struct {
 	t  *testing.T
-	sb ISafeInt
+	si ISafeInt
 }
 
-func TestSAfeBool(t *testing.T) {
+func TestSafeInt(t *testing.T) {
 	sf := &tester{
 		t: t,
 	}
@@ -23,12 +23,12 @@ func TestSAfeBool(t *testing.T) {
 // Сбрасывает хранимое значение
 func (sf *tester) reset() {
 	sf.t.Log("reset")
-	sf.sb.Reset()
-	if sf.sb.Get() != 0 {
+	sf.si.Reset()
+	if sf.si.Get() != 0 {
 		sf.t.Fatalf("reset(): ISafeInt!=0")
 	}
-	sf.sb.Reset()
-	if sf.sb.Get() != 0 {
+	sf.si.Reset()
+	if sf.si.Get() != 0 {
 		sf.t.Fatalf("reset(): ISafeInt!=0")
 	}
 }
@@ -36,12 +36,12 @@ func (sf *tester) reset() {
 // Установка хранимого значения
 func (sf *tester) set() {
 	sf.t.Log("set")
-	sf.sb.Set(77)
-	if sf.sb.Get() != 77 {
+	sf.si.Set(77)
+	if sf.si.Get() != 77 {
 		sf.t.Fatalf("set(): ISafeInt!=77")
 	}
-	sf.sb.Set(-56)
-	if sf.sb.Get() != -56 {
+	sf.si.Set(-56)
+	if sf.si.Get() != -56 {
 		sf.t.Fatalf("set(): ISafeInt!=-56")
 	}
 }
@@ -49,11 +49,11 @@ func (sf *tester) set() {
 // Создаёт потокобезопасный булевый признак
 func (sf *tester) new() {
 	sf.t.Log("new")
-	sf.sb = NewSafeInt()
-	if sf.sb == nil {
+	sf.si = NewSafeInt()
+	if sf.si == nil {
 		sf.t.Fatalf("new(): ISafeInt==nil")
 	}
-	if sf.sb.Get() != 0 {
+	if sf.si.Get() != 0 {
 		sf.t.Fatalf("new(): ISafeInt!=0")
 	}
 }

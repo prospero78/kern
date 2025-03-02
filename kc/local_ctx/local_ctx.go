@@ -73,12 +73,6 @@ func (sf *LocalCtx) Del(key string) {
 	sf.lstSort.Del(val)
 }
 
-type triple struct {
-	key     string
-	val     any
-	comment string
-}
-
 // Set -- добавляет значение в контекст
 func (sf *LocalCtx) Set(key string, val any, comment string) {
 	sf.Lock()
