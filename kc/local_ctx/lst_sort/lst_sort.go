@@ -3,6 +3,7 @@ package lst_sort
 
 import (
 	"sort"
+	"sync"
 
 	. "github.com/prospero78/kern/kc/helpers"
 	. "github.com/prospero78/kern/krn/ktypes"
@@ -10,100 +11,58 @@ import (
 
 // LstSort -- сортированный список значений контекста
 type LstSort struct {
-	chAddIn  chan ICtxValue
-	chAddOut chan int
-
-	chDelIn  chan ICtxValue
-	chDelOut chan int
-
-	chListIn  chan int
-	chListOut chan []ICtxValue
-
-	chSizeIn  chan int
-	chSizeOut chan int
-
-	chGetIn  chan int
-	chGetOut chan ICtxValue
-	lstVal   []ICtxValue // Сортированный список значений
+	sync.RWMutex
+	lstVal []ICtxValue // Сортированный список значений
 }
 
 // NewLstSort -- возвращает новый сортированный список значений контекста
 func NewLstSort() *LstSort {
 	sf := &LstSort{
-		chAddIn:  make(chan ICtxValue, 2),
-		chAddOut: make(chan int, 2),
-
-		chDelIn:  make(chan ICtxValue, 2),
-		chDelOut: make(chan int, 2),
-
-		chListIn:  make(chan int, 2),
-		chListOut: make(chan []ICtxValue, 2),
-
-		chSizeIn:  make(chan int, 2),
-		chSizeOut: make(chan int, 2),
-
-		chGetIn:  make(chan int, 2),
-		chGetOut: make(chan ICtxValue, 2),
-		lstVal:   []ICtxValue{},
+		lstVal: []ICtxValue{},
 	}
-	go sf.run()
 	return sf
 }
 
 // Add -- добавляет значение в список
 func (sf *LstSort) Add(val ICtxValue) {
+	sf.Lock()
+	defer sf.Unlock()
 	Hassert(val != nil, "LstSort.Add(): ICtxValue==nil")
-	sf.chAddIn <- val
-	<-sf.chAddOut
+	sf.lstVal = append(sf.lstVal, val)
+	sf.sort()
 }
 
 // Del -- удаляет элемент из списка
 func (sf *LstSort) Del(val ICtxValue) {
+	sf.Lock()
+	defer sf.Unlock()
 	if val == nil {
 		return
 	}
-	sf.chDelIn <- val
-	<-sf.chDelOut
+	sf.del(val)
 }
 
 // List -- возвращает сортированный список
 func (sf *LstSort) List() []ICtxValue {
-	sf.chListIn <- 1
-	return <-sf.chListOut
+	sf.RLock()
+	defer sf.RUnlock()
+	return sf.list()
 }
 
 // Size -- возвращает длину списка
 func (sf *LstSort) Size() int {
-	sf.chSizeIn <- 1
-	return <-sf.chSizeOut
+	sf.RLock()
+	defer sf.RUnlock()
+	return len(sf.lstVal)
 }
 
 // Get -- возвращает по индексу
 func (sf *LstSort) Get(ind int) ICtxValue {
+	sf.RLock()
+	defer sf.RUnlock()
 	Hassert(ind >= 0, "LstSort.Get(): ind(%v)<0", ind)
-	sf.chGetIn <- ind
-	return <-sf.chGetOut
-}
-
-func (sf *LstSort) run() {
-	for {
-		select {
-		case val := <-sf.chAddIn:
-			sf.lstVal = append(sf.lstVal, val)
-			sf.sort()
-			sf.chAddOut <- 1
-		case val := <-sf.chDelIn:
-			sf.del(val)
-			sf.chDelOut <- 1
-		case <-sf.chListIn:
-			sf.chListOut <- sf.list()
-		case <-sf.chSizeIn:
-			sf.chSizeOut <- len(sf.lstVal)
-		case ind := <-sf.chGetIn:
-			Hassert(ind < len(sf.lstVal), "LstSort.run(): ind(%v)<len(%v)", ind, len(sf.lstVal))
-			sf.chGetOut <- sf.lstVal[ind]
-		}
-	}
+	Hassert(ind < len(sf.lstVal), "LstSort.Get(): ind(%v)>=len(%v)", ind, len(sf.lstVal))
+	return sf.lstVal[ind]
 }
 
 // удаляет элемент из списка

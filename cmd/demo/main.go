@@ -3,10 +3,13 @@ package main
 
 import (
 	"github.com/prospero78/kern"
+	. "github.com/prospero78/kern/krn/ktypes"
 )
 
+var app IKernelMonolit
+
 func main() {
-	app := kern.NewMonolitLocal("Demo monolit")
+	app = kern.NewMonolitLocal("Demo monolit")
 
 	modServHttp := kern.NewModuleServHttp()
 	app.Add(modServHttp)

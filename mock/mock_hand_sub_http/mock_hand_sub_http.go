@@ -59,18 +59,6 @@ func (sf *MockHandSubHttp) Name() AHandlerName {
 func (sf *MockHandSubHttp) FnBack(binMsg []byte) {
 	sf.block.Lock()
 	defer sf.block.Unlock()
-	/*
-		body := bytes.NewBuffer(binMsg)
-		resp, err := http.Post(sf.WebHook_, "application/json", body)
-		if err != nil {
-			log.Printf("handlerHttpSub.FnBack(): topic='%v', in make request, err=\n\t%v\n", sf.WebHook_, err)
-			return
-		}
-		defer resp.Body.Close()
-		if resp.StatusCode != 200 {
-			log.Printf("handlerHttpSub.FnBack(): topic='%v', code=%v, status=%v\n", sf.WebHook_, resp.StatusCode, resp.Status)
-		}
-	*/
 	log.Printf("HandlerHttpSub.FnBack(): msg=%v\n", string(binMsg))
 	sf.BinMsg_ = binMsg
 }

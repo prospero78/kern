@@ -3,6 +3,7 @@ package local_ctx
 
 import (
 	"context"
+	"sync"
 
 	. "github.com/prospero78/kern/kc/helpers"
 	"github.com/prospero78/kern/kc/local_ctx/ctx_value"
@@ -13,20 +14,9 @@ import (
 
 // LocalCtx -- локальный контекст
 type LocalCtx struct {
+	sync.RWMutex
 	ctx      context.Context // Отменяемый контекст
 	fnCancel func()          // Функция отмены контекста
-
-	chGetIn  chan string
-	chGetOut chan ICtxValue
-
-	chDelIn  chan string
-	chDelOut chan int
-
-	chSetIn  chan triple
-	chSetOut chan int
-
-	chSizeIn  chan int
-	chSizeOut chan int
 
 	dictVal map[string]ICtxValue // Словарь различных значений
 	lstSort *lst_sort.LstSort    // Сортированный список значений
@@ -40,31 +30,18 @@ func NewLocalCtx(ctx context.Context) ILocalCtx {
 	sf := &LocalCtx{
 		ctx:      _ctx,
 		fnCancel: fnCancel,
-
-		chGetIn:  make(chan string, 2),
-		chGetOut: make(chan ICtxValue, 2),
-
-		chDelIn:  make(chan string, 2),
-		chDelOut: make(chan int, 2),
-
-		chSetIn:  make(chan triple, 2),
-		chSetOut: make(chan int, 2),
-
-		chSizeIn:  make(chan int, 2),
-		chSizeOut: make(chan int, 2),
-
-		dictVal: map[string]ICtxValue{},
-		lstSort: lst_sort.NewLstSort(),
-		log:     log_buf.NewLogBuf(),
+		dictVal:  map[string]ICtxValue{},
+		lstSort:  lst_sort.NewLstSort(),
+		log:      log_buf.NewLogBuf(),
 	}
-	go sf.run()
 	return sf
 }
 
 // Size -- возвращает размер контекста
 func (sf *LocalCtx) Size() int {
-	sf.chSizeIn <- 1
-	return <-sf.chSizeOut
+	sf.RLock()
+	defer sf.RUnlock()
+	return len(sf.dictVal)
 }
 
 // SortedList -- возвращает сортированный список значений
@@ -79,17 +56,21 @@ func (sf *LocalCtx) Log() ILogBuf {
 
 // Get -- возвращает хранимое значение
 func (sf *LocalCtx) Get(key string) ICtxValue {
+	sf.RLock()
+	defer sf.RUnlock()
 	Hassert(key != "", "localCtx.Get(): key is empty")
 	sf.log.Debug("localCtx.Get(): key='%v'", key)
-	sf.chGetIn <- key
-	return <-sf.chGetOut
+	return sf.dictVal[key]
 }
 
 // Del -- удаляет значение из контекста
 func (sf *LocalCtx) Del(key string) {
+	sf.Lock()
+	defer sf.Unlock()
 	sf.log.Debug("localCtx.Del(): key='%v'", key)
-	sf.chDelIn <- key
-	<-sf.chDelOut
+	val := sf.dictVal[key]
+	delete(sf.dictVal, key)
+	sf.lstSort.Del(val)
 }
 
 type triple struct {
@@ -100,14 +81,21 @@ type triple struct {
 
 // Set -- добавляет значение в контекст
 func (sf *LocalCtx) Set(key string, val any, comment string) {
+	sf.Lock()
+	defer sf.Unlock()
 	sf.log.Debug("localCtx.Set(): key='%v'", key)
-	valIn := triple{
-		key:     key,
-		val:     val,
-		comment: comment,
+	_val, isOk := sf.dictVal[key]
+	if isOk {
+		val0 := _val.(*ctx_value.CtxValue)
+		val0.Lock()
+		val0.UpdateAt_ = TimeNow()
+		val0.Val_ = val
+		val0.Unlock()
+		return
 	}
-	sf.chSetIn <- valIn
-	<-sf.chSetOut
+	_val = ctx_value.NewCtxValue(key, val, comment)
+	sf.dictVal[key] = _val
+	sf.lstSort.Add(_val)
 }
 
 // Done -- блокирующий вызов ожидания отмены контекста
@@ -119,37 +107,4 @@ func (sf *LocalCtx) Done() {
 func (sf *LocalCtx) Cancel() {
 	sf.log.Warn("localCtx.Cancel()")
 	sf.fnCancel()
-}
-
-func (sf *LocalCtx) run() {
-	for {
-		select {
-		case <-sf.ctx.Done():
-			sf.log.Debug("localCtx.run(): done")
-			return
-		case key := <-sf.chGetIn:
-			sf.chGetOut <- sf.dictVal[key]
-		case key := <-sf.chDelIn:
-			val := sf.dictVal[key]
-			delete(sf.dictVal, key)
-			sf.lstSort.Del(val)
-			sf.chDelOut <- 1
-		case valIn := <-sf.chSetIn:
-			sf.set(valIn)
-			sf.chSetOut <- 1
-		case <-sf.chSizeIn:
-			sf.chSizeOut <- len(sf.dictVal)
-		}
-	}
-}
-
-func (sf *LocalCtx) set(val triple) {
-	_val, isOk := sf.dictVal[val.key]
-	if isOk {
-		_val.Update(val.val, val.comment)
-		return
-	}
-	_val = ctx_value.NewCtxValue(val.key, val.val, val.comment)
-	sf.dictVal[val.key] = _val
-	sf.lstSort.Add(_val)
 }

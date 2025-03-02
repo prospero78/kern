@@ -7,7 +7,6 @@ import (
 	"context"
 	"fmt"
 	"sync"
-	"time"
 
 	. "github.com/prospero78/kern/kc/helpers"
 	"github.com/prospero78/kern/kc/log_buf"
@@ -18,11 +17,11 @@ import (
 
 // kernelWg -- именованный ожидатель потоков ядра
 type kernelWg struct {
+	sync.RWMutex
 	ctx        context.Context
 	dictStream map[AStreamName]bool // Словарь имён потоков с признаком работы
 	isWork     ISafeBool
 	log        ILogBuf
-	block      sync.RWMutex
 }
 
 var (
@@ -59,8 +58,8 @@ func (sf *kernelWg) Log() ILogBuf {
 
 // Len -- возвращает размер списка ожидания потоков
 func (sf *kernelWg) Len() int {
-	sf.block.RLock()
-	defer sf.block.RUnlock()
+	sf.RLock()
+	defer sf.RUnlock()
 	return len(sf.dictStream)
 }
 
@@ -71,8 +70,8 @@ func (sf *kernelWg) IsWork() bool {
 
 // List -- возвращает список имён потоков на ожидании
 func (sf *kernelWg) List() []AStreamName {
-	sf.block.RLock()
-	defer sf.block.RUnlock()
+	sf.RLock()
+	defer sf.RUnlock()
 	lst := []AStreamName{}
 	for name := range sf.dictStream {
 		lst = append(lst, name)
@@ -82,8 +81,8 @@ func (sf *kernelWg) List() []AStreamName {
 
 // Done -- удаляет поток из ожидания
 func (sf *kernelWg) Done(name AStreamName) {
-	sf.block.Lock()
-	defer sf.block.Unlock()
+	sf.Lock()
+	defer sf.Unlock()
 	delete(sf.dictStream, name)
 	sf.log.Debug("kernelWg.Done(): stream(%v) done", name)
 }
@@ -91,7 +90,7 @@ func (sf *kernelWg) Done(name AStreamName) {
 // Wait -- блокирующий вызов; возвращает управление, только когда все потоки завершили работу
 func (sf *kernelWg) Wait() {
 	for {
-		time.Sleep(time.Millisecond * 1)
+		SleepMs()
 		if !sf.isWork.Get() {
 			break
 		}
@@ -101,8 +100,8 @@ func (sf *kernelWg) Wait() {
 
 // Add -- добавляет поток в ожидание
 func (sf *kernelWg) Add(name AStreamName) error {
-	sf.block.Lock()
-	defer sf.block.Unlock()
+	sf.Lock()
+	defer sf.Unlock()
 	sf.log.Debug("kernelWg.Add(): stream='%v'", name)
 	if !sf.isWork.Get() {
 		return fmt.Errorf("kernelWg.Add(): stream=%v, work end", name)
@@ -118,18 +117,21 @@ func (sf *kernelWg) Add(name AStreamName) error {
 func (sf *kernelWg) close() {
 	<-sf.ctx.Done()
 	fnDone := func() bool {
-		sf.block.Lock()
-		defer sf.block.Unlock()
+		sf.Lock()
+		defer sf.Unlock()
 		return len(sf.dictStream) == 0
 	}
 	for {
-		time.Sleep(time.Millisecond * 1)
+		SleepMs()
 		if fnDone() {
 			break
 		}
 	}
-	sf.block.Lock()
-	defer sf.block.Unlock()
+	sf.Lock()
+	defer sf.Unlock()
+	if !sf.isWork.Get() {
+		return
+	}
 	sf.isWork.Reset()
 	sf.log.Debug("kernelWg.close(): end")
 }

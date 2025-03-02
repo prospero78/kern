@@ -21,21 +21,24 @@ const (
 
 // KBusBase -- базовая часть шины данных
 type KBusBase struct {
+	sync.Mutex
 	Ctx_      IKernelCtx
 	IsWork_   ISafeBool
 	ctx       ILocalCtx
 	log       ILogBuf
 	dictSub   IDictTopicSub
 	dictServe IDictTopicServe
-	block     sync.Mutex
 }
 
 var (
-	Bus_ *KBusBase
+	Bus_  *KBusBase
+	block sync.Mutex
 )
 
 // GetKernelBusBase -- возвращает базовую шину сообщений
 func GetKernelBusBase() *KBusBase {
+	block.Lock()
+	defer block.Unlock()
 	if Bus_ != nil {
 		return Bus_
 	}
@@ -49,9 +52,10 @@ func GetKernelBusBase() *KBusBase {
 	}
 	Bus_.log = Bus_.ctx.Log()
 	go Bus_.close()
-	err := Bus_.Ctx_.Wg().Add(strBusBaseStream)
-	Hassert(err == nil, "GetKernelBusBase(): in add name stream '%v' Wg, err=%v", strBusBaseStream, err)
+	go Bus_.run()
 	Bus_.IsWork_.Set()
+	err := Bus_.Ctx_.Wg().Add(strBusBaseStream)
+	Hassert(err == nil, "GetKernelBusBase(): in add name stream(%v), err=\n\t%v", strBusBaseStream, err)
 	ctx.Set("kernBusBase", Bus_, "base of data bus")
 	_ = IKernelBus(Bus_)
 	return Bus_
@@ -62,6 +66,13 @@ func (sf *KBusBase) Log() ILogBuf {
 	return sf.log
 }
 
+func (sf *KBusBase) run() {
+	sf.log.Debug("KBusBase.run()")
+	for {
+		break
+	}
+}
+
 // Unsubscribe -- отписывает обработчик от топика
 func (sf *KBusBase) Unsubscribe(handler IBusHandlerSubscribe) {
 	sf.log.Debug("KBusBase.Unsubscribe(): handler='%v'", handler.Name())
@@ -70,8 +81,8 @@ func (sf *KBusBase) Unsubscribe(handler IBusHandlerSubscribe) {
 
 // Subscribe -- подписывает обработчик на топик
 func (sf *KBusBase) Subscribe(handler IBusHandlerSubscribe) error {
-	sf.block.Lock()
-	defer sf.block.Unlock()
+	sf.Lock()
+	defer sf.Unlock()
 	sf.log.Debug("KBusBase.Subscribe(): handler='%v'", handler.Name())
 	if !sf.IsWork_.Get() {
 		err := fmt.Errorf("KBusBase.Subscribe():  handler='%v', bus already closed", handler.Name())
@@ -84,8 +95,8 @@ func (sf *KBusBase) Subscribe(handler IBusHandlerSubscribe) error {
 
 // SendRequest -- отправляет запрос в шину данных
 func (sf *KBusBase) SendRequest(topic ATopic, binReq []byte) ([]byte, error) {
-	sf.block.Lock()
-	defer sf.block.Unlock()
+	sf.Lock()
+	defer sf.Unlock()
 	sf.log.Debug("KBusBase.SendRequest(): topic='%v'", topic)
 	if !sf.IsWork_.Get() {
 		err := fmt.Errorf("KBusBase.SendRequest():  topic='%v', bus already closed", topic)
@@ -110,8 +121,8 @@ func (sf *KBusBase) RegisterServe(handler IBusHandlerServe) {
 
 // Publish -- публикует сообщение в шину
 func (sf *KBusBase) Publish(topic ATopic, binMsg []byte) (err error) {
-	sf.block.Lock()
-	defer sf.block.Unlock()
+	sf.Lock()
+	defer sf.Unlock()
 	sf.log.Debug("KBusBase.Publish(): topic='%v'", topic)
 	if !sf.IsWork_.Get() {
 		err := fmt.Errorf("KBusBase.Publish(): topic='%v',bus already closed", topic)
@@ -131,8 +142,8 @@ func (sf *KBusBase) IsWork() bool {
 // Ожидает закрытия шины в отдельном потоке
 func (sf *KBusBase) close() {
 	sf.Ctx_.Done()
-	sf.block.Lock()
-	defer sf.block.Unlock()
+	sf.Ctx_.Lock()
+	defer sf.Ctx_.Unlock()
 	if !sf.IsWork_.Get() {
 		return
 	}

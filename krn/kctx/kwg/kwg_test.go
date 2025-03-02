@@ -42,6 +42,8 @@ func (sf *tester) addBad3() {
 	if _len != 0 {
 		sf.t.Fatalf("addBad3(): len(%v)!=0", _len)
 	}
+	sf.fnCancel()
+	kernWg.close()
 }
 
 // Убирает имя потока из ожидателя

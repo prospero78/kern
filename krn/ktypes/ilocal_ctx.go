@@ -6,6 +6,7 @@ import (
 
 // ICtxValue -- интерфейс к значению локального контекста
 type ICtxValue interface {
+	IRWMutex
 	// Key -- возвращает ключ значения
 	Key() string
 	// Val -- возвращает хранимое значение
@@ -16,12 +17,11 @@ type ICtxValue interface {
 	UpdateAt() ATime
 	// Comment -- возвращает комментарий значения
 	Comment() string
-	// Update -- обновляет хранимое значение
-	Update(val any, comment string)
 }
 
 // ILocalCtx -- локальный контекст
 type ILocalCtx interface {
+	IRWMutex
 	// Get -- извлекает значение из контекста
 	Get(key string) ICtxValue
 	// Del -- удаляет значение из контекста

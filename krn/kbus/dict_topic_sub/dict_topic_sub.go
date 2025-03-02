@@ -2,6 +2,8 @@
 package dict_topic_sub
 
 import (
+	"sync"
+
 	. "github.com/prospero78/kern/kc/helpers"
 	. "github.com/prospero78/kern/krn/kalias"
 	"github.com/prospero78/kern/krn/kbus/dict_sub_hook"
@@ -16,68 +18,29 @@ type tReadReq struct {
 
 // dictTopicSub -- потокобезопасный словарь подписчиков
 type dictTopicSub struct {
+	sync.RWMutex
 	ctx           IKernelCtx
 	dictTopicHook map[ATopic]IDictSubHook
-
-	chReadIn      chan *tReadReq
-	chSubscribeIn chan IBusHandlerSubscribe
-	chUnsubIn     chan IBusHandlerSubscribe
 }
 
 // NewDictTopicSub -- возвращает потокобезопасный словарь подписчиков
 func NewDictTopicSub() IDictTopicSub {
 	sf := &dictTopicSub{
 		ctx:           kctx.GetKernelCtx(),
-		chReadIn:      make(chan *tReadReq, 2),
-		chSubscribeIn: make(chan IBusHandlerSubscribe, 2),
-		chUnsubIn:     make(chan IBusHandlerSubscribe, 2),
 		dictTopicHook: map[ATopic]IDictSubHook{},
 	}
-	go sf.run()
 	return sf
 }
 
 // Read -- вызывает обработчики при поступлении события
 func (sf *dictTopicSub) Read(topic ATopic, binMsg []byte) {
+	sf.RLock()
+	defer sf.RUnlock()
 	Hassert(topic != "", "dictTopicSub.Read(): topic is empty")
 	msg := &tReadReq{
 		topic:  topic,
 		binMsg: binMsg,
 	}
-	sf.chReadIn <- msg
-}
-
-// Subscribe -- подписывает обработчик на топик
-func (sf *dictTopicSub) Subscribe(handler IBusHandlerSubscribe) {
-	Hassert(handler != nil, "dictTopicSub.Subscribe(): IBusHandlerSubscribe==nil")
-	topic := handler.Topic()
-	Hassert(topic != "", "dictTopicSub.Subscribe(): topic is empty")
-	sf.chSubscribeIn <- handler
-}
-
-// Unsubscribe -- отписывает обработчик
-func (sf *dictTopicSub) Unsubscribe(handler IBusHandlerSubscribe) {
-	if handler == nil {
-		return
-	}
-	sf.chUnsubIn <- handler
-}
-
-func (sf *dictTopicSub) run() {
-	for {
-		select {
-		case msg := <-sf.chReadIn:
-			sf.read(msg)
-		case handler := <-sf.chSubscribeIn:
-			sf.subscribe(handler)
-		case handler := <-sf.chUnsubIn:
-			sf.unsub(handler)
-		}
-	}
-}
-
-// вызывает обработчики при поступлении события
-func (sf *dictTopicSub) read(msg *tReadReq) {
 	dictHook := sf.dictTopicHook[msg.topic]
 	if dictHook == nil {
 		return
@@ -85,9 +48,13 @@ func (sf *dictTopicSub) read(msg *tReadReq) {
 	dictHook.Read(msg.binMsg)
 }
 
-// подписывает обработчик на топик
-func (sf *dictTopicSub) subscribe(handler IBusHandlerSubscribe) {
+// Subscribe -- подписывает обработчик на топик
+func (sf *dictTopicSub) Subscribe(handler IBusHandlerSubscribe) {
+	sf.Lock()
+	defer sf.Unlock()
+	Hassert(handler != nil, "dictTopicSub.Subscribe(): IBusHandlerSubscribe==nil")
 	topic := handler.Topic()
+	Hassert(topic != "", "dictTopicSub.Subscribe(): topic is empty")
 	dictSubHook := sf.dictTopicHook[topic]
 	if dictSubHook == nil {
 		dictSubHook = dict_sub_hook.NewDictSubHook()
@@ -96,8 +63,13 @@ func (sf *dictTopicSub) subscribe(handler IBusHandlerSubscribe) {
 	dictSubHook.Subscribe(handler)
 }
 
-// отписывает обработчик
-func (sf *dictTopicSub) unsub(handler IBusHandlerSubscribe) {
+// Unsubscribe -- отписывает обработчик
+func (sf *dictTopicSub) Unsubscribe(handler IBusHandlerSubscribe) {
+	sf.Lock()
+	defer sf.Unlock()
+	if handler == nil {
+		return
+	}
 	topic := handler.Topic()
 	dictSubHook := sf.dictTopicHook[topic]
 	if dictSubHook == nil {

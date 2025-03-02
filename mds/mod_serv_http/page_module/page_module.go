@@ -84,14 +84,17 @@ func (sf *PageModule) postModuleCtx(ctx *fiber.Ctx) error {
 		strOut = strings.ReplaceAll(strOut, "{.ctx_block}", "")
 		return ctx.SendString(strOut)
 	}
-	chLst := module.Ctx().SortedList()
+	mCtx := module.Ctx()
+
+	lst := mCtx.SortedList()
 	if module.Name() == "kCtx" {
-		chLst = sf.ctx.SortedList()
+		lst = sf.ctx.SortedList()
 	}
 	strOut := ""
-	for _, val := range chLst {
+	for _, val := range lst {
 		strRow := strCtxRowVal
 		strRow = strings.ReplaceAll(strRow, "{.key}", val.Key())
+		// mCtx.RLock()
 		_val := val.Val()
 		valShort := fmt.Sprint(_val)
 		strRow = strings.ReplaceAll(strRow, "{.value}", valShort)
@@ -100,6 +103,7 @@ func (sf *PageModule) postModuleCtx(ctx *fiber.Ctx) error {
 		strRow = strings.ReplaceAll(strRow, "{.createAt}", string(val.CreateAt()))
 		strRow = strings.ReplaceAll(strRow, "{.updateAt}", string(val.UpdateAt()))
 		strRow = strings.ReplaceAll(strRow, "{.comment}", val.Comment())
+		// mCtx.RUnlock()
 		strOut += strRow
 	}
 	strOut = strings.ReplaceAll(strCtxRowBlock, "{.ctx_block}", strOut)

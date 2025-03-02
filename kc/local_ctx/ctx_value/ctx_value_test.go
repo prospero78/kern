@@ -18,27 +18,6 @@ func TestCtxValue(t *testing.T) {
 		t: t,
 	}
 	sf.new()
-	sf.upd()
-}
-
-// Обновление значения
-func (sf *tester) upd() {
-	sf.t.Log("upd")
-	sf.val.Update(35, "new_value")
-	if val := sf.val.Val().(int); val != 35 {
-		sf.t.Fatalf("upd(): val(%v)!=35", val)
-	}
-	create := sf.val.CreateAt()
-	if create != sf.create {
-		sf.t.Fatalf("upd(): create bad")
-	}
-	if comment := sf.val.Comment(); comment != "new_value" {
-		sf.t.Fatalf("upd(): comment(%v)!='new_value'", comment)
-	}
-	if update := sf.val.UpdateAt(); update == "" {
-		sf.t.Fatalf("upd(): update empty")
-	}
-	sf.val.Update("проверка обрезки длинного значения для теста", "new_value")
 }
 
 // Создаёт значение локального контекста
