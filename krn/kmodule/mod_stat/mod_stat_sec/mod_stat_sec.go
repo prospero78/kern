@@ -110,9 +110,9 @@ func (sf *ModStatSec) Svg() string {
 	timeSub0 := time.Now().Format("05")
 	cnv.Text(392, 295, timeSub0, "")
 	for i, val := range sf.lst {
-		x1 := int(float32(i)*6.67) + 2
+		x1 := int(float32(i)*6) + 42
 		y1 := int(240 * float32(valMax) / float32(val))
-		cnv.Rect(x1, 280-y1, 6, y1, "fill:true;stroke:red;")
+		cnv.Rect(x1, 280-y1, 5, y1, "fill:true;stroke:red;")
 	}
 	fnDrawNet := func() {
 		count := 0
