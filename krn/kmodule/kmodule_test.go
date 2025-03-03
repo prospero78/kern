@@ -31,7 +31,12 @@ func (sf *tester) recErr() {
 	mod := sf.mod.(*kModule)
 	err := fmt.Errorf("tra-la-la")
 	mod.recErr(err)
-	_ = sf.mod.Live()
+	if live := sf.mod.Live(); live == "" {
+		sf.t.Fatalf("recErr(): live empty")
+	}
+	if stat := sf.mod.Stat(); stat == nil {
+		sf.t.Fatalf("recErr(): stat==nil")
+	}
 }
 
 // Работа после остановки локальной шины

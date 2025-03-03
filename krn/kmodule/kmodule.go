@@ -11,6 +11,7 @@ import (
 	. "github.com/prospero78/kern/krn/kalias"
 	"github.com/prospero78/kern/krn/kbus/kbus_local"
 	"github.com/prospero78/kern/krn/kctx"
+	"github.com/prospero78/kern/krn/kmodule/mod_stat"
 	. "github.com/prospero78/kern/krn/ktypes"
 )
 
@@ -22,6 +23,7 @@ type kModule struct {
 	bus       IKernelBus
 	timePhase ISafeInt
 	strLive   ISafeString
+	stat      IModuleStat
 }
 
 // NewKernelModule -- возвращает новый модуль на основе ядра
@@ -35,10 +37,16 @@ func NewKernelModule(name AModuleName) IKernelModule {
 		bus:       kbus_local.GetKernelBusLocal(),
 		timePhase: safe_int.NewSafeInt(),
 		strLive:   safe_string.NewSafeString(),
+		stat:      mod_stat.NewModStat(name),
 	}
 	sf.timePhase.Set(1000) // 1000 msec
 	go sf.sigLive()
 	return sf
+}
+
+// Stat -- возвращает статистику модуля
+func (sf *kModule) Stat() IModuleStat {
+	return sf.stat
 }
 
 // Log -- возвращает буферный лог
@@ -97,6 +105,7 @@ func (sf *kModule) sigLive() {
 		}
 		sf.recErr(err)
 		iPhase++
+		sf.stat.Add(1)
 		time.Sleep(time.Millisecond * time.Duration(sf.timePhase.Get()))
 	}
 	for {

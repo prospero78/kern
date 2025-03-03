@@ -1,16 +1,4 @@
-<div class="container border rounded m-3 text-center">
-    <h2>Module {.name}</h2>
-</div>
-
-<p></p>
-
-<div class="container border rounded m-3 text-center">
-    <span class="btn btn-primary" hx-post="/module/{.id}" hx-target="#main">State</span>
-    <span class="btn btn-primary" hx-post="/module_ctx/{.id}" hx-target="#main">ctx</span>
-    <span class="btn btn-primary" hx-post="/module_log/{.id}" hx-target="#main">log</span>
-</div>
-
-<div class="container">
+<div class="container" hx-post="/module_ctx/{.id}" hx-trigger="every 2s">
 
     <div class="row">
         <div class="col-2 border bg-info">
@@ -34,5 +22,3 @@
     </div>
     {.ctx_block}
 </div>
-
-<span hx-post="/module_ctx/{.id}" hx-trigger="every 2s" hx-target="#main"></span>

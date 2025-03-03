@@ -18,4 +18,6 @@ type IKernelModule interface {
 	Log() ILogBuf
 	// Live -- "сигнал жизни"
 	Live() string
+	// Stat -- возвращает статистику модуля
+	Stat() IModuleStat
 }

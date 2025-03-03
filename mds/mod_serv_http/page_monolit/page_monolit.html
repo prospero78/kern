@@ -23,16 +23,12 @@
                         <h1>kern</h1>
                     </div>
                     <div class="col">
-                        <span class="btn btn-primary" hx-post="/monolit_state" hx-target="#main">Monolit</span>
-                        <span class="btn btn-primary" hx-post="/modules" hx-target="#main">Modules</span>
+                        <span class="btn btn-primary" hx-get="/monolit" hx-target="body">Monolit</span>
+                        <span class="btn btn-primary" hx-post="/modules" hx-target="#modules">Modules</span>
                         <a class="btn btn-primary" href="/monitor" hx-boost="false">Monitor</a>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- main -->
-        <div id="main" hx-post="/monolit_state" hx-trigger="load">
             <!-- тест для hyperscript
                 <div class="container-fluid">
                     <div class="counter">
@@ -43,6 +39,27 @@
                     <br>
                 </div>
             -->
+        </div>
+
+        <!-- main -->
+        <div id="main">
+            <div id="monolit">
+                <div class="container border rounded m-3 text-center">
+                    <h2>Monolit</h2>
+                </div>
+                <p></p>
+                <div class="container border rounded m-3 text-center">
+                    <span class="btn btn-primary" hx-post="/monolit_state" hx-target="#monolit_state">Monolit</span>
+                    <span class="btn btn-primary" hx-post="/monolit_ctx" hx-target="#monolit_state">ctx</span>
+                    <span class="btn btn-primary" hx-post="/monolit_log" hx-target="#monolit_state">log</span>
+                </div>
+                <div id="monolit_state" class="container" hx-post="/monolit_state" hx-trigger="load">
+                </div>
+            </div>
+            <div id="modules" class="container border rounded m-3 text-center">
+            </div>
+            <div id="module" class="container border rounded m-3 text-center">
+            </div>
         </div>
 
         <!-- подвал -->

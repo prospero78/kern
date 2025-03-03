@@ -1,18 +1,4 @@
-<div class="container border rounded m-3 text-center">
-    <h2>Monolit</h2>
-</div>
-
-<p></p>
-
-<div class="container border rounded m-3 text-center">
-    <span class="btn btn-primary" hx-post="/monolit_state" hx-target="#main">Monolit</span>
-    <span class="btn btn-primary" hx-post="/monolit_ctx" hx-target="#main">ctx</span>
-    <span class="btn btn-primary" hx-post="/monolit_log" hx-target="#main">log</span>
-</div>
-
-<div class="container border rounded m-3">
+<div class="container border rounded m-3" hx-post="/monolit_log" hx-trigger="every 2s">
     <label for="exampleFormControlTextarea1" class="form-label"> Пример текстовой области</label>
     <textarea class="form-control" id="exampleFormControlTextarea1" rows="20">{.log}</textarea>
 </div>
-
-<span hx-post="/monolit_log" hx-trigger="every 2s" hx-target="#main"></span>

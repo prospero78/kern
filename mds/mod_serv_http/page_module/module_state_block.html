@@ -1,0 +1,55 @@
+<div hx-post="/module_state/{.id}" hx-trigger="every 1s" class="container">
+    <div class="container">
+        <div class="row">
+            <div class="col-2 border bg-info">
+                <b>Param</b>
+            </div>
+            <div class="col border bg-info">
+                <b>Value</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2 border">
+                <b>Name:</b>
+            </div>
+            <div class="col border">
+                {.name}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2 border">
+                <b>CreateAt:</b>
+            </div>
+            <div class="col border">
+                {.createAt}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2 border">
+                <b>UpdateAt:</b>
+            </div>
+            <div class="col border">
+                {.updateAt}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2 border">
+                <b>Comment:</b>
+            </div>
+            <div class="col border">
+                {.comment}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-2 border bg-info">
+                <b>Live</b>
+            </div>
+            <div class="col border">
+                {.live}
+            </div>
+        </div>
+    </div>
+</div>

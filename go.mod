@@ -3,6 +3,7 @@ module github.com/prospero78/kern
 go 1.24.0
 
 require (
+	github.com/ajstarks/svgo v0.0.0-20211024235047-1546f124cd8b
 	github.com/dgraph-io/badger/v4 v4.5.1
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/google/uuid v1.6.0

@@ -29,9 +29,11 @@ func GetPageModule() *PageModule {
 		ctx: kCtx,
 	}
 	fiberApp := kCtx.Get("fiberApp").Val().(*fiber.App)
-	fiberApp.Post("/module/:id", sf.postModuleState)
+	fiberApp.Post("/module/:id", sf.postModule)
+	fiberApp.Post("/module_state/:id", sf.postModuleState)
 	fiberApp.Post("/module_ctx/:id", sf.postModuleCtx)
 	fiberApp.Post("/module_log/:id", sf.postModuleLog)
+	fiberApp.Post("/module_svg_sec/svg_sec_:id.svg", sf.postSvgSec)
 	page = sf
 	return sf
 }
@@ -47,6 +49,7 @@ func (sf *PageModule) postModuleLog(ctx *fiber.Ctx) error {
 		strOut := strings.ReplaceAll(strLogBlock, "{.id}", id)
 		strOut = strings.ReplaceAll(strOut, "{.log}", strOut)
 		strOut = strings.ReplaceAll(strOut, "{.name}", "not found")
+		strOut = strings.ReplaceAll(strOut, "{.mod_state}", "")
 		return ctx.SendString(strOut)
 	}
 	_log := module.Log()
@@ -119,12 +122,16 @@ func (sf *PageModule) postModuleCtx(ctx *fiber.Ctx) error {
 //go:embed module_state.html
 var strStateModule string
 
+//go:embed module_state_block.html
+var strStateModuleBlock string
+
 // Показывает состояние модуля
 func (sf *PageModule) postModuleState(ctx *fiber.Ctx) error {
 	id := ctx.Params("id", "1")
 	module, modVal := sf.getModule(id)
 	if module == nil {
-		return ctx.SendString(strStateModule)
+		strOut := strings.ReplaceAll(strStateModuleBlock, "{.id}", "")
+		return ctx.SendString(strOut)
 	}
 	dictState := map[string]any{}
 	dictState["{.name}"] = module.Name()
@@ -133,11 +140,56 @@ func (sf *PageModule) postModuleState(ctx *fiber.Ctx) error {
 	dictState["{.comment}"] = modVal.Comment()
 	dictState["{.id}"] = id
 	dictState["{.live}"] = module.Live()
-	strOut := strStateModule
+	dictState["{.svg_sec}"] = module.Stat().SvgSec()
+	strOut := strStateModuleBlock
 	for key, val := range dictState {
 		strOut = strings.ReplaceAll(strOut, key, fmt.Sprint(val))
 	}
+
 	return ctx.SendString(strOut)
+}
+
+// Показывает состояние модуля
+func (sf *PageModule) postModule(ctx *fiber.Ctx) error {
+	id := ctx.Params("id", "1")
+	module, modVal := sf.getModule(id)
+	if module == nil {
+		strOut := strings.ReplaceAll(strStateModule, "{.name}", "unknown")
+		strOut = strings.ReplaceAll(strOut, "{.mod_state}", "")
+		strOut = strings.ReplaceAll(strOut, "{.id}", "")
+		return ctx.SendString(strOut)
+	}
+	dictState := map[string]any{}
+	dictState["{.name}"] = module.Name()
+	dictState["{.createAt}"] = modVal.CreateAt()
+	dictState["{.updateAt}"] = modVal.UpdateAt()
+	dictState["{.comment}"] = modVal.Comment()
+	// dictState["{.id}"] = id
+	dictState["{.live}"] = module.Live()
+	dictState["{.svg_sec}"] = module.Stat().SvgSec()
+	strOut := strStateModuleBlock
+	for key, val := range dictState {
+		strOut = strings.ReplaceAll(strOut, key, fmt.Sprint(val))
+	}
+	{
+		strOut = strings.ReplaceAll(strStateModule, "{.mod_state}", strOut)
+		strOut = strings.ReplaceAll(strOut, "{.name}", string(module.Name()))
+		strOut = strings.ReplaceAll(strOut, "{.id}", id)
+	}
+
+	return ctx.SendString(strOut)
+}
+
+// Возвращает секундную статистику модуля
+func (sf *PageModule) postSvgSec(ctx *fiber.Ctx) error {
+	id := ctx.Params("id", "1")
+	module, _ := sf.getModule(id)
+	if module == nil {
+		return ctx.SendString("")
+	}
+	strSvgSec := module.Stat().SvgSec()
+	ctx.Set("Content-Type", "image/svg+xml")
+	return ctx.SendString(strSvgSec)
 }
 
 // Возвращает модуль
