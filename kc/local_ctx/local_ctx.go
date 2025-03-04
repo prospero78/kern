@@ -82,7 +82,7 @@ func (sf *LocalCtx) Set(key string, val any, comment string) {
 	if isOk {
 		val0 := _val.(*ctx_value.CtxValue)
 		val0.Lock()
-		val0.UpdateAt_ = TimeNow()
+		val0.UpdateAt_ = TimeNowStr()
 		val0.Val_ = val
 		val0.Unlock()
 		return

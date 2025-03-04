@@ -24,7 +24,7 @@ func NewCtxValue(key string, val any, comment string) ICtxValue {
 	Hassert(key != "", "NewCtxValue(): key is empty")
 	sf := &CtxValue{
 		key:      key,
-		createAt: TimeNow(),
+		createAt: TimeNowStr(),
 		Val_:     val,
 		Comment_: comment,
 	}

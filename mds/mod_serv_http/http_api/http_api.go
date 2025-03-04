@@ -22,6 +22,6 @@ func NewHttpApi() *HttpApi {
 
 // Возвращает текущее время сервера
 func (sf *HttpApi) postTime(ctx *fiber.Ctx) error {
-	strTime := TimeNow()
+	strTime := TimeNowStr()
 	return ctx.SendString(string(strTime))
 }

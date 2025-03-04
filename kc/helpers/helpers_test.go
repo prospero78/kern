@@ -45,8 +45,11 @@ func (sf *tester) hassert() {
 	sf.hassertLocal()
 	sf.hassertProd()
 	sf.hassertProdGood1()
-	if strTime := TimeNow(); strTime == "" {
+	if strTime := TimeNowStr(); strTime == "" {
 		sf.t.Fatalf("hassert(): strTime==''")
+	}
+	if unixTime := TimeNow(); unixTime == 0 {
+		sf.t.Fatalf("hassert(): unixTime==0")
 	}
 	SleepMs()
 }

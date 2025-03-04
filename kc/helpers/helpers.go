@@ -37,10 +37,16 @@ func Hassert(isCond bool, msgFormat string, args ...interface{}) {
 	panic(msg)
 }
 
-// TimeNow -- возвращает стандартную строку сейчас-времени "2006-01-02 15:04:05.000 -07 MST"
-func TimeNow() ATime {
+// TimeNowStr -- возвращает стандартную строку локального сейчас-времени "2006-01-02 15:04:05.000 -07 MST"
+func TimeNowStr() ATime {
 	strTime := time.Now().Local().Format("2006-01-02 15:04:05.000 -07 MST")
 	return ATime(strTime)
+}
+
+// TimeNow -- возвращает Unix сейчас-время (мсек, не зависит от положения)
+func TimeNow() int64 {
+	timeNow := time.Now().Local().UnixMilli()
+	return timeNow
 }
 
 // SleepMs -- спит миллисекунду

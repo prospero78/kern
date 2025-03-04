@@ -26,7 +26,7 @@ type logMsg struct {
 // NewLogMsg -- возвращает новое сообщение логгера
 func NewLogMsg(level int, msg string) ILogMsg {
 	sf := &logMsg{
-		createAt: TimeNow(),
+		createAt: TimeNowStr(),
 		msg:      msg,
 	}
 	sf.check(level)
