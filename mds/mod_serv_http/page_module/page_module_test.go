@@ -37,8 +37,61 @@ func TestPageMonolit(t *testing.T) {
 	sf.postModuleStateBad()
 	sf.postSvgSecGood1()
 	sf.postSvgSecBad1()
-
+	sf.postSvgMinGood1()
+	sf.postSvgMinBad1()
 	sf.done()
+}
+
+// Получение SVG, модуля 20 не существует
+func (sf *tester) postSvgMinBad1() {
+	sf.t.Log("postSvgMinBad1")
+	mon := kmonolit.GetMonolit("test_monolit")
+	ctxMon := mon.Ctx()
+	module := kmodule.NewKernelModule("kCtx")
+	module.Log().Debug("test msg")
+	module.Log().Debug("test msg")
+	ctxMod := module.Ctx()
+	ctxMod.Set("demo_key", "demo value", "for demo comment")
+	time.Sleep(time.Millisecond * 20)
+	ctxMon.Set("module_1", module, "test_module")
+	fiberApp := sf.serv.Fiber()
+	req, err := http.NewRequest("POST", "/module_svg_min/svg_min_20.svg", nil)
+	if err != nil {
+		sf.t.Fatalf("postSvgMinBad1(): in net request, err=%v", err)
+	}
+	resp, err := fiberApp.Test(req)
+	if err != nil {
+		sf.t.Fatalf("postSvgMinBad1(): in make POST, err=%v", err)
+	}
+	if resp.StatusCode != 200 {
+		sf.t.Fatalf("postSvgMinBad1(): status(%v)!=200", resp.StatusCode)
+	}
+}
+
+// Получение SVG
+func (sf *tester) postSvgMinGood1() {
+	sf.t.Log("postSvgMinGood1")
+	mon := kmonolit.GetMonolit("test_monolit")
+	ctxMon := mon.Ctx()
+	module := kmodule.NewKernelModule("kCtx")
+	module.Log().Debug("test msg")
+	module.Log().Debug("test msg")
+	ctxMod := module.Ctx()
+	ctxMod.Set("demo_key", "demo value", "for demo comment")
+	time.Sleep(time.Millisecond * 20)
+	ctxMon.Set("module_1", module, "test_module")
+	fiberApp := sf.serv.Fiber()
+	req, err := http.NewRequest("POST", "/module_svg_min/svg_min_1.svg", nil)
+	if err != nil {
+		sf.t.Fatalf("postSvgMinGood1(): in net request, err=%v", err)
+	}
+	resp, err := fiberApp.Test(req)
+	if err != nil {
+		sf.t.Fatalf("postSvgMinGood1(): in make POST, err=%v", err)
+	}
+	if resp.StatusCode != 200 {
+		sf.t.Fatalf("postSvgMinGood1(): status(%v)!=200", resp.StatusCode)
+	}
 }
 
 // Получение SVG, модуля 20 не существует

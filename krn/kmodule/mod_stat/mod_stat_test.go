@@ -29,6 +29,9 @@ func (sf *tester) newGood1() {
 	if svg := stat.SvgSec(); svg == "" {
 		sf.t.Fatalf("newGood1(): svg is empty")
 	}
+	if svg := stat.SvgMin(); svg == "" {
+		sf.t.Fatalf("newGood1(): svg is empty")
+	}
 }
 
 // Нет имени статистики

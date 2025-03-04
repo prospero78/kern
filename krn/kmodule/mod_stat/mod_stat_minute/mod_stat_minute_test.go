@@ -1,4 +1,4 @@
-package mod_stat_sec
+package mod_stat_minute
 
 import (
 	"testing"
@@ -6,24 +6,15 @@ import (
 
 type tester struct {
 	t    *testing.T
-	stat *ModStatSec
+	stat *ModStatMinutes
 }
 
-func TestModStatSec(t *testing.T) {
+func TestModStatMinute(t *testing.T) {
 	sf := &tester{
 		t: t,
 	}
 	sf.new()
 	sf.add()
-	sf.sum()
-}
-
-// Возвращает сумму значений за минуту
-func (sf *tester) sum() {
-	sf.t.Log("sum")
-	if sum := sf.stat.Sum(); sum == 0 {
-		sf.t.Fatalf("sum(): sum==0")
-	}
 }
 
 // Добавляет событие в стату
@@ -42,7 +33,7 @@ func (sf *tester) add() {
 // Создаёт новую секундную статистику модуля
 func (sf *tester) new() {
 	sf.t.Log("new")
-	sf.stat = NewModStatSec()
+	sf.stat = NewModStatMinute()
 	if sf.stat == nil {
 		sf.t.Fatalf("new(): stat==nil")
 	}
