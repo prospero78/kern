@@ -34,6 +34,7 @@ func (sf *tester) add() {
 	sf.stat.Add(11)
 	sf.stat.momentAt = 0
 	sf.stat.Add(3)
+	sf.stat.Add(3)
 	if svg := sf.stat.Svg(); svg == "" {
 		sf.t.Fatal("add(): svg is empty")
 	}
@@ -45,5 +46,8 @@ func (sf *tester) new() {
 	sf.stat = NewModStatSec()
 	if sf.stat == nil {
 		sf.t.Fatalf("new(): stat==nil")
+	}
+	if svg := sf.stat.Svg(); svg == "" {
+		sf.t.Fatal("new(): svg is empty")
 	}
 }

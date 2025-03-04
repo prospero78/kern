@@ -16,12 +16,12 @@
             <div id="mod_graph_sec" hx-post="/module_svg_sec/svg_sec_{.id}.svg" hx-trigger="every 1s">
             </div>
 
-            <span hx-post="/module_svg_min/svg_min_{.id}.svg" hx-trigger="load" class="container"
+            <span hx-post="/module_svg_sec/svg_sec_{.id}.svg" hx-trigger="load" class="container"
                 hx-target="#mod_graph_sec"></span>
         </div>
 
         <div>
-            <div id="mod_graph_min" hx-post="/module_svg_min/svg_sec_{.id}.svg" hx-trigger="every 1s">
+            <div id="mod_graph_min" hx-post="/module_svg_min/svg_min_{.id}.svg" hx-trigger="every 10s">
             </div>
 
             <span hx-post="/module_svg_min/svg_min_{.id}.svg" hx-trigger="load" class="container"

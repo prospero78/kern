@@ -22,7 +22,7 @@ import (
 // ModStat -- статистика модуля
 type ModStat struct {
 	statSec    *mod_stat_sec.ModStatSec        // Объект статистики 60 секунд
-	timeMinute ISafeInt                        // Интервал ожидания минутного таймера, сек
+	timeMinute ISafeInt                        // Интервал ожидания минутного таймера, мсек
 	statMin    *mod_stat_minute.ModStatMinutes // Объект статистики 60 минут
 	name       AModuleName
 }
@@ -36,7 +36,7 @@ func NewModStat(name AModuleName) *ModStat {
 		timeMinute: safe_int.NewSafeInt(),
 		name:       name,
 	}
-	sf.timeMinute.Set(60)
+	sf.timeMinute.Set(60 * 1000)
 	go sf.eventMinute()
 	return sf
 }
@@ -44,7 +44,7 @@ func NewModStat(name AModuleName) *ModStat {
 // Срабатывает раз в минуту
 func (sf *ModStat) eventMinute() {
 	for {
-		time.Sleep(time.Millisecond * 1000 * time.Duration(sf.timeMinute.Get()))
+		time.Sleep(time.Millisecond * time.Duration(sf.timeMinute.Get()))
 		sum := sf.statSec.Sum()
 		sf.statMin.Add(sum)
 	}

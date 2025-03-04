@@ -21,9 +21,7 @@ func TestModStatMinute(t *testing.T) {
 func (sf *tester) add() {
 	sf.t.Log("add")
 	sf.stat.Add(12)
-	sf.stat.momentAt = 0
 	sf.stat.Add(11)
-	sf.stat.momentAt = 0
 	sf.stat.Add(3)
 	if svg := sf.stat.Svg(); svg == "" {
 		sf.t.Fatal("add(): svg is empty")
@@ -37,4 +35,8 @@ func (sf *tester) new() {
 	if sf.stat == nil {
 		sf.t.Fatalf("new(): stat==nil")
 	}
+	if svg := sf.stat.Svg(); svg == "" {
+		sf.t.Fatal("new(): svg is empty")
+	}
+
 }
