@@ -6,6 +6,8 @@ type IModuleStat interface {
 	SvgSec() string
 	// SvgMin -- возвращает SVG с поминутным графиком за последний час
 	SvgMin() string
+	// SvgDay -- возвращает SVG с поминутным графиком за последние сутки
+	SvgDay() string
 	// Add -- добавляет секундное показание в статистику
 	Add(int)
 }

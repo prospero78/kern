@@ -1,4 +1,4 @@
-package mod_stat_minute
+package mod_stat_day
 
 import (
 	"testing"
@@ -6,7 +6,7 @@ import (
 
 type tester struct {
 	t    *testing.T
-	stat *ModStatMinutes
+	stat *ModStatDay
 }
 
 func TestModStatMinute(t *testing.T) {
@@ -34,7 +34,7 @@ func (sf *tester) add() {
 // Создаёт новую секундную статистику модуля
 func (sf *tester) new() {
 	sf.t.Log("new")
-	sf.stat = NewModStatMinute()
+	sf.stat = NewModStatDay()
 	if sf.stat == nil {
 		sf.t.Fatalf("new(): stat==nil")
 	}

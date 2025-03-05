@@ -39,7 +39,61 @@ func TestPageMonolit(t *testing.T) {
 	sf.postSvgSecBad1()
 	sf.postSvgMinGood1()
 	sf.postSvgMinBad1()
+	sf.postSvgDayGood1()
+	sf.postSvgDayBad1()
 	sf.done()
+}
+
+// Получение SVG, модуля 20 не существует
+func (sf *tester) postSvgDayBad1() {
+	sf.t.Log("postSvgDayBad1")
+	mon := kmonolit.GetMonolit("test_monolit")
+	ctxMon := mon.Ctx()
+	module := kmodule.NewKernelModule("kCtx")
+	module.Log().Debug("test msg")
+	module.Log().Debug("test msg")
+	ctxMod := module.Ctx()
+	ctxMod.Set("demo_key", "demo value", "for demo comment")
+	time.Sleep(time.Millisecond * 20)
+	ctxMon.Set("module_1", module, "test_module")
+	fiberApp := sf.serv.Fiber()
+	req, err := http.NewRequest("POST", "/module_svg_day/svg_day_20.svg", nil)
+	if err != nil {
+		sf.t.Fatalf("postSvgDayBad1(): in net request, err=%v", err)
+	}
+	resp, err := fiberApp.Test(req)
+	if err != nil {
+		sf.t.Fatalf("postSvgDayBad1(): in make POST, err=%v", err)
+	}
+	if resp.StatusCode != 200 {
+		sf.t.Fatalf("postSvgDayBad1(): status(%v)!=200", resp.StatusCode)
+	}
+}
+
+// Получение SVG
+func (sf *tester) postSvgDayGood1() {
+	sf.t.Log("postSvgDayGood1")
+	mon := kmonolit.GetMonolit("test_monolit")
+	ctxMon := mon.Ctx()
+	module := kmodule.NewKernelModule("kCtx")
+	module.Log().Debug("test msg")
+	module.Log().Debug("test msg")
+	ctxMod := module.Ctx()
+	ctxMod.Set("demo_key", "demo value", "for demo comment")
+	time.Sleep(time.Millisecond * 20)
+	ctxMon.Set("module_1", module, "test_module")
+	fiberApp := sf.serv.Fiber()
+	req, err := http.NewRequest("POST", "/module_svg_day/svg_day_1.svg", nil)
+	if err != nil {
+		sf.t.Fatalf("postSvgDayGood1(): in net request, err=%v", err)
+	}
+	resp, err := fiberApp.Test(req)
+	if err != nil {
+		sf.t.Fatalf("postSvgDayGood1(): in make POST, err=%v", err)
+	}
+	if resp.StatusCode != 200 {
+		sf.t.Fatalf("postSvgDayGood1(): status(%v)!=200", resp.StatusCode)
+	}
 }
 
 // Получение SVG, модуля 20 не существует

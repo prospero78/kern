@@ -35,6 +35,7 @@ func GetPageModule() *PageModule {
 	fiberApp.Post("/module_log/:id", sf.postModuleLog)
 	fiberApp.Post("/module_svg_sec/svg_sec_:id.svg", sf.postSvgSec)
 	fiberApp.Post("/module_svg_min/svg_min_:id.svg", sf.postSvgMin)
+	fiberApp.Post("/module_svg_day/svg_day_:id.svg", sf.postSvgDay)
 	page = sf
 	return sf
 }
@@ -179,6 +180,18 @@ func (sf *PageModule) postModule(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.SendString(strOut)
+}
+
+// Возвращает секундную статистику модуля
+func (sf *PageModule) postSvgDay(ctx *fiber.Ctx) error {
+	id := ctx.Params("id", "1")
+	module, _ := sf.getModule(id)
+	if module == nil {
+		return ctx.SendString("")
+	}
+	strSvgSec := module.Stat().SvgDay()
+	ctx.Set("Content-Type", "image/svg+xml")
+	return ctx.SendString(strSvgSec)
 }
 
 // Возвращает секундную статистику модуля

@@ -2,10 +2,12 @@ package mod_stat
 
 import (
 	"testing"
+	"time"
 )
 
 type tester struct {
-	t *testing.T
+	t    *testing.T
+	stat *ModStat
 }
 
 func TestModStat(t *testing.T) {
@@ -13,6 +15,13 @@ func TestModStat(t *testing.T) {
 		t: t,
 	}
 	sf.new()
+	sf.event()
+}
+
+// Проверка генерации меток времени
+func (sf *tester) event() {
+	sf.t.Log("event")
+	time.Sleep(time.Millisecond * 100)
 }
 
 // Создание статистики модуля
@@ -24,12 +33,17 @@ func (sf *tester) new() {
 
 func (sf *tester) newGood1() {
 	sf.t.Log("newGood1")
-	stat := NewModStat("test")
-	stat.Add(23)
-	if svg := stat.SvgSec(); svg == "" {
+	sf.stat = NewModStat("test")
+	// Обязательно установить время сразу, для покрытия тестами
+	sf.stat.timeMinute.Set(1)
+	sf.stat.Add(23)
+	if svg := sf.stat.SvgSec(); svg == "" {
 		sf.t.Fatalf("newGood1(): svg is empty")
 	}
-	if svg := stat.SvgMin(); svg == "" {
+	if svg := sf.stat.SvgMin(); svg == "" {
+		sf.t.Fatalf("newGood1(): svg is empty")
+	}
+	if svg := sf.stat.SvgDay(); svg == "" {
 		sf.t.Fatalf("newGood1(): svg is empty")
 	}
 }

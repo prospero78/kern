@@ -28,5 +28,13 @@
                 hx-target="#mod_graph_min"></span>
         </div>
 
+        <div>
+            <div id="mod_graph_day" hx-post="/module_svg_day/svg_day_{.id}.svg" hx-trigger="every 30s">
+            </div>
+
+            <span hx-post="/module_svg_day/svg_day_{.id}.svg" hx-trigger="load" class="container"
+                hx-target="#mod_graph_day"></span>
+        </div>
+
     </div>
 </div>
