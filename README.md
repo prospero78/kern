@@ -12,7 +12,7 @@
 
 ## Контакты
 
-Пишите запросы в соответствующем [разделе](https://github.com/prospero78/kern/issue?status=).
+Пишите запросы в соответствующем [разделе](https://gitp78su.ipnodns.ru/svi/kern/issue?status=).
 
 ## Статус проекта
 

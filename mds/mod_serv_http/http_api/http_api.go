@@ -4,8 +4,8 @@ package http_api
 import (
 	"github.com/gofiber/fiber/v2"
 
-	. "github.com/prospero78/kern/kc/helpers"
-	"github.com/prospero78/kern/krn/kctx"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx"
 )
 
 // HttpApi -- различные API для работы веб-морды

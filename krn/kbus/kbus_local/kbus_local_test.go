@@ -3,9 +3,9 @@ package kbus_local
 import (
 	"testing"
 
-	. "github.com/prospero78/kern/krn/ktypes"
-	"github.com/prospero78/kern/mock/mock_hand_serve"
-	"github.com/prospero78/kern/mock/mock_hand_sub_local"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
+	"gitp78su.ipnodns.ru/svi/kern/mock/mock_hand_serve"
+	"gitp78su.ipnodns.ru/svi/kern/mock/mock_hand_sub_local"
 )
 
 type tester struct {

@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/prospero78/kern/krn/kctx/kwg"
-	. "github.com/prospero78/kern/krn/ktypes"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx/kwg"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 type tester struct {

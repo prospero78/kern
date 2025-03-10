@@ -10,11 +10,11 @@ import (
 
 	"github.com/dgraph-io/badger/v4"
 
-	. "github.com/prospero78/kern/kc/helpers"
-	"github.com/prospero78/kern/kc/local_ctx"
-	"github.com/prospero78/kern/kc/safe_bool"
-	"github.com/prospero78/kern/krn/kctx"
-	. "github.com/prospero78/kern/krn/ktypes"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
+	"gitp78su.ipnodns.ru/svi/kern/kc/local_ctx"
+	"gitp78su.ipnodns.ru/svi/kern/kc/safe_bool"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 const (

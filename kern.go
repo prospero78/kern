@@ -2,22 +2,22 @@
 package kern
 
 import (
-	. "github.com/prospero78/kern/kc/helpers"
-	"github.com/prospero78/kern/kc/safe_bool"
-	. "github.com/prospero78/kern/krn/kalias"
-	"github.com/prospero78/kern/krn/kbus/kbus_http"
-	"github.com/prospero78/kern/krn/kbus/kbus_http/client_bus_http"
-	"github.com/prospero78/kern/krn/kbus/kbus_local"
-	"github.com/prospero78/kern/krn/kbus/kbus_local/client_bus_local"
-	"github.com/prospero78/kern/krn/kctx"
-	"github.com/prospero78/kern/krn/kmodule"
-	"github.com/prospero78/kern/krn/kmonolit"
-	"github.com/prospero78/kern/krn/kserv_http"
-	"github.com/prospero78/kern/krn/kstore_kv"
-	. "github.com/prospero78/kern/krn/ktypes"
-	"github.com/prospero78/kern/mds/mod_kctx"
-	"github.com/prospero78/kern/mds/mod_keeper"
-	"github.com/prospero78/kern/mds/mod_serv_http"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
+	"gitp78su.ipnodns.ru/svi/kern/kc/safe_bool"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/kalias"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_http"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_http/client_bus_http"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_local"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_local/client_bus_local"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kmodule"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kmonolit"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kserv_http"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kstore_kv"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
+	"gitp78su.ipnodns.ru/svi/kern/mds/mod_kctx"
+	"gitp78su.ipnodns.ru/svi/kern/mds/mod_keeper"
+	"gitp78su.ipnodns.ru/svi/kern/mds/mod_serv_http"
 )
 
 // NewKernelCtx -- возвращает контекст ядра

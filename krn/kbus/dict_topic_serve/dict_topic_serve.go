@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"time"
 
-	. "github.com/prospero78/kern/kc/helpers"
-	. "github.com/prospero78/kern/krn/kalias"
-	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_serve"
-	"github.com/prospero78/kern/krn/kctx"
-	. "github.com/prospero78/kern/krn/ktypes"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/kalias"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_msg/msg_serve"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 // dictServe -- потокобезопасный словарь обработчиков запросов

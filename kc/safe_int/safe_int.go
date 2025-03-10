@@ -4,7 +4,7 @@ package safe_int
 import (
 	"sync"
 
-	. "github.com/prospero78/kern/krn/ktypes"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 // safeInt -- потокобезопасное целое

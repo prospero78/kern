@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	. "github.com/prospero78/kern/krn/kalias"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/kalias"
 )
 
 var (

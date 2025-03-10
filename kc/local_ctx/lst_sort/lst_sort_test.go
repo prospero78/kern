@@ -3,7 +3,7 @@ package lst_sort
 import (
 	"testing"
 
-	"github.com/prospero78/kern/kc/local_ctx/ctx_value"
+	"gitp78su.ipnodns.ru/svi/kern/kc/local_ctx/ctx_value"
 )
 
 type tester struct {

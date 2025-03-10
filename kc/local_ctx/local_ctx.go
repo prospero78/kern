@@ -5,11 +5,11 @@ import (
 	"context"
 	"sync"
 
-	. "github.com/prospero78/kern/kc/helpers"
-	"github.com/prospero78/kern/kc/local_ctx/ctx_value"
-	"github.com/prospero78/kern/kc/local_ctx/lst_sort"
-	"github.com/prospero78/kern/kc/log_buf"
-	. "github.com/prospero78/kern/krn/ktypes"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
+	"gitp78su.ipnodns.ru/svi/kern/kc/local_ctx/ctx_value"
+	"gitp78su.ipnodns.ru/svi/kern/kc/local_ctx/lst_sort"
+	"gitp78su.ipnodns.ru/svi/kern/kc/log_buf"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 // LocalCtx -- локальный контекст

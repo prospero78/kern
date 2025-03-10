@@ -4,10 +4,10 @@ import (
 	"os"
 	"testing"
 
-	. "github.com/prospero78/kern/kc/helpers"
-	"github.com/prospero78/kern/krn/kctx"
-	. "github.com/prospero78/kern/krn/ktypes"
-	"github.com/prospero78/kern/mock/mock_env"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
+	"gitp78su.ipnodns.ru/svi/kern/mock/mock_env"
 )
 
 type tester struct {

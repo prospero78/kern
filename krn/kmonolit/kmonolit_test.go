@@ -3,11 +3,11 @@ package kmonolit
 import (
 	"testing"
 
-	. "github.com/prospero78/kern/kc/helpers"
-	. "github.com/prospero78/kern/krn/kalias"
-	"github.com/prospero78/kern/krn/kctx"
-	"github.com/prospero78/kern/krn/kmodule"
-	. "github.com/prospero78/kern/krn/ktypes"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/kalias"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kmodule"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 type tester struct {

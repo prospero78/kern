@@ -4,8 +4,8 @@ package log_buf
 import (
 	"fmt"
 
-	"github.com/prospero78/kern/kc/log_buf/log_msg"
-	. "github.com/prospero78/kern/krn/ktypes"
+	"gitp78su.ipnodns.ru/svi/kern/kc/log_buf/log_msg"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 // logBuf -- потокобезопасный буфер лога

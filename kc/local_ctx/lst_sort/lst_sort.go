@@ -5,8 +5,8 @@ import (
 	"sort"
 	"sync"
 
-	. "github.com/prospero78/kern/kc/helpers"
-	. "github.com/prospero78/kern/krn/ktypes"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 // LstSort -- сортированный список значений контекста

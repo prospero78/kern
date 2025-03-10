@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	. "github.com/prospero78/kern/kc/helpers"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
 )
 
 // MockEnv -- объект мок-окружения

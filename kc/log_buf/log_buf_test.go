@@ -3,7 +3,7 @@ package log_buf
 import (
 	"testing"
 
-	. "github.com/prospero78/kern/krn/ktypes"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 type tester struct {

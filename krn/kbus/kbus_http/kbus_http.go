@@ -7,15 +7,15 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/prospero78/kern/krn/kbus/kbus_base"
-	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_pub"
-	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_serve"
-	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_sub"
-	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_unsub"
-	"github.com/prospero78/kern/krn/kctx"
-	"github.com/prospero78/kern/krn/kserv_http"
-	. "github.com/prospero78/kern/krn/ktypes"
-	"github.com/prospero78/kern/mock/mock_hand_sub_http"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_base"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_msg/msg_pub"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_msg/msg_serve"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_msg/msg_sub"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_msg/msg_unsub"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kserv_http"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
+	"gitp78su.ipnodns.ru/svi/kern/mock/mock_hand_sub_http"
 )
 
 // kBusHttp -- шина данных поверх HTTP

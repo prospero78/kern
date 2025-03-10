@@ -2,8 +2,8 @@
 package kbus_local
 
 import (
-	"github.com/prospero78/kern/krn/kbus/kbus_base"
-	. "github.com/prospero78/kern/krn/ktypes"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_base"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 // Локальная шина данных

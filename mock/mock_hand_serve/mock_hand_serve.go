@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"sync"
 
-	. "github.com/prospero78/kern/kc/helpers"
-	"github.com/prospero78/kern/kc/safe_bool"
-	. "github.com/prospero78/kern/krn/kalias"
-	. "github.com/prospero78/kern/krn/ktypes"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
+	"gitp78su.ipnodns.ru/svi/kern/kc/safe_bool"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/kalias"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 // MockHandlerServe -- мок-обработчик входящих запросов

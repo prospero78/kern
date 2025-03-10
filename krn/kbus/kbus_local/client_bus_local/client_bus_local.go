@@ -2,8 +2,8 @@
 package client_bus_local
 
 import (
-	"github.com/prospero78/kern/krn/kbus/kbus_local"
-	. "github.com/prospero78/kern/krn/ktypes"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_local"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 // ClientBusLocal -- клиент локальной шины

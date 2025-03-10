@@ -2,8 +2,8 @@
 package main
 
 import (
-	"github.com/prospero78/kern"
-	. "github.com/prospero78/kern/krn/ktypes"
+	"gitp78su.ipnodns.ru/svi/kern"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 var app IKernelMonolit

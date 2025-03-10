@@ -5,14 +5,14 @@ import (
 	"strings"
 	"testing"
 
-	. "github.com/prospero78/kern/kc/helpers"
-	"github.com/prospero78/kern/krn/kbus/kbus_base"
-	"github.com/prospero78/kern/krn/kctx"
-	"github.com/prospero78/kern/krn/kserv_http"
-	. "github.com/prospero78/kern/krn/ktypes"
-	"github.com/prospero78/kern/mock/mock_env"
-	"github.com/prospero78/kern/mock/mock_hand_serve"
-	"github.com/prospero78/kern/mock/mock_hand_sub_http"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_base"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kserv_http"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
+	"gitp78su.ipnodns.ru/svi/kern/mock/mock_env"
+	"gitp78su.ipnodns.ru/svi/kern/mock/mock_hand_serve"
+	"gitp78su.ipnodns.ru/svi/kern/mock/mock_hand_sub_http"
 )
 
 type tester struct {

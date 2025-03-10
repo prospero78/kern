@@ -2,8 +2,8 @@
 package msg_pub
 
 import (
-	. "github.com/prospero78/kern/kc/helpers"
-	. "github.com/prospero78/kern/krn/kalias"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/kalias"
 )
 
 // PublishReq -- запрос на публикацию

@@ -5,10 +5,10 @@ import (
 	"context"
 	"sync"
 
-	"github.com/prospero78/kern/kc/local_ctx"
-	"github.com/prospero78/kern/krn/kctx/kernel_keeper"
-	"github.com/prospero78/kern/krn/kctx/kwg"
-	. "github.com/prospero78/kern/krn/ktypes"
+	"gitp78su.ipnodns.ru/svi/kern/kc/local_ctx"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx/kernel_keeper"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx/kwg"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 // kCtx -- контекст ядра

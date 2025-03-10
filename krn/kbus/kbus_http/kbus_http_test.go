@@ -8,16 +8,16 @@ import (
 	"strings"
 	"testing"
 
-	. "github.com/prospero78/kern/kc/helpers"
-	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_pub"
-	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_serve"
-	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_sub"
-	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_unsub"
-	"github.com/prospero78/kern/krn/kctx"
-	"github.com/prospero78/kern/krn/kserv_http"
-	"github.com/prospero78/kern/mock/mock_env"
-	"github.com/prospero78/kern/mock/mock_hand_serve"
-	"github.com/prospero78/kern/mock/mock_hand_sub_local"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_msg/msg_pub"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_msg/msg_serve"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_msg/msg_sub"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_msg/msg_unsub"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kserv_http"
+	"gitp78su.ipnodns.ru/svi/kern/mock/mock_env"
+	"gitp78su.ipnodns.ru/svi/kern/mock/mock_hand_serve"
+	"gitp78su.ipnodns.ru/svi/kern/mock/mock_hand_sub_local"
 )
 
 type tester struct {

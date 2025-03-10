@@ -4,15 +4,15 @@ package kmodule
 import (
 	"time"
 
-	. "github.com/prospero78/kern/kc/helpers"
-	"github.com/prospero78/kern/kc/local_ctx"
-	"github.com/prospero78/kern/kc/safe_int"
-	"github.com/prospero78/kern/kc/safe_string"
-	. "github.com/prospero78/kern/krn/kalias"
-	"github.com/prospero78/kern/krn/kbus/kbus_local"
-	"github.com/prospero78/kern/krn/kctx"
-	"github.com/prospero78/kern/krn/kmodule/mod_stat"
-	. "github.com/prospero78/kern/krn/ktypes"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
+	"gitp78su.ipnodns.ru/svi/kern/kc/local_ctx"
+	"gitp78su.ipnodns.ru/svi/kern/kc/safe_int"
+	"gitp78su.ipnodns.ru/svi/kern/kc/safe_string"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/kalias"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_local"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kmodule/mod_stat"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 // kModule -- модуль на основе ядра

@@ -11,12 +11,12 @@ package mod_stat
 import (
 	"time"
 
-	. "github.com/prospero78/kern/kc/helpers"
-	"github.com/prospero78/kern/kc/safe_int"
-	. "github.com/prospero78/kern/krn/kalias"
-	"github.com/prospero78/kern/krn/kmodule/mod_stat/mod_stat_day"
-	"github.com/prospero78/kern/krn/kmodule/mod_stat/mod_stat_sec"
-	. "github.com/prospero78/kern/krn/ktypes"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
+	"gitp78su.ipnodns.ru/svi/kern/kc/safe_int"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/kalias"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kmodule/mod_stat/mod_stat_day"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kmodule/mod_stat/mod_stat_sec"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 // ModStat -- статистика модуля

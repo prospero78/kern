@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/prospero78/kern/mock/mock_env"
+	"gitp78su.ipnodns.ru/svi/kern/mock/mock_env"
 )
 
 type tester struct {

@@ -2,14 +2,14 @@
 package mod_keeper
 
 import (
-	"github.com/prospero78/kern/krn/kctx"
-	"github.com/prospero78/kern/krn/kmodule"
-	"github.com/prospero78/kern/krn/kserv_http"
-	. "github.com/prospero78/kern/krn/ktypes"
-	"github.com/prospero78/kern/mds/mod_serv_http/http_api"
-	"github.com/prospero78/kern/mds/mod_serv_http/page_module"
-	"github.com/prospero78/kern/mds/mod_serv_http/page_modules"
-	"github.com/prospero78/kern/mds/mod_serv_http/page_monolit"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kmodule"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kserv_http"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
+	"gitp78su.ipnodns.ru/svi/kern/mds/mod_serv_http/http_api"
+	"gitp78su.ipnodns.ru/svi/kern/mds/mod_serv_http/page_module"
+	"gitp78su.ipnodns.ru/svi/kern/mds/mod_serv_http/page_modules"
+	"gitp78su.ipnodns.ru/svi/kern/mds/mod_serv_http/page_monolit"
 )
 
 // ModuleKeeper -- модуль сторожа

@@ -3,8 +3,8 @@ package ctx_value
 import (
 	"testing"
 
-	. "github.com/prospero78/kern/krn/kalias"
-	. "github.com/prospero78/kern/krn/ktypes"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/kalias"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
 )
 
 type tester struct {

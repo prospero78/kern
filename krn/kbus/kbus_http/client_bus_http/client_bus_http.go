@@ -11,18 +11,18 @@ import (
 
 	"github.com/google/uuid"
 
-	. "github.com/prospero78/kern/kc/helpers"
-	"github.com/prospero78/kern/kc/local_ctx"
-	"github.com/prospero78/kern/kc/safe_bool"
-	. "github.com/prospero78/kern/krn/kalias"
-	"github.com/prospero78/kern/krn/kbus/kbus_http"
-	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_pub"
-	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_serve"
-	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_sub"
-	"github.com/prospero78/kern/krn/kbus/kbus_msg/msg_unsub"
-	"github.com/prospero78/kern/krn/kctx"
-	. "github.com/prospero78/kern/krn/ktypes"
-	"github.com/prospero78/kern/mock/mock_hand_sub_http"
+	. "gitp78su.ipnodns.ru/svi/kern/kc/helpers"
+	"gitp78su.ipnodns.ru/svi/kern/kc/local_ctx"
+	"gitp78su.ipnodns.ru/svi/kern/kc/safe_bool"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/kalias"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_http"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_msg/msg_pub"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_msg/msg_serve"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_msg/msg_sub"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kbus/kbus_msg/msg_unsub"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx"
+	. "gitp78su.ipnodns.ru/svi/kern/krn/ktypes"
+	"gitp78su.ipnodns.ru/svi/kern/mock/mock_hand_sub_http"
 )
 
 // ClientBusHttp -- клиент HTTP-шины

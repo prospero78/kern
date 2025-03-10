@@ -3,7 +3,7 @@ package dict_sub_hook
 import (
 	"testing"
 
-	"github.com/prospero78/kern/mock/mock_hand_sub_local"
+	"gitp78su.ipnodns.ru/svi/kern/mock/mock_hand_sub_local"
 )
 
 type tester struct {

@@ -3,8 +3,8 @@ package dict_topic_serve
 import (
 	"testing"
 
-	"github.com/prospero78/kern/krn/kctx"
-	"github.com/prospero78/kern/mock/mock_hand_serve"
+	"gitp78su.ipnodns.ru/svi/kern/krn/kctx"
+	"gitp78su.ipnodns.ru/svi/kern/mock/mock_hand_serve"
 )
 
 type tester struct {
